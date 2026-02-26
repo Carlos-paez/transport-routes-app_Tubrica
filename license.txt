@@ -1,0 +1,36 @@
+DECLARACIÓN DE POLÍTICAS DE USO, DISTRIBUCIÓN, MODIFICACIÓN Y ESTUDIO
+
+Aplicación: transport-routes-app
+Titulares de los derechos: Tubrica y Carlos Páez
+
+1. Propiedad Intelectual
+Todos los derechos de propiedad intelectual, incluyendo pero no limitado a: código fuente, diseño, contenido, marcas, patentes, y cualquier otro elemento asociado a la aplicación, son propiedad exclusiva y total de Tubrica y Carlos Páez.
+
+2. Uso de la Aplicación
+
+El uso de la aplicación está sujeto a las condiciones establecidas por Tubrica y Carlos Páez.
+Queda prohibido el uso de la aplicación para fines ilegales, fraudulentos o que violen los derechos de terceros.
+Los usuarios no podrán realizar ingeniería inversa, descompilar, desensamblar o intentar extraer el código fuente de la aplicación sin autorización expresa y por escrito de los titulares.
+
+3. Distribución
+
+La distribución de la aplicación, ya sea de forma gratuita o remunerada, solo podrá realizarse con la autorización expresa de Tubrica y Carlos Páez.
+Los titulares se reservan el derecho de decidir los canales, condiciones y términos de distribución en cualquier momento y sin previo aviso.
+
+4. Modificación
+
+Cualquier modificación, adaptación o creación de versiones derivadas de la aplicación requiere la autorización previa y por escrito de Tubrica y Carlos Páez.
+Las modificaciones no autorizadas se considerarán una violación de los derechos de propiedad intelectual y podrán ser objeto de acciones legales.
+
+5. Estudio y Análisis
+
+El estudio, análisis o investigación de la aplicación con fines académicos, científicos o comerciales solo podrá realizarse con el consentimiento expreso de los titulares.
+Los resultados de cualquier estudio o análisis deberán citar expresamente a Tubrica y Carlos Páez como titulares de los derechos y no podrán ser utilizados para fines comerciales sin autorización.
+
+6. Sanciones por Incumplimiento
+
+El incumplimiento de estas políticas podrá dar lugar a la terminación inmediata del acceso a la aplicación, así como a acciones legales conforme a la legislación aplicable en la República Bolivariana de Venezuela.
+
+7. Jurisdicción
+
+Cualquier disputa relacionada con el uso, distribución, modificación o estudio de la aplicación se regirá por las leyes de la República Bolivariana de Venezuela y será resuelta en los tribunales competentes de Caracas.
