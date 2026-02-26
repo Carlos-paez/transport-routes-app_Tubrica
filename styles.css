@@ -141,3 +141,55 @@ body {
   letter-spacing: 3px;
   pointer-events: none;
 }
+
+/* ... (Mantener lo anterior de toolbar y sidebar) ... */
+
+#map {
+  flex-grow: 1;
+  background: #e0e0e0;
+  height: 100%;
+}
+
+/* ETIQUETAS DE MUNICIPIOS - AHORA MÁS VISIBLES */
+.label-municipio {
+  background: rgba(
+    0,
+    0,
+    0,
+    0.6
+  ) !important; /* Fondo oscuro semi-transparente */
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 4px;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+  text-align: center;
+  padding: 2px 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ESTILO DE RUTAS COMPACTAS (IGUAL QUE ANTES) */
+.route-text {
+  background: rgba(26, 26, 26, 0.9) !important;
+  color: #ffffff;
+  padding: 3px 7px !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  pointer-events: none;
+}
+.route-name {
+  font-size: 10px !important;
+  font-weight: 800;
+  color: #3498db;
+  display: block;
+}
+.route-stats {
+  font-size: 9px !important;
+  color: #bdc3c7;
+  display: block;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}

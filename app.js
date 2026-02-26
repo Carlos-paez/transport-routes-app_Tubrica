@@ -1,5 +1,5 @@
 // ==========================================
-// CONFIGURACIÓN BASE Y MAPA
+// 1. CONFIGURACIÓN BASE Y MAPA
 // ==========================================
 const TUBRICA_LOCATION = L.latLng(10.09673945749423, -69.35846137671071);
 
@@ -7,7 +7,7 @@ const map = L.map("map", {
   preferCanvas: true,
   doubleClickZoom: false,
   zoomControl: false,
-}).setView(TUBRICA_LOCATION, 13);
+}).setView(TUBRICA_LOCATION, 12);
 
 L.control.zoom({ position: "bottomright" }).addTo(map);
 
@@ -16,10 +16,11 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap",
 }).addTo(map);
 
-// CAPAS SEPARADAS
-const boundaryLayer = L.layerGroup().addTo(map); // Para municipios (fijo)
-const drawnItems = L.featureGroup().addTo(map); // Para rutas (editable)
+// CAPAS INDEPENDIENTES
+const boundaryLayer = L.layerGroup().addTo(map);
+const drawnItems = L.featureGroup().addTo(map);
 
+// VARIABLES DE ESTADO
 let currentMode = null;
 let smartRoutePoints = [];
 let tempPointsMarkers = [];
@@ -27,23 +28,23 @@ let previewRouteLine = null;
 let eraserCircle = null;
 let eraserSize = 30;
 
+// Marcador Sede TUBRICA
 L.marker(TUBRICA_LOCATION, { interactive: false })
   .addTo(map)
   .bindPopup("📍 SEDE TUBRICA")
   .openPopup();
 
 // ==========================================
-// 🗺️ DELIMITACIÓN DE MUNICIPIOS (IRIBARREN, PALAVECINO, AYACUCHO)
+// 2. DELIMITACIÓN DE MUNICIPIOS (ALTA VISIBILIDAD)
 // ==========================================
 async function cargarDelimitaciones() {
   const zonas = [
-    { name: "Municipio Iribarren", id: 2211603, color: "#3498db" },
-    { name: "Municipio Palavecino", id: 2211604, color: "#2ecc71" },
-    { name: "Parroquia Ayacucho", id: 7293700, color: "#e74c3c" },
+    { name: "Municipio Iribarren", id: 2211603, color: "#2980b9" },
+    { name: "Municipio Palavecino", id: 2211604, color: "#27ae60" },
+    { name: "Parroquia Ayacucho", id: 7293700, color: "#c0392b" },
   ];
 
   zonas.forEach((zona) => {
-    // Obtenemos los polígonos de OSM vía Nominatim
     const url = `https://nominatim.openstreetmap.org/details.php?osmtype=R&osmid=${zona.id}&class=boundary&addressdetails=1&hierarchy=0&group_hierarchy=1&format=json&polygon_geojson=1`;
 
     fetch(url)
@@ -51,36 +52,35 @@ async function cargarDelimitaciones() {
       .then((data) => {
         if (data.geometry) {
           const polygon = L.geoJSON(data.geometry, {
-            interactive: false, // Importante: no interfiere con clics
+            interactive: false,
             style: {
               color: zona.color,
-              weight: 2,
-              opacity: 0.5,
+              weight: 3,
+              opacity: 0.8,
               fillColor: zona.color,
-              fillOpacity: 0.03,
-              dashArray: "5, 10",
+              fillOpacity: 0.1,
             },
           }).addTo(boundaryLayer);
 
-          // Etiqueta flotante en el centro
           const center = polygon.getBounds().getCenter();
           L.marker(center, {
             icon: L.divIcon({
               className: "label-municipio",
               html: zona.name,
-              iconSize: [150, 20],
+              iconSize: [120, 20],
+              iconAnchor: [60, 10],
             }),
             interactive: false,
           }).addTo(boundaryLayer);
         }
       })
-      .catch((e) => console.error("Error cargando límites:", zona.name));
+      .catch((e) => console.error("Error límites:", zona.name));
   });
 }
 cargarDelimitaciones();
 
 // ==========================================
-// 🔄 CARGA DE DATOS (HÍBRIDO GO / NODE.JS)
+// 3. CARGA DE DATOS DESDE DB
 // ==========================================
 async function loadData() {
   try {
@@ -107,7 +107,7 @@ async function loadData() {
 loadData();
 
 // ==========================================
-// 🏷️ RENDERIZADO DE RUTAS
+// 4. RENDERIZADO DE RUTAS
 // ==========================================
 function renderRoute(latlngs, name, id, durationSeconds = null) {
   if (!latlngs || latlngs.length < 2) return;
@@ -198,7 +198,116 @@ function renderMarker(latlng, name, id) {
 }
 
 // ==========================================
-// 🧹 BORRADOR (Solo afecta a drawnItems)
+// 5. RUTA INTELIGENTE (MULTI-PUNTO REESTABLECIDA)
+// ==========================================
+function toggleSmartRoute() {
+  resetModes();
+  currentMode = "smart";
+  setStatus(
+    "Ruta Inteligente: Marque puntos. Clic en el ÚLTIMO marcador para finalizar.",
+  );
+}
+
+map.on("click", async function (e) {
+  if (currentMode === "marker") {
+    const text = prompt("Nombre:");
+    if (text) {
+      const id = await saveElement(text, "marker", e.latlng);
+      renderMarker(e.latlng, text, id);
+    }
+  }
+
+  if (currentMode === "smart") {
+    const point = e.latlng;
+    smartRoutePoints.push(point);
+
+    const m = L.circleMarker(point, {
+      radius: 7,
+      color: "#e67e22",
+      fillColor: "white",
+      fillOpacity: 1,
+      interactive: true,
+    }).addTo(map);
+
+    // Finalizar al clicar el marcador
+    m.on("click", (ev) => {
+      L.DomEvent.stopPropagation(ev);
+      if (smartRoutePoints.length >= 2) finalizeSmartRoute();
+    });
+
+    tempPointsMarkers.push(m);
+    if (smartRoutePoints.length >= 2) updatePreviewLine();
+  }
+
+  if (currentMode === "to-tubrica") fetchOSRM([e.latlng, TUBRICA_LOCATION]);
+});
+
+async function updatePreviewLine() {
+  const coords = smartRoutePoints.map((p) => `${p.lng},${p.lat}`).join(";");
+  const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.routes && data.routes.length > 0) {
+      const pts = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
+      if (previewRouteLine) map.removeLayer(previewRouteLine);
+      previewRouteLine = L.polyline(pts, {
+        color: "#e67e22",
+        weight: 4,
+        dashArray: "5, 10",
+      }).addTo(map);
+    }
+  } catch (e) {}
+}
+
+async function finalizeSmartRoute() {
+  const coordsStr = smartRoutePoints.map((p) => `${p.lng},${p.lat}`).join(";");
+  const url = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.routes && data.routes.length > 0) {
+      const fullCoords = data.routes[0].geometry.coordinates.map((c) => [
+        c[1],
+        c[0],
+      ]);
+      const duration = data.routes[0].duration;
+      const name = prompt("Nombre de la ruta:");
+      if (name) {
+        const id = await saveElement(name, "route", fullCoords);
+        renderRoute(fullCoords, name, id, duration);
+      }
+    }
+  } catch (e) {
+    alert("Error al generar ruta");
+  }
+  resetModes();
+}
+
+async function fetchOSRM(points) {
+  const coordsStr = points.map((p) => `${p.lng},${p.lat}`).join(";");
+  const url = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.routes && data.routes.length > 0) {
+      const fullCoords = data.routes[0].geometry.coordinates.map((c) => [
+        c[1],
+        c[0],
+      ]);
+      const duration = data.routes[0].duration;
+      const name = prompt("Nombre:");
+      if (name) {
+        const id = await saveElement(name, "route", fullCoords);
+        renderRoute(fullCoords, name, id, duration);
+      }
+    }
+  } catch (e) {}
+  resetModes();
+}
+
+// ==========================================
+// 6. BORRADOR Y UTILIDADES
 // ==========================================
 function toggleEraser() {
   if (currentMode === "eraser") return resetModes();
@@ -216,7 +325,6 @@ function toggleEraser() {
 map.on("mousemove", function (e) {
   if (currentMode !== "eraser" || !eraserCircle) return;
   eraserCircle.setLatLng(e.latlng);
-
   drawnItems.eachLayer((group) => {
     if (group.type !== "route") return;
     const line = group.routeLine;
@@ -249,80 +357,6 @@ map.on("mouseup", async () => {
   });
 });
 
-// ==========================================
-// 🛣️ RUTA INTELIGENTE
-// ==========================================
-async function fetchOSRM(points) {
-  const coordsStr = points.map((p) => `${p.lng},${p.lat}`).join(";");
-  const url = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.routes && data.routes.length > 0) {
-      const fullCoords = data.routes[0].geometry.coordinates.map((c) => [
-        c[1],
-        c[0],
-      ]);
-      const duration = data.routes[0].duration;
-      const name = prompt("Nombre de la ruta:");
-      if (name) {
-        const id = await saveElement(name, "route", fullCoords);
-        renderRoute(fullCoords, name, id, duration);
-      }
-    }
-  } catch (e) {
-    alert("Error OSRM");
-  }
-  resetModes();
-}
-
-map.on("click", async function (e) {
-  if (currentMode === "marker") {
-    const text = prompt("Nombre:");
-    if (text) {
-      const id = await saveElement(text, "marker", e.latlng);
-      renderMarker(e.latlng, text, id);
-    }
-  }
-  if (currentMode === "smart") {
-    smartRoutePoints.push(e.latlng);
-    const m = L.circleMarker(e.latlng, {
-      radius: 7,
-      color: "#e67e22",
-      fillColor: "white",
-      fillOpacity: 1,
-    }).addTo(map);
-    m.on("click", (ev) => {
-      L.DomEvent.stopPropagation(ev);
-      if (smartRoutePoints.length >= 2) fetchOSRM(smartRoutePoints);
-    });
-    tempPointsMarkers.push(m);
-    if (smartRoutePoints.length >= 2) updatePreviewLine();
-  }
-  if (currentMode === "to-tubrica") fetchOSRM([e.latlng, TUBRICA_LOCATION]);
-});
-
-async function updatePreviewLine() {
-  const coords = smartRoutePoints.map((p) => `${p.lng},${p.lat}`).join(";");
-  const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.routes && data.routes.length > 0) {
-      const pts = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
-      if (previewRouteLine) map.removeLayer(previewRouteLine);
-      previewRouteLine = L.polyline(pts, {
-        color: "#e67e22",
-        weight: 4,
-        dashArray: "5, 10",
-      }).addTo(map);
-    }
-  } catch (e) {}
-}
-
-// ==========================================
-// 🛠️ UTILIDADES
-// ==========================================
 function resetModes() {
   currentMode = null;
   smartRoutePoints = [];
@@ -355,34 +389,17 @@ async function saveElement(name, type, geometry) {
 }
 
 async function handleDelete(layer) {
-  if (!drawnItems.hasLayer(layer)) return; // No borrar municipios
+  if (!drawnItems.hasLayer(layer)) return;
   if (confirm("¿Eliminar elemento?")) {
     await fetch(`/api/elements/${layer.dbId}`, { method: "DELETE" });
     drawnItems.removeLayer(layer);
   }
 }
 
-const manualDrawer = new L.Draw.Polyline(map, {
-  shapeOptions: { color: "#3498db", weight: 6 },
-});
-function enableManualDraw() {
-  resetModes();
-  currentMode = "manual";
-  manualDrawer.enable();
-}
-map.on(L.Draw.Event.CREATED, (e) => {
-  const name = prompt("Nombre:");
-  if (name)
-    saveElement(name, "route", e.layer.getLatLngs()).then((id) =>
-      renderRoute(e.layer.getLatLngs(), name, id),
-    );
-});
-
 function toggleSidebar() {
   document.getElementById("sidebar").classList.toggle("collapsed");
   setTimeout(() => map.invalidateSize(), 350);
 }
-
 function enableMarker() {
   resetModes();
   currentMode = "marker";
@@ -398,6 +415,21 @@ function toggleGoToTubrica() {
   currentMode = "to-tubrica";
   setStatus("Hacia Tubrica");
 }
+function enableManualDraw() {
+  resetModes();
+  currentMode = "manual";
+  new L.Draw.Polyline(map, {
+    shapeOptions: { color: "#3498db", weight: 6 },
+  }).enable();
+}
+
+map.on(L.Draw.Event.CREATED, (e) => {
+  const name = prompt("Nombre:");
+  if (name)
+    saveElement(name, "route", e.layer.getLatLngs()).then((id) =>
+      renderRoute(e.layer.getLatLngs(), name, id),
+    );
+});
 
 document.getElementById("eraserSlider").oninput = (e) => {
   eraserSize = parseInt(e.target.value);
@@ -410,7 +442,7 @@ function exportMapToPDF() {
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF("l", "mm", "a4");
       pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, 297, 210);
-      pdf.save("mapa_tubrica_lara.pdf");
+      pdf.save("mapa_logistica_tubrica.pdf");
     },
   );
 }
