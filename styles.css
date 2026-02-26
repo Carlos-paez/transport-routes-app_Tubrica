@@ -99,44 +99,19 @@ body {
   font-size: 0.85rem;
 }
 
+/* ETIQUETAS DE RUTA COMPACTAS */
 .route-text {
-  background: rgba(44, 62, 80, 0.95);
+  background: rgba(26, 26, 26, 0.9) !important;
   color: #ffffff;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  font-weight: 600;
-  font-size: 13px;
-  text-align: center;
-  white-space: nowrap;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  line-height: 1.4;
-}
-
-.route-name {
-  font-size: 14px;
-  text-transform: uppercase;
-  color: #3498db;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  display: block;
-  margin-bottom: 4px;
-}
-
-/* Contenedor principal de la etiqueta más pequeño */
-.route-text {
-  background: rgba(26, 26, 26, 0.85) !important; /* Más oscuro y elegante */
-  color: #ffffff;
-  padding: 3px 7px !important; /* Margen interno mínimo */
-  border-radius: 4px !important; /* Menos redondeado para ahorrar espacio */
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 3px 7px !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   text-align: center;
   white-space: nowrap;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   pointer-events: none;
-  backdrop-filter: blur(2px); /* Efecto cristalizado moderno */
 }
 
-/* Nombre de la ruta en una sola línea y pequeño */
 .route-name {
   font-size: 10px !important;
   font-weight: 800;
@@ -144,33 +119,25 @@ body {
   color: #3498db;
   margin-bottom: 1px;
   display: block;
-  letter-spacing: 0.3px;
 }
 
-/* Estadísticas en una línea muy fina */
 .route-stats {
   font-size: 9px !important;
   font-weight: 500;
   color: #bdc3c7;
   display: block;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 1px;
 }
 
-/* Estilo para las delimitaciones municipales */
-.municipio-boundary {
-  pointer-events: none; /* Para que no interfieran con los clics en las rutas */
-  transition: all 0.5s;
-}
-
-/* Etiquetas flotantes para los municipios */
+/* ESTILOS PARA MUNICIPIOS */
 .label-municipio {
   background: transparent;
   border: none;
   box-shadow: none;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.4);
   font-weight: bold;
-  font-size: 14px;
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
+  pointer-events: none;
 }

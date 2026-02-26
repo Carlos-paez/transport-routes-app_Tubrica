@@ -3,14 +3,12 @@
 // ==========================================
 const TUBRICA_LOCATION = L.latLng(10.09673945749423, -69.35846137671071);
 
-// preferCanvas: true para que el mapa vuele incluso con miles de puntos
 const map = L.map("map", {
   preferCanvas: true,
   doubleClickZoom: false,
   zoomControl: false,
 }).setView(TUBRICA_LOCATION, 13);
 
-// Control de zoom en la esquina inferior derecha para no estorbar
 L.control.zoom({ position: "bottomright" }).addTo(map);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -18,10 +16,10 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap",
 }).addTo(map);
 
-// Grupo principal para persistencia y gestión de capas
-const drawnItems = L.featureGroup().addTo(map);
+// CAPAS SEPARADAS
+const boundaryLayer = L.layerGroup().addTo(map); // Para municipios (fijo)
+const drawnItems = L.featureGroup().addTo(map); // Para rutas (editable)
 
-// Variables de Estado
 let currentMode = null;
 let smartRoutePoints = [];
 let tempPointsMarkers = [];
@@ -29,24 +27,68 @@ let previewRouteLine = null;
 let eraserCircle = null;
 let eraserSize = 30;
 
-// Marcador Fijo Sede TUBRICA (No interactivo para no borrarlo por error)
 L.marker(TUBRICA_LOCATION, { interactive: false })
   .addTo(map)
   .bindPopup("📍 SEDE TUBRICA")
   .openPopup();
 
 // ==========================================
-// 🔄 CARGA DE DATOS (COMPATIBLE GO / NODE.JS)
+// 🗺️ DELIMITACIÓN DE MUNICIPIOS (IRIBARREN, PALAVECINO, AYACUCHO)
+// ==========================================
+async function cargarDelimitaciones() {
+  const zonas = [
+    { name: "Municipio Iribarren", id: 2211603, color: "#3498db" },
+    { name: "Municipio Palavecino", id: 2211604, color: "#2ecc71" },
+    { name: "Parroquia Ayacucho", id: 7293700, color: "#e74c3c" },
+  ];
+
+  zonas.forEach((zona) => {
+    // Obtenemos los polígonos de OSM vía Nominatim
+    const url = `https://nominatim.openstreetmap.org/details.php?osmtype=R&osmid=${zona.id}&class=boundary&addressdetails=1&hierarchy=0&group_hierarchy=1&format=json&polygon_geojson=1`;
+
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.geometry) {
+          const polygon = L.geoJSON(data.geometry, {
+            interactive: false, // Importante: no interfiere con clics
+            style: {
+              color: zona.color,
+              weight: 2,
+              opacity: 0.5,
+              fillColor: zona.color,
+              fillOpacity: 0.03,
+              dashArray: "5, 10",
+            },
+          }).addTo(boundaryLayer);
+
+          // Etiqueta flotante en el centro
+          const center = polygon.getBounds().getCenter();
+          L.marker(center, {
+            icon: L.divIcon({
+              className: "label-municipio",
+              html: zona.name,
+              iconSize: [150, 20],
+            }),
+            interactive: false,
+          }).addTo(boundaryLayer);
+        }
+      })
+      .catch((e) => console.error("Error cargando límites:", zona.name));
+  });
+}
+cargarDelimitaciones();
+
+// ==========================================
+// 🔄 CARGA DE DATOS (HÍBRIDO GO / NODE.JS)
 // ==========================================
 async function loadData() {
   try {
     const res = await fetch("/api/elements");
     const elements = await res.json();
-
     elements.forEach((el) => {
       let geo;
       try {
-        // Si viene de Node es String, si viene de Go es Objeto
         geo =
           typeof el.geometry === "string"
             ? JSON.parse(el.geometry)
@@ -54,19 +96,18 @@ async function loadData() {
       } catch (e) {
         geo = el.geometry;
       }
-
       if (el.type === "route") renderRoute(geo, el.name, el.id);
       else renderMarker(geo, el.name, el.id);
     });
     setTimeout(() => map.invalidateSize(), 200);
   } catch (e) {
-    console.error("Error cargando DB:", e);
+    console.error("Error DB:", e);
   }
 }
 loadData();
 
 // ==========================================
-// 🏷️ RENDERIZADO (LÍNEA + PUNTOS + ETIQUETA COMPACTA)
+// 🏷️ RENDERIZADO DE RUTAS
 // ==========================================
 function renderRoute(latlngs, name, id, durationSeconds = null) {
   if (!latlngs || latlngs.length < 2) return;
@@ -89,7 +130,6 @@ function renderRoute(latlngs, name, id, durationSeconds = null) {
     fillOpacity: 1,
   });
 
-  // Cálculo de Distancia Real (Metros a Kilómetros)
   let totalMeters = 0;
   let segmentDistances = [];
   for (let i = 1; i < latlngs.length; i++) {
@@ -98,13 +138,10 @@ function renderRoute(latlngs, name, id, durationSeconds = null) {
     totalMeters += d;
   }
   const distKM = (totalMeters / 1000).toFixed(1);
-
-  // Cálculo de Tiempo (OSRM o Estimado a 40km/h para carga)
   let timeText = durationSeconds
     ? formatTime(durationSeconds)
     : formatTime(totalMeters / 11.11);
 
-  // Punto Medio para la etiqueta
   let halfDist = totalMeters / 2;
   let accumulated = 0;
   let midPos = latlngs[Math.floor(latlngs.length / 2)];
@@ -116,16 +153,11 @@ function renderRoute(latlngs, name, id, durationSeconds = null) {
     }
   }
 
-  // Diseño Compacto solicitado para PDF
   const label = L.marker(midPos, {
     interactive: false,
     icon: L.divIcon({
       className: "route-label",
-      html: `
-                <div class="route-text">
-                    <span class="route-name">${name}</span>
-                    <span class="route-stats">${distKM}km | ${timeText}</span>
-                </div>`,
+      html: `<div class="route-text"><span class="route-name">${name}</span><span class="route-stats">${distKM}km | ${timeText}</span></div>`,
       iconSize: null,
     }),
   });
@@ -135,7 +167,6 @@ function renderRoute(latlngs, name, id, durationSeconds = null) {
   group.type = "route";
   group.routeLine = polyline;
 
-  // Vincular clic para borrar el grupo entero (incluyendo puntos)
   [polyline, startPoint, endPoint].forEach((layer) => {
     layer.on("click", (e) => {
       if (currentMode === "delete") {
@@ -146,7 +177,6 @@ function renderRoute(latlngs, name, id, durationSeconds = null) {
   });
 
   group.addTo(drawnItems);
-  return group;
 }
 
 function formatTime(seconds) {
@@ -168,7 +198,7 @@ function renderMarker(latlng, name, id) {
 }
 
 // ==========================================
-// 🧹 BORRADOR DE PRECISIÓN (MOVIMIENTO)
+// 🧹 BORRADOR (Solo afecta a drawnItems)
 // ==========================================
 function toggleEraser() {
   if (currentMode === "eraser") return resetModes();
@@ -181,7 +211,6 @@ function toggleEraser() {
     fillOpacity: 0.2,
     interactive: false,
   }).addTo(map);
-  map.getContainer().style.cursor = "crosshair";
 }
 
 map.on("mousemove", function (e) {
@@ -193,7 +222,6 @@ map.on("mousemove", function (e) {
     const line = group.routeLine;
     const pts = line.getLatLngs();
     const filtered = pts.filter((p) => map.distance(p, e.latlng) > eraserSize);
-
     if (filtered.length !== pts.length) {
       if (filtered.length < 2) group.toDelete = true;
       else {
@@ -204,7 +232,6 @@ map.on("mousemove", function (e) {
   });
 });
 
-// Sincronizar cambios del borrador al soltar clic
 map.on("mouseup", async () => {
   if (currentMode !== "eraser") return;
   drawnItems.eachLayer(async (group) => {
@@ -223,12 +250,11 @@ map.on("mouseup", async () => {
 });
 
 // ==========================================
-// 🛣️ RUTA INTELIGENTE / IR A TUBRICA (OSRM)
+// 🛣️ RUTA INTELIGENTE
 // ==========================================
 async function fetchOSRM(points) {
   const coordsStr = points.map((p) => `${p.lng},${p.lat}`).join(";");
   const url = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
-
   try {
     const res = await fetch(url);
     const data = await res.json();
@@ -237,23 +263,22 @@ async function fetchOSRM(points) {
         c[1],
         c[0],
       ]);
-      const duration = data.routes[0].duration; // Tiempo real de OSRM
-
-      const name = prompt("Ingrese el nombre de la ruta:");
+      const duration = data.routes[0].duration;
+      const name = prompt("Nombre de la ruta:");
       if (name) {
         const id = await saveElement(name, "route", fullCoords);
         renderRoute(fullCoords, name, id, duration);
       }
     }
   } catch (e) {
-    alert("Error al conectar con OSRM");
+    alert("Error OSRM");
   }
   resetModes();
 }
 
 map.on("click", async function (e) {
   if (currentMode === "marker") {
-    const text = prompt("Nombre del punto:");
+    const text = prompt("Nombre:");
     if (text) {
       const id = await saveElement(text, "marker", e.latlng);
       renderMarker(e.latlng, text, id);
@@ -261,28 +286,20 @@ map.on("click", async function (e) {
   }
   if (currentMode === "smart") {
     smartRoutePoints.push(e.latlng);
-    // Marcador naranja guía
     const m = L.circleMarker(e.latlng, {
       radius: 7,
       color: "#e67e22",
       fillColor: "white",
       fillOpacity: 1,
-      interactive: true,
     }).addTo(map);
-
-    // Finalizar al clicar el último punto naranja
     m.on("click", (ev) => {
       L.DomEvent.stopPropagation(ev);
       if (smartRoutePoints.length >= 2) fetchOSRM(smartRoutePoints);
     });
-
     tempPointsMarkers.push(m);
     if (smartRoutePoints.length >= 2) updatePreviewLine();
   }
-  if (currentMode === "to-tubrica") {
-    // Herramienta "Ir a Tubrica": Origen (clic) -> Destino (HQ)
-    fetchOSRM([e.latlng, TUBRICA_LOCATION]);
-  }
+  if (currentMode === "to-tubrica") fetchOSRM([e.latlng, TUBRICA_LOCATION]);
 });
 
 async function updatePreviewLine() {
@@ -298,14 +315,13 @@ async function updatePreviewLine() {
         color: "#e67e22",
         weight: 4,
         dashArray: "5, 10",
-        interactive: false,
       }).addTo(map);
     }
   } catch (e) {}
 }
 
 // ==========================================
-// 🛠️ UTILIDADES Y GESTIÓN
+// 🛠️ UTILIDADES
 // ==========================================
 function resetModes() {
   currentMode = null;
@@ -339,13 +355,13 @@ async function saveElement(name, type, geometry) {
 }
 
 async function handleDelete(layer) {
-  if (confirm("¿Eliminar permanentemente este elemento y sus datos?")) {
+  if (!drawnItems.hasLayer(layer)) return; // No borrar municipios
+  if (confirm("¿Eliminar elemento?")) {
     await fetch(`/api/elements/${layer.dbId}`, { method: "DELETE" });
     drawnItems.removeLayer(layer);
   }
 }
 
-// Trazado Manual
 const manualDrawer = new L.Draw.Polyline(map, {
   shapeOptions: { color: "#3498db", weight: 6 },
 });
@@ -353,17 +369,15 @@ function enableManualDraw() {
   resetModes();
   currentMode = "manual";
   manualDrawer.enable();
-  setStatus("Trazado Manual");
 }
 map.on(L.Draw.Event.CREATED, (e) => {
-  const name = prompt("Nombre de la ruta:");
-  if (name) {
-    const pts = e.layer.getLatLngs();
-    saveElement(name, "route", pts).then((id) => renderRoute(pts, name, id));
-  }
+  const name = prompt("Nombre:");
+  if (name)
+    saveElement(name, "route", e.layer.getLatLngs()).then((id) =>
+      renderRoute(e.layer.getLatLngs(), name, id),
+    );
 });
 
-// Interfaz Sidebar
 function toggleSidebar() {
   document.getElementById("sidebar").classList.toggle("collapsed");
   setTimeout(() => map.invalidateSize(), 350);
@@ -377,12 +391,12 @@ function enableMarker() {
 function enableDelete() {
   resetModes();
   currentMode = "delete";
-  setStatus("Eliminar elemento");
+  setStatus("Eliminar");
 }
 function toggleGoToTubrica() {
   resetModes();
   currentMode = "to-tubrica";
-  setStatus("Ruta hacia Tubrica");
+  setStatus("Hacia Tubrica");
 }
 
 document.getElementById("eraserSlider").oninput = (e) => {
@@ -390,17 +404,13 @@ document.getElementById("eraserSlider").oninput = (e) => {
   if (eraserCircle) eraserCircle.setRadius(eraserSize);
 };
 
-// Exportar PDF
 function exportMapToPDF() {
-  const btn = document.querySelector(".btn-pdf");
-  btn.innerText = "⏳...";
   html2canvas(document.getElementById("map"), { useCORS: true, scale: 2 }).then(
     (canvas) => {
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF("l", "mm", "a4");
       pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, 297, 210);
-      pdf.save("mapa_rutas_tubrica.pdf");
-      btn.innerText = "📄 Exportar PDF";
+      pdf.save("mapa_tubrica_lara.pdf");
     },
   );
 }
