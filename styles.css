@@ -1,195 +1,126 @@
-body,
-html {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  font-family: "Segoe UI", sans-serif;
+/* ==========================================
+   ESTRUCTURA GENERAL
+   ========================================== */
+body, html {
+    height: 100%; margin: 0; padding: 0;
+    overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {
-  display: flex;
-  flex-direction: column;
-}
+body { display: flex; flex-direction: column; background: #f4f4f4; }
 
 #toolbar {
-  height: 60px;
-  background: #1a1a1a;
-  color: white;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  z-index: 1001;
+    height: 60px; background: #1a1a1a; color: white;
+    display: flex; align-items: center; padding: 0 20px; z-index: 1001;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 #toggle-btn {
-  background: #34495e;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 4px;
+    background: #34495e; color: white; border: none;
+    padding: 8px 12px; cursor: pointer; border-radius: 4px; transition: 0.3s;
 }
+
+#toggle-btn:hover { background: #2c3e50; }
 
 #main-container {
-  display: flex;
-  flex-grow: 1;
-  height: calc(100vh - 60px);
-  position: relative;
-  overflow: hidden;
+    display: flex; flex-grow: 1; height: calc(100vh - 60px);
+    position: relative; overflow: hidden;
 }
 
+/* ==========================================
+   SIDEBAR (COLAPSABLE)
+   ========================================== */
 #sidebar {
-  width: 260px;
-  background: #2c3e50;
-  color: white;
-  padding: 20px;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1000;
-  flex-shrink: 0;
-  will-change: transform;
+    width: 260px; background: #2c3e50; color: white; padding: 20px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000; flex-shrink: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+    overflow-y: auto;
 }
 
-#sidebar.collapsed {
-  transform: translateX(-260px);
-  margin-right: -260px;
-}
+#sidebar.collapsed { transform: translateX(-260px); margin-right: -260px; }
 
-#map {
-  flex-grow: 1;
-  background: #e0e0e0;
-  height: 100%;
-}
+#map { flex-grow: 1; background: #e0e0e0; height: 100%; }
 
+/* ==========================================
+   BOTONES Y HERRAMIENTAS
+   ========================================== */
 .btn {
-  border: none;
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-top: 8px;
-  width: 100%;
+    border: none; padding: 10px; border-radius: 4px;
+    cursor: pointer; font-weight: bold; margin-top: 8px; width: 100%;
+    transition: 0.2s;
 }
 
-.btn-tool {
-  background: #34495e;
-  color: white;
-}
-.btn-eraser {
-  background: #7f8c8d;
-}
-.btn-pdf {
-  background: #27ae60;
-  color: white;
-  width: auto;
-  margin-left: auto;
-}
+.btn-tool { background: #34495e; color: white; }
+.btn-tool:hover { background: #3d566e; }
 
-.logo {
-  margin-left: 15px;
-  font-weight: bold;
-  flex-grow: 1;
-}
+.btn-save { background: #16a085; color: white; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); }
+.btn-save:hover { background: #1abc9c; }
+
+.btn-eraser { background: #7f8c8d; }
+.btn-pdf { background: #27ae60; color: white; width: auto; margin-left: auto; }
+
+.logo { margin-left: 15px; font-weight: bold; flex-grow: 1; font-size: 1.1rem; }
 
 #status {
-  margin-top: 15px;
-  padding: 10px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  font-size: 0.85rem;
+    margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.2);
+    border-radius: 4px; font-size: 0.85rem; border-left: 3px solid #3498db;
 }
 
-/* ETIQUETAS DE RUTA COMPACTAS */
+/* ==========================================
+   ETIQUETAS DE RUTA (AUTO-AJUSTABLES)
+   ========================================== */
+.route-label {
+    width: auto !important; height: auto !important;
+}
+
 .route-text {
-  background: rgba(26, 26, 26, 0.9) !important;
-  color: #ffffff;
-  padding: 3px 7px !important;
-  border-radius: 4px !important;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  text-align: center;
-  white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-  pointer-events: none;
+    background: rgba(15, 23, 42, 0.95) !important;
+    color: #ffffff !important;
+    padding: 4px 10px !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 4px solid #3498db !important;
+    
+    /* Ajuste dinámico */
+    width: fit-content !important;
+    min-width: 60px;
+    max-width: 250px;
+    
+    text-align: left;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 
 .route-name {
-  font-size: 10px !important;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: #3498db;
-  margin-bottom: 1px;
-  display: block;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase;
+    color: #3498db !important;
+    display: block;
+    letter-spacing: 0.5px;
+    margin-bottom: 1px;
 }
 
 .route-stats {
-  font-size: 9px !important;
-  font-weight: 500;
-  color: #bdc3c7;
-  display: block;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 9px !important;
+    font-weight: 600 !important;
+    color: #f8fafc !important;
+    display: block;
 }
 
-/* ESTILOS PARA MUNICIPIOS */
+/* ==========================================
+   ETIQUETAS DE MUNICIPIOS
+   ========================================== */
 .label-municipio {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  color: rgba(255, 255, 255, 0.4);
-  font-weight: bold;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  pointer-events: none;
-}
-
-/* ... (Mantener lo anterior de toolbar y sidebar) ... */
-
-#map {
-  flex-grow: 1;
-  background: #e0e0e0;
-  height: 100%;
-}
-
-/* ETIQUETAS DE MUNICIPIOS - AHORA MÁS VISIBLES */
-.label-municipio {
-  background: rgba(
-    0,
-    0,
-    0,
-    0.6
-  ) !important; /* Fondo oscuro semi-transparente */
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  border-radius: 4px;
-  color: #ffffff !important;
-  font-weight: 800 !important;
-  font-size: 11px !important;
-  text-align: center;
-  padding: 2px 5px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-/* ESTILO DE RUTAS COMPACTAS (IGUAL QUE ANTES) */
-.route-text {
-  background: rgba(26, 26, 26, 0.9) !important;
-  color: #ffffff;
-  padding: 3px 7px !important;
-  border-radius: 4px !important;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  text-align: center;
-  pointer-events: none;
-}
-.route-name {
-  font-size: 10px !important;
-  font-weight: 800;
-  color: #3498db;
-  display: block;
-}
-.route-stats {
-  font-size: 9px !important;
-  color: #bdc3c7;
-  display: block;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 4px;
+    color: #ffffff !important;
+    font-weight: bold;
+    font-size: 10px;
+    padding: 2px 6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    pointer-events: none;
 }

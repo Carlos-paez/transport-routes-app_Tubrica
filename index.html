@@ -2,55 +2,47 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Gestión de Rutas - TUBRICA</title>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Transporte - TUBRICA</title>
+    
+    <!-- CSS de Leaflet y Draw -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div id="toolbar">
       <button id="toggle-btn" onclick="toggleSidebar()">☰</button>
       <div class="logo">🇻🇪 Gestión de Transporte - TUBRICA</div>
-      <button class="btn btn-pdf" onclick="exportMapToPDF()">
-        📄 Exportar PDF
-      </button>
+      <button class="btn btn-pdf" onclick="exportMapToPDF()">📄 Exportar PDF</button>
     </div>
 
     <div id="main-container">
       <div id="sidebar">
         <h3>Herramientas</h3>
-        <button class="btn btn-tool" onclick="enableManualDraw()">
-          📈 Trazado Manual
-        </button>
-        <button class="btn btn-tool" onclick="toggleSmartRoute()">
-          🛣 Ruta Inteligente
-        </button>
-        <button class="btn btn-tool" onclick="toggleGoToTubrica()">
-          🧭 Ir a TUBRICA
-        </button>
-        <button class="btn btn-tool" onclick="enableMarker()">
-          📍 Marcador con Texto
-        </button>
-        <button class="btn btn-tool" onclick="enableDelete()">
-          🗑 Eliminar Elemento
-        </button>
-        <button class="btn btn-tool btn-eraser" onclick="toggleEraser()">
-          🧹 Borrador
-        </button>
+        <button class="btn btn-save" onclick="saveAllChanges()">💾 Guardar Cambios</button>
+        
+        <div class="tool-grid">
+          <button class="btn btn-tool" onclick="enableManualDraw()">📈 Trazado Manual</button>
+          <button class="btn btn-tool" onclick="toggleSmartRoute()">🛣 Ruta Inteligente</button>
+          <button class="btn btn-tool" onclick="toggleGoToTubrica()">🧭 Ir a TUBRICA</button>
+          <button class="btn btn-tool" onclick="enableMarker()">📍 Marcador</button>
+          <button class="btn btn-tool" onclick="enableEditMode()">✏️ Editar Ruta</button>
+          <button class="btn btn-tool" onclick="enableDelete()">🗑 Eliminar</button>
+          <button class="btn btn-tool btn-eraser" onclick="toggleEraser()">🧹 Borrador</button>
+        </div>
+
         <hr />
         <label>Sensibilidad Borrador</label>
         <input type="range" min="10" max="100" value="30" id="eraserSlider" />
+        
         <div id="status">Modo: Inactivo</div>
       </div>
+
       <div id="map"></div>
     </div>
 
+    <!-- Librerías -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>

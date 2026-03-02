@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/glebarez/go-sqlite"
@@ -14,7 +15,7 @@ type Element struct {
 	ID        int             `json:"id"`
 	Name      string          `json:"name"`
 	Type      string          `json:"type"`
-	Geometry  json.RawMessage `json:"geometry"` 
+	Geometry  json.RawMessage `json:"geometry"`
 	CreatedAt string          `json:"created_at"`
 }
 
@@ -28,7 +29,6 @@ func main() {
 	}
 	defer db.Close()
 
-	// Optimizaciones de escritura
 	db.Exec("PRAGMA journal_mode = WAL")
 
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS elements (
@@ -41,79 +41,47 @@ func main() {
 
 	r := gin.Default()
 
-	// API
 	api := r.Group("/api")
 	{
-		api.GET("/elements", getElements)
-		api.POST("/elements", createElement)
-		api.PUT("/elements/:id", updateElement)
-		api.DELETE("/elements/:id", deleteElement)
+		api.GET("/elements", func(c *gin.Context) {
+			rows, _ := db.Query("SELECT id, name, type, geometry, created_at FROM elements")
+			defer rows.Close()
+			elements := []Element{}
+			for rows.Next() {
+				var e Element
+				var geoStr string
+				rows.Scan(&e.ID, &e.Name, &e.Type, &geoStr, &e.CreatedAt)
+				e.Geometry = json.RawMessage(geoStr)
+				elements = append(elements, e)
+			}
+			c.JSON(200, elements)
+		})
+
+		api.POST("/elements", func(c *gin.Context) {
+			var in Element
+			c.ShouldBindJSON(&in)
+			res, _ := db.Exec("INSERT INTO elements (name, type, geometry) VALUES (?, ?, ?)", in.Name, in.Type, string(in.Geometry))
+			id, _ := res.LastInsertId()
+			c.JSON(200, gin.H{"id": id})
+		})
+
+		api.PUT("/elements/:id", func(c *gin.Context) {
+			var in Element
+			c.ShouldBindJSON(&in)
+			db.Exec("UPDATE elements SET geometry = ? WHERE id = ?", string(in.Geometry), c.Param("id"))
+			c.JSON(200, gin.H{"status": "ok"})
+		})
+
+		api.DELETE("/elements/:id", func(c *gin.Context) {
+			db.Exec("DELETE FROM elements WHERE id = ?", c.Param("id"))
+			c.JSON(200, gin.H{"status": "ok"})
+		})
 	}
 
-	// Frontend
 	r.StaticFile("/", "./index.html")
 	r.StaticFile("/app.js", "./app.js")
 	r.StaticFile("/styles.css", "./styles.css")
 
-	fmt.Println("\n🚀 SERVIDOR TUBRICA GO ACTIVO EN http://localhost:3000")
+	fmt.Println("🚀 Servidor TUBRICA en http://localhost:3000")
 	r.Run(":3000")
-}
-
-func getElements(c *gin.Context) {
-	rows, err := db.Query("SELECT id, name, type, geometry, created_at FROM elements")
-	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		return
-	}
-	defer rows.Close()
-
-	elements := []Element{}
-	for rows.Next() {
-		var e Element
-		var geoStr string
-		rows.Scan(&e.ID, &e.Name, &e.Type, &geoStr, &e.CreatedAt)
-		e.Geometry = json.RawMessage(geoStr)
-		elements = append(elements, e)
-	}
-	c.JSON(200, elements)
-}
-
-func createElement(c *gin.Context) {
-	var input Element
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
-		return
-	}
-
-	// Importante: Guardar el RawMessage como string plano
-	res, err := db.Exec("INSERT INTO elements (name, type, geometry) VALUES (?, ?, ?)", 
-		input.Name, input.Type, string(input.Geometry))
-	
-	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		return
-	}
-
-	lastID, _ := res.LastInsertId()
-	log.Printf("💾 Guardado: %s", input.Name)
-	c.JSON(200, gin.H{"id": lastID})
-}
-
-func updateElement(c *gin.Context) {
-	id := c.Param("id")
-	var input Element
-	c.ShouldBindJSON(&input)
-	_, err := db.Exec("UPDATE elements SET geometry = ? WHERE id = ?", string(input.Geometry), id)
-	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(200, gin.H{"status": "ok"})
-}
-
-func deleteElement(c *gin.Context) {
-	id := c.Param("id")
-	db.Exec("DELETE FROM elements WHERE id = ?", id)
-	log.Printf("🗑️ Eliminado ID: %s", id)
-	c.JSON(200, gin.H{"status": "ok"})
 }
