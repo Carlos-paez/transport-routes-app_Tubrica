@@ -1,126 +1,192 @@
-/* ==========================================
-   ESTRUCTURA GENERAL
-   ========================================== */
-body, html {
-    height: 100%; margin: 0; padding: 0;
-    overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+body,
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: "Segoe UI", sans-serif;
 }
-
-body { display: flex; flex-direction: column; background: #f4f4f4; }
-
+body {
+  display: flex;
+  flex-direction: column;
+  background: #f4f4f4;
+}
 #toolbar {
-    height: 60px; background: #1a1a1a; color: white;
-    display: flex; align-items: center; padding: 0 20px; z-index: 1001;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  height: 60px;
+  background: #1a1a1a;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 1001;
 }
-
 #toggle-btn {
-    background: #34495e; color: white; border: none;
-    padding: 8px 12px; cursor: pointer; border-radius: 4px; transition: 0.3s;
+  background: #34495e;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
 }
-
-#toggle-btn:hover { background: #2c3e50; }
-
 #main-container {
-    display: flex; flex-grow: 1; height: calc(100vh - 60px);
-    position: relative; overflow: hidden;
+  display: flex;
+  flex-grow: 1;
+  height: calc(100vh - 60px);
+  position: relative;
+  overflow: hidden;
 }
-
-/* ==========================================
-   SIDEBAR (COLAPSABLE)
-   ========================================== */
 #sidebar {
-    width: 260px; background: #2c3e50; color: white; padding: 20px;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1000; flex-shrink: 0; box-shadow: 2px 0 10px rgba(0,0,0,0.2);
-    overflow-y: auto;
+  width: 260px;
+  background: #2c3e50;
+  color: white;
+  padding: 15px;
+  transition: transform 0.3s;
+  z-index: 1000;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+#sidebar.collapsed {
+  transform: translateX(-260px);
+  margin-right: -260px;
+}
+#map {
+  flex-grow: 1;
+  background: #e0e0e0;
+  height: 100%;
 }
 
-#sidebar.collapsed { transform: translateX(-260px); margin-right: -260px; }
-
-#map { flex-grow: 1; background: #e0e0e0; height: 100%; }
-
-/* ==========================================
-   BOTONES Y HERRAMIENTAS
-   ========================================== */
 .btn {
-    border: none; padding: 10px; border-radius: 4px;
-    cursor: pointer; font-weight: bold; margin-top: 8px; width: 100%;
-    transition: 0.2s;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 8px;
+  width: 100%;
+}
+.btn-save {
+  background: #16a085;
+  color: white;
+  margin-bottom: 10px;
+}
+.btn-tool {
+  background: #34495e;
+  color: white;
+}
+.btn-pdf {
+  background: #27ae60;
+  color: white;
+  width: auto;
+  margin-left: auto;
+}
+.btn-small {
+  padding: 5px;
+  font-size: 0.75rem;
 }
 
-.btn-tool { background: #34495e; color: white; }
-.btn-tool:hover { background: #3d566e; }
-
-.btn-save { background: #16a085; color: white; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); }
-.btn-save:hover { background: #1abc9c; }
-
-.btn-eraser { background: #7f8c8d; }
-.btn-pdf { background: #27ae60; color: white; width: auto; margin-left: auto; }
-
-.logo { margin-left: 15px; font-weight: bold; flex-grow: 1; font-size: 1.1rem; }
+#omega-route-list {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 5px;
+  margin-top: 5px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+.omega-item {
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+}
+.omega-item:last-child {
+  border-bottom: none;
+}
+.omega-item input {
+  margin-right: 8px;
+  cursor: pointer;
+}
+.omega-item span {
+  flex-grow: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 #status {
-    margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.2);
-    border-radius: 4px; font-size: 0.85rem; border-left: 3px solid #3498db;
+  margin-top: 15px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  border-left: 3px solid #3498db;
 }
 
-/* ==========================================
-   ETIQUETAS DE RUTA (AUTO-AJUSTABLES)
-   ========================================== */
-.route-label {
-    width: auto !important; height: auto !important;
+/* ETIQUETAS DE RUTA - ALTA VISIBILIDAD */
+.route-text {
+  background: rgba(15, 23, 42, 0.95) !important;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border-left: 3px solid #3498db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  min-width: 60px;
+  width: fit-content;
+}
+.route-name {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #3498db;
+  display: block;
+}
+.route-stats {
+  font-size: 8px;
+  color: #f8fafc;
+  display: block;
+}
+
+.label-municipio {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-weight: bold;
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Asegúrate de tener estas reglas para que el borrador se vea bien */
+#map {
+  flex-grow: 1;
+  background: #e0e0e0;
+  height: 100%;
+  cursor: default;
 }
 
 .route-text {
-    background: rgba(15, 23, 42, 0.95) !important;
-    color: #ffffff !important;
-    padding: 4px 10px !important;
-    border-radius: 4px !important;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-left: 4px solid #3498db !important;
-    
-    /* Ajuste dinámico */
-    width: fit-content !important;
-    min-width: 60px;
-    max-width: 250px;
-    
-    text-align: left;
-    white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    pointer-events: none;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: rgba(15, 23, 42, 0.95) !important;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border-left: 3px solid #3498db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  min-width: 60px;
+  width: fit-content;
 }
-
 .route-name {
-    font-size: 10px !important;
-    font-weight: 800 !important;
-    text-transform: uppercase;
-    color: #3498db !important;
-    display: block;
-    letter-spacing: 0.5px;
-    margin-bottom: 1px;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #3498db;
+  display: block;
 }
-
 .route-stats {
-    font-size: 9px !important;
-    font-weight: 600 !important;
-    color: #f8fafc !important;
-    display: block;
-}
-
-/* ==========================================
-   ETIQUETAS DE MUNICIPIOS
-   ========================================== */
-.label-municipio {
-    background: rgba(0, 0, 0, 0.6) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-radius: 4px;
-    color: #ffffff !important;
-    font-weight: bold;
-    font-size: 10px;
-    padding: 2px 6px;
-    text-transform: uppercase;
-    white-space: nowrap;
-    pointer-events: none;
+  font-size: 8px;
+  color: #f8fafc;
+  display: block;
 }
