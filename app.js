@@ -1,122 +1,128 @@
 // ==========================================
-// 1. CONFIGURACIÓN Y DATASET OMEGA
+// 1. CONFIGURACIÓN Y PUNTOS DE PASO (PDF OCR)
 // ==========================================
 const TUBRICA_LOCATION = L.latLng(10.09673945749423, -69.35846137671071);
 
+// Coordenadas basadas en los hitos del documento PDF
 const OMEGA_WAYPOINTS = [
   {
     name: "OESTE (Admin)",
-    waypoints: [
+    points: [
       [10.063, -69.395],
-      [10.076, -69.389],
-      [10.088, -69.378],
+      [10.07, -69.39],
+      [10.073, -69.375],
+      [10.09, -69.378],
       [10.0967, -69.3584],
     ],
+    desc: "Cerro Mara - La Y - Rio Linare - El Caribe - Nueva Paz - El Tostado",
   },
   {
     name: "SUR OESTE",
-    waypoints: [
+    points: [
       [10.052, -69.358],
-      [10.062, -69.366],
+      [10.055, -69.362],
+      [10.065, -69.368],
       [10.075, -69.355],
       [10.0967, -69.3584],
     ],
+    desc: "Horcones - Carucieña - Cerrajones - Ruiz Pineda - Sta Isabel",
   },
   {
     name: "PAVIA (Admin)",
-    waypoints: [
+    points: [
       [10.125, -69.412],
       [10.108, -69.395],
-      [10.1, -69.375],
       [10.0967, -69.3584],
     ],
+    desc: "Punto Fe y Alegría - Altos de Pavía",
   },
   {
     name: "CABUDARE (Rot)",
-    waypoints: [
+    points: [
       [10.035, -69.268],
+      [10.042, -69.285],
       [10.051, -69.282],
       [10.078, -69.335],
       [10.0967, -69.3584],
     ],
+    desc: "Trigal - Plaza Bolivar - Chucho Briceño - Agua Viva",
   },
   {
     name: "CABUDARE A",
-    waypoints: [
+    points: [
       [10.012, -69.255],
-      [10.025, -69.278],
+      [10.021, -69.268],
+      [10.035, -69.278],
       [10.045, -69.305],
       [10.0967, -69.3584],
     ],
+    desc: "Loma Alta - Agua Viva - Fermin Toro - Ribereña",
   },
   {
     name: "CABUDARE B",
-    waypoints: [
+    points: [
       [10.002, -69.245],
       [10.018, -69.265],
+      [10.025, -69.295],
       [10.048, -69.315],
       [10.0967, -69.3584],
     ],
+    desc: "El Recreo - La Campiña - La Mora - El Palmar",
   },
   {
     name: "RUEZGA / UNION",
-    waypoints: [
+    points: [
       [10.108, -69.315],
+      [10.102, -69.325],
       [10.095, -69.332],
       [10.088, -69.345],
       [10.0967, -69.3584],
     ],
+    desc: "Ruezga Sect 4 - Santos Luzardo - B. Union - La Peña",
   },
   {
     name: "ESTE-CENTRO",
-    waypoints: [
+    points: [
       [10.078, -69.295],
+      [10.072, -69.305],
       [10.065, -69.312],
       [10.082, -69.338],
       [10.0967, -69.3584],
     ],
+    desc: "Rio Lama - Vargas - Libertador - Metropolis",
   },
   {
     name: "NORTE (Rot)",
-    waypoints: [
+    points: [
       [10.155, -69.305],
       [10.132, -69.325],
+      [10.125, -69.338],
       [10.108, -69.348],
       [10.0967, -69.3584],
     ],
-  },
-  {
-    name: "ESTE 1",
-    waypoints: [
-      [10.082, -69.275],
-      [10.088, -69.298],
-      [10.0967, -69.3584],
-    ],
-  },
-  {
-    name: "ESTE 2",
-    waypoints: [
-      [10.088, -69.268],
-      [10.092, -69.305],
-      [10.0967, -69.3584],
-    ],
+    desc: "Ali Primera - Yucatan - Via Duaca - El Cuji",
   },
   {
     name: "MANZANO CENTRO",
-    waypoints: [
+    points: [
       [10.042, -69.325],
       [10.058, -69.335],
+      [10.068, -69.335],
       [10.085, -69.345],
       [10.0967, -69.3584],
     ],
+    desc: "Puente Macuto - Carrera 18 - Calle 54",
   },
 ];
 
+// ==========================================
+// 2. INICIALIZACIÓN DEL MAPA
+// ==========================================
 const map = L.map("map", {
-  preferCanvas: true,
+  preferCanvas: true, // Crucial para que las líneas se vean en el PDF
   doubleClickZoom: false,
   zoomControl: false,
-}).setView(TUBRICA_LOCATION, 12);
+}).setView(TUBRICA_LOCATION, 13);
 
 L.control.zoom({ position: "bottomright" }).addTo(map);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -142,21 +148,20 @@ L.marker(TUBRICA_LOCATION, { interactive: false })
 
 async function init() {
   cargarMunicipios();
-  loadData();
-  await cargarRutasOmegaReales();
+  loadData(); // Carga de SQLite
+  await cargarRutasOmegaInteligentes(); // Carga rutas del PDF por calle
 }
 init();
 
 // ==========================================
-// 2. LÓGICA DE RUTAS OMEGA
+// 3. TRAZADO INTELIGENTE DESDE PDF
 // ==========================================
-async function cargarRutasOmegaReales() {
+async function cargarRutasOmegaInteligentes() {
   const list = document.getElementById("omega-route-list");
+
   for (let i = 0; i < OMEGA_WAYPOINTS.length; i++) {
     const routeData = OMEGA_WAYPOINTS[i];
-    const coordsStr = routeData.waypoints
-      .map((p) => `${p[1]},${p[0]}`)
-      .join(";");
+    const coordsStr = routeData.points.map((p) => `${p[1]},${p[0]}`).join(";");
     const url = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
 
     try {
@@ -174,14 +179,18 @@ async function cargarRutasOmegaReales() {
           null,
           true,
         );
+
         const item = document.createElement("div");
         item.className = "omega-item";
-        item.innerHTML = `<input type="checkbox" checked onchange="toggleOmegaLayer(${i}, this.checked)"><span onclick="focusRoute(${i})">${routeData.name}</span>`;
+        item.innerHTML = `
+                    <input type="checkbox" checked onchange="toggleOmegaLayer(${i}, this.checked)">
+                    <span onclick="focusRoute(${i})" title="${routeData.desc}">${routeData.name}</span>
+                `;
         list.appendChild(item);
         OMEGA_WAYPOINTS[i].layer = layer;
       }
     } catch (e) {
-      console.error("Error OMEGA:", routeData.name);
+      console.error("Error ruta:", routeData.name);
     }
   }
 }
@@ -189,6 +198,13 @@ async function cargarRutasOmegaReales() {
 function toggleOmegaLayer(i, show) {
   if (show) omegaLayer.addLayer(OMEGA_WAYPOINTS[i].layer);
   else omegaLayer.removeLayer(OMEGA_WAYPOINTS[i].layer);
+}
+
+function focusRoute(i) {
+  const poly = OMEGA_WAYPOINTS[i].layer
+    .getLayers()
+    .find((l) => l instanceof L.Polyline);
+  map.fitBounds(poly.getBounds(), { padding: [50, 50] });
 }
 
 function toggleAllOmega(show) {
@@ -201,25 +217,17 @@ function toggleAllOmega(show) {
   });
 }
 
-function focusRoute(i) {
-  if (!OMEGA_WAYPOINTS[i].layer) return;
-  omegaLayer.addLayer(OMEGA_WAYPOINTS[i].layer);
-  const poly = OMEGA_WAYPOINTS[i].layer
-    .getLayers()
-    .find((l) => l instanceof L.Polyline);
-  map.fitBounds(poly.getBounds(), { padding: [50, 50] });
-}
-
 // ==========================================
-// 3. RENDERIZADO Y ACTUALIZACIÓN (FIX BORRADOR)
+// 4. RENDERIZADO Y HERRAMIENTA IR A TUBRICA
 // ==========================================
 function renderRoute(latlngs, name, id, dur = null, isOmega = false) {
   if (!latlngs || latlngs.length < 2) return;
   const poly = L.polyline(latlngs, {
     color: isOmega ? "#e67e22" : "#3498db",
     weight: 5,
-    smoothFactor: 1,
+    smoothFactor: 1.5,
   });
+
   const start = L.circleMarker(latlngs[0], {
     radius: 4,
     color: "#2ecc71",
@@ -244,14 +252,9 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false) {
   group.routeLine = poly;
   group.isDirty = false;
 
-  // Función de actualización interna (Km y Tiempo)
   group.refreshStats = function () {
     const pts = poly.getLatLngs();
-    if (pts.length < 2) {
-      drawnItems.removeLayer(group);
-      omegaLayer.removeLayer(group);
-      return;
-    }
+    if (pts.length < 2) return;
     let m = 0;
     for (let i = 1; i < pts.length; i++) m += map.distance(pts[i - 1], pts[i]);
     const dist = (m / 1000).toFixed(1);
@@ -267,7 +270,6 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false) {
     start.setLatLng(pts[0]);
     end.setLatLng(pts[pts.length - 1]);
   };
-
   group.refreshStats();
 
   [poly, start, end].forEach((l) =>
@@ -282,7 +284,6 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false) {
       }
     }),
   );
-
   poly.on("edit", () => {
     group.refreshStats();
     group.isDirty = true;
@@ -293,9 +294,7 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false) {
   return group;
 }
 
-// ==========================================
-// 4. HERRAMIENTAS (FIX BORRADOR Y TUBRICA)
-// ==========================================
+// FIX: HERRAMIENTA IR A TUBRICA
 map.on("click", (e) => {
   if (currentMode === "marker") {
     const n = prompt("Nombre:");
@@ -318,54 +317,19 @@ map.on("click", (e) => {
     tempMarkers.push(m);
     if (smartRoutePoints.length >= 2) updatePreview();
   } else if (currentMode === "to-tubrica") {
+    // Ejecución directa de ruta inteligente a sede
     fetchOSRMDirect([e.latlng, TUBRICA_LOCATION]);
   }
 });
 
-// LÓGICA DEL BORRADOR REPARADA
-map.on("mousemove", (e) => {
-  if (currentMode !== "eraser" || !eraserCircle) return;
-  eraserCircle.setLatLng(e.latlng);
-
-  // Iterar sobre rutas dibujadas y rutas omega
-  [drawnItems, omegaLayer].forEach((layerGroup) => {
-    layerGroup.eachLayer((group) => {
-      if (group.type !== "route") return;
-      const poly = group.routeLine;
-      const pts = poly.getLatLngs();
-      const initialCount = pts.length;
-
-      // Filtrar puntos que están fuera del radio del borrador
-      const filtered = pts.filter(
-        (p) => map.distance(p, e.latlng) > eraserSize,
-      );
-
-      if (filtered.length !== initialCount) {
-        poly.setLatLngs(filtered);
-        group.isDirty = true;
-        group.refreshStats(); // Recalcular Km y Tiempo inmediatamente
-      }
-    });
-  });
-});
-
-map.on("mouseup", async () => {
-  if (currentMode !== "eraser") return;
-  // Guardar cambios en DB después de borrar
-  drawnItems.eachLayer(async (group) => {
-    if (group.isDirty && group.dbId) await saveLayer(group);
-  });
-});
-
 async function fetchOSRMDirect(points) {
   const coords = points.map((p) => `${p.lng},${p.lat}`).join(";");
-  const res = await fetch(
-    `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`,
-  );
+  const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
+  const res = await fetch(url);
   const data = await res.json();
   if (data.routes && data.routes.length > 0) {
     const full = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
-    const name = prompt("Nombre de la ruta a Sede:");
+    const name = prompt("Nombre de ruta personalizada a TUBRICA:");
     if (name) {
       const id = await saveElement(name, "route", full);
       renderRoute(full, name, id);
@@ -375,24 +339,56 @@ async function fetchOSRMDirect(points) {
 }
 
 // ==========================================
-// 5. PDF Y OTROS
+// 5. BORRADOR Y PDF MEJORADOS
 // ==========================================
+map.on("mousemove", (e) => {
+  if (currentMode !== "eraser" || !eraserCircle) return;
+  eraserCircle.setLatLng(e.latlng);
+  [drawnItems, omegaLayer].forEach((lg) =>
+    lg.eachLayer((g) => {
+      if (g.type !== "route") return;
+      const poly = g.routeLine;
+      const pts = poly.getLatLngs();
+      const filt = pts.filter((p) => map.distance(p, e.latlng) > eraserSize);
+      if (filt.length !== pts.length) {
+        poly.setLatLngs(filt);
+        g.isDirty = true;
+        g.refreshStats();
+      }
+    }),
+  );
+});
+
+map.on("mouseup", async () => {
+  if (currentMode === "eraser") {
+    drawnItems.eachLayer(async (g) => {
+      if (g.isDirty && g.dbId) await saveLayer(g);
+    });
+  }
+});
+
 window.exportMapToPDF = function () {
   const btn = document.querySelector(".btn-pdf");
-  btn.innerHTML = "⏳ Generando...";
-  html2canvas(document.getElementById("map"), { useCORS: true, scale: 3 }).then(
-    (canvas) => {
+  btn.innerHTML = "⏳ Generando Alta Calidad...";
+  setTimeout(() => {
+    html2canvas(document.getElementById("map"), {
+      useCORS: true,
+      scale: 3,
+    }).then((canvas) => {
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF("l", "mm", "a4");
-      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 10, 20, 277, 170);
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 10, 22, 277, 175);
       pdf.setFontSize(14);
-      pdf.text("GESTIÓN DE RUTAS - TUBRICA", 10, 12);
-      pdf.save(`Transporte_Tubrica_${new Date().getTime()}.pdf`);
+      pdf.text("REPORTE LOGÍSTICO - TUBRICA", 10, 12);
+      pdf.save(`Rutas_Transporte_${new Date().getTime()}.pdf`);
       btn.innerHTML = "📄 Exportar PDF";
-    },
-  );
+    });
+  }, 500);
 };
 
+// ==========================================
+// OTROS (Municipios, Persistencia)
+// ==========================================
 async function cargarMunicipios() {
   const zonas = [
     { name: "Iribarren", id: 2211603, col: "#2980b9" },
@@ -431,15 +427,6 @@ async function loadData() {
   });
 }
 
-async function saveAllChanges() {
-  const p = [];
-  drawnItems.eachLayer((l) => {
-    if (l.isDirty) p.push(saveLayer(l));
-  });
-  await Promise.all(p);
-  alert("Sincronizado");
-}
-
 async function saveLayer(l) {
   if (!l.dbId || String(l.dbId).startsWith("omega")) return;
   await fetch(`/api/elements/${l.dbId}`, {
@@ -458,6 +445,15 @@ async function saveElement(n, t, g) {
   });
   const d = await res.json();
   return d.id;
+}
+
+async function saveAllChanges() {
+  const p = [];
+  drawnItems.eachLayer((l) => {
+    if (l.isDirty) p.push(saveLayer(l));
+  });
+  await Promise.all(p);
+  alert("Sincronizado");
 }
 
 function renderMarker(latlng, name, id) {
@@ -481,8 +477,8 @@ async function handleDelete(l) {
 function resetModes() {
   currentMode = null;
   smartRoutePoints = [];
-  [drawnItems, omegaLayer].forEach((layer) =>
-    layer.eachLayer((g) => {
+  [drawnItems, omegaLayer].forEach((lg) =>
+    lg.eachLayer((g) => {
       if (g.routeLine?.editing) g.routeLine.editing.disable();
     }),
   );
@@ -514,6 +510,7 @@ window.toggleSmartRoute = () => {
 window.toggleGoToTubrica = () => {
   resetModes();
   currentMode = "to-tubrica";
+  setStatus("Ir a TUBRICA: Haga clic en su origen");
 };
 window.enableMarker = () => {
   resetModes();
@@ -544,11 +541,24 @@ map.on(L.Draw.Event.CREATED, (e) => {
       renderRoute(e.layer.getLatLngs(), n, id),
     );
 });
-
 document.getElementById("eraserSlider").oninput = (e) => {
   eraserSize = parseInt(e.target.value);
   if (eraserCircle) eraserCircle.setRadius(eraserSize);
 };
+
+async function finalizeSmart() {
+  const coords = smartRoutePoints.map((p) => `${p.lng},${p.lat}`).join(";");
+  const res = await fetch(
+    `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`,
+  );
+  const data = await res.json();
+  if (data.routes) {
+    const pts = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
+    const n = prompt("Nombre:");
+    if (n) saveElement(n, "route", pts).then((id) => renderRoute(pts, n, id));
+  }
+  resetModes();
+}
 
 async function updatePreview() {
   const coords = smartRoutePoints.map((p) => `${p.lng},${p.lat}`).join(";");
