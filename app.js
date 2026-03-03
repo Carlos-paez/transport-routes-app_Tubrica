@@ -1,9 +1,79 @@
 // ==========================================
-// 1. CONFIGURACIÓN Y DATASET OMEGA COMPLETO (17 RUTAS)
+// 1. CONFIGURACIÓN INICIAL Y MAPAS BASE
 // ==========================================
 const TUBRICA_LOCATION = L.latLng(10.09673945749423, -69.35846137671071);
 
-// Dataset extraído íntegramente del PDF (Páginas 1 y 2)
+// Capas Base
+const mapaCalle = L.tileLayer(
+  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  {
+    maxZoom: 19,
+    crossOrigin: true,
+    attribution: "© OpenStreetMap",
+  },
+);
+
+const satelitePuro = L.tileLayer(
+  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  {
+    maxZoom: 19,
+    crossOrigin: true,
+    attribution: "Esri",
+  },
+);
+
+const etiquetasCalles = L.tileLayer(
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+  {
+    maxZoom: 19,
+    crossOrigin: true,
+    pane: "overlayPane",
+  },
+);
+
+const mapaHibrido = L.layerGroup([satelitePuro, etiquetasCalles]);
+
+const map = L.map("map", {
+  preferCanvas: true,
+  doubleClickZoom: false,
+  zoomControl: false,
+  layers: [mapaCalle],
+}).setView(TUBRICA_LOCATION, 13);
+
+// Controles de Interfaz
+L.control
+  .layers(
+    {
+      "Mapa de Calles": mapaCalle,
+      Satélite: satelitePuro,
+      "Vista Híbrida": mapaHibrido,
+    },
+    null,
+    { position: "topright", collapsed: false },
+  )
+  .addTo(map);
+L.control.zoom({ position: "bottomright" }).addTo(map);
+
+// Capas de Contenido
+const boundaryLayer = L.layerGroup().addTo(map);
+const omegaLayer = L.layerGroup().addTo(map);
+const drawnItems = L.featureGroup().addTo(map);
+
+let currentMode = null,
+  smartRoutePoints = [],
+  tempMarkers = [],
+  previewLine = null,
+  eraserCircle = null,
+  eraserSize = 30;
+
+L.marker(TUBRICA_LOCATION, { interactive: false })
+  .addTo(map)
+  .bindPopup("<b>📍 SEDE TUBRICA</b>")
+  .openPopup();
+
+// ==========================================
+// 2. DATASET OMEGA (PDF)
+// ==========================================
 const OMEGA_WAYPOINTS = [
   // --- PAGINA 1 ---
   {
@@ -182,6 +252,7 @@ const OMEGA_WAYPOINTS = [
     desc: "Yucatan - Tamaca - Sabana Grande - Macias Mujica - Zona Ind II - TUBRICA",
   },
   {
+    //traza desvios erroneos cerca del callejon y la calle 11 con calle 1, son lineas rectas, sin cruces
     name: "RUEZGA / UNION (Admin)",
     points: [
       [10.102015067019032, -69.33458629573151],
@@ -226,49 +297,18 @@ const OMEGA_WAYPOINTS = [
 ];
 
 // ==========================================
-// 2. INICIALIZACIÓN DEL MAPA (preferCanvas: true para fix de PDF)
+// 3. CARGA Y MENÚ OMEGA
 // ==========================================
-const map = L.map("map", {
-  preferCanvas: true,
-  doubleClickZoom: false,
-  zoomControl: false,
-}).setView(TUBRICA_LOCATION, 13);
-
-L.control.zoom({ position: "bottomright" }).addTo(map);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 19,
-  crossOrigin: true,
-}).addTo(map);
-
-const boundaryLayer = L.layerGroup().addTo(map);
-const omegaLayer = L.layerGroup().addTo(map);
-const drawnItems = L.featureGroup().addTo(map);
-
-let currentMode = null,
-  smartRoutePoints = [],
-  tempMarkers = [],
-  previewLine = null,
-  eraserCircle = null,
-  eraserSize = 30;
-
-L.marker(TUBRICA_LOCATION, { interactive: false })
-  .addTo(map)
-  .bindPopup("<b>📍 SEDE TUBRICA</b>")
-  .openPopup();
-
 async function init() {
   cargarMunicipios();
-  loadData();
-  await cargarRutasOmegaInteligentes();
+  await loadData();
+  await cargarRutasOmega();
 }
 init();
 
-// ==========================================
-// 3. TRAZADO INTELIGENTE (OSRM)
-// ==========================================
-async function cargarRutasOmegaInteligentes() {
+async function cargarRutasOmega() {
   const list = document.getElementById("omega-route-list");
-  list.innerHTML = ""; // Limpiar antes de cargar
+  list.innerHTML = "";
 
   for (let i = 0; i < OMEGA_WAYPOINTS.length; i++) {
     const routeData = OMEGA_WAYPOINTS[i];
@@ -294,42 +334,52 @@ async function cargarRutasOmegaInteligentes() {
         const item = document.createElement("div");
         item.className = "omega-item";
         item.innerHTML = `
-                    <input type="checkbox" checked onchange="toggleOmegaLayer(${i}, this.checked)">
-                    <span onclick="focusRoute(${i})" title="${routeData.desc}">${routeData.name}</span>
-                `;
+          <input type="checkbox" checked id="chk-omega-${i}" onchange="window.toggleOmegaLayer(${i}, this.checked)">
+          <span onclick="window.focusRoute(${i})">${routeData.name}</span>
+        `;
         list.appendChild(item);
         OMEGA_WAYPOINTS[i].layer = layer;
       }
+      await new Promise((r) => setTimeout(r, 100)); // Delay para no saturar OSRM
     } catch (e) {
-      console.error("Error cargando:", routeData.name);
+      console.error("Error cargando ruta:", routeData.name);
     }
   }
 }
 
-function toggleOmegaLayer(i, show) {
-  if (show) omegaLayer.addLayer(OMEGA_WAYPOINTS[i].layer);
-  else omegaLayer.removeLayer(OMEGA_WAYPOINTS[i].layer);
-}
+// FUNCIONES GLOBALES DE MENÚ OMEGA (REPARADAS)
+window.toggleOmegaLayer = function (i, show) {
+  const route = OMEGA_WAYPOINTS[i];
+  if (!route || !route.layer) return;
+  if (show) omegaLayer.addLayer(route.layer);
+  else omegaLayer.removeLayer(route.layer);
+};
 
-function focusRoute(i) {
-  const poly = OMEGA_WAYPOINTS[i].layer
-    .getLayers()
-    .find((l) => l instanceof L.Polyline);
-  map.fitBounds(poly.getBounds(), { padding: [50, 50] });
-}
+window.toggleAllOmega = function (show) {
+  const list = document.getElementById("omega-route-list");
+  const checks = list.querySelectorAll('input[type="checkbox"]');
 
-function toggleAllOmega(show) {
-  OMEGA_WAYPOINTS.forEach((r, i) => {
-    const checks = document.querySelectorAll(".omega-item input");
-    if (checks[i]) {
-      checks[i].checked = show;
-      toggleOmegaLayer(i, show);
-    }
+  checks.forEach((chk, index) => {
+    chk.checked = show; // Cambia el estado visual
+    window.toggleOmegaLayer(index, show); // Cambia el estado en el mapa
   });
-}
+};
+
+window.focusRoute = function (i) {
+  const route = OMEGA_WAYPOINTS[i];
+  if (!route || !route.layer) return;
+
+  // Asegurar que sea visible
+  const chk = document.getElementById(`chk-omega-${i}`);
+  if (chk) chk.checked = true;
+  omegaLayer.addLayer(route.layer);
+
+  const poly = route.layer.getLayers().find((l) => l instanceof L.Polyline);
+  if (poly) map.fitBounds(poly.getBounds(), { padding: [50, 50] });
+};
 
 // ==========================================
-// 4. RENDERIZADO Y HERRAMIENTAS
+// 4. FUNCIONES CORE (RENDER, SAVE, DELETE)
 // ==========================================
 function renderRoute(latlngs, name, id, dur = null, isOmega = false) {
   if (!latlngs || latlngs.length < 2) return;
@@ -405,6 +455,9 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false) {
   return group;
 }
 
+// ==========================================
+// 5. HERRAMIENTAS Y CLICS
+// ==========================================
 map.on("click", (e) => {
   if (currentMode === "marker") {
     const n = prompt("Nombre:");
@@ -431,22 +484,7 @@ map.on("click", (e) => {
   }
 });
 
-async function fetchOSRMDirect(points) {
-  const coords = points.map((p) => `${p.lng},${p.lat}`).join(";");
-  const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
-  const res = await fetch(url);
-  const data = await res.json();
-  if (data.routes && data.routes.length > 0) {
-    const full = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
-    const name = prompt("Nombre de ruta a TUBRICA:");
-    if (name) renderRoute(full, name, await saveElement(name, "route", full));
-  }
-  resetModes();
-}
-
-// ==========================================
-// 5. BORRADOR Y PDF
-// ==========================================
+// Borrador Dinámico
 map.on("mousemove", (e) => {
   if (currentMode !== "eraser" || !eraserCircle) return;
   eraserCircle.setLatLng(e.latlng);
@@ -455,8 +493,9 @@ map.on("mousemove", (e) => {
       if (g.type !== "route") return;
       const poly = g.routeLine;
       const pts = poly.getLatLngs();
+      const initialCount = pts.length;
       const filt = pts.filter((p) => map.distance(p, e.latlng) > eraserSize);
-      if (filt.length !== pts.length) {
+      if (filt.length !== initialCount) {
         poly.setLatLngs(filt);
         g.isDirty = true;
         g.refreshStats();
@@ -473,28 +512,60 @@ map.on("mouseup", async () => {
   }
 });
 
-window.exportMapToPDF = function () {
-  const btn = document.querySelector(".btn-pdf");
-  btn.innerHTML = "⏳ Generando Alta Calidad...";
-  setTimeout(() => {
-    html2canvas(document.getElementById("map"), {
-      useCORS: true,
-      scale: 3,
-    }).then((canvas) => {
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF("l", "mm", "a4");
-      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 10, 22, 277, 175);
-      pdf.setFontSize(14);
-      pdf.text("REPORTE LOGÍSTICO - TUBRICA", 10, 12);
-      pdf.save(`Rutas_Transporte_${new Date().getTime()}.pdf`);
-      btn.innerHTML = "📄 Exportar PDF";
-    });
-  }, 500);
-};
+// ==========================================
+// 6. UTILIDADES Y PERSISTENCIA
+// ==========================================
+async function saveElement(n, t, g) {
+  const res = await fetch("/api/elements", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: n, type: t, geometry: g }),
+  });
+  const d = await res.json();
+  return d.id;
+}
 
-// ==========================================
-// OTROS
-// ==========================================
+async function saveLayer(l) {
+  if (!l.dbId || String(l.dbId).startsWith("omega")) return;
+  await fetch(`/api/elements/${l.dbId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ geometry: l.routeLine.getLatLngs() }),
+  });
+  l.isDirty = false;
+}
+
+async function loadData() {
+  const res = await fetch("/api/elements");
+  const data = await res.json();
+  data.forEach((el) => {
+    let geo =
+      typeof el.geometry === "string" ? JSON.parse(el.geometry) : el.geometry;
+    if (el.type === "route") renderRoute(geo, el.name, el.id);
+    else renderMarker(geo, el.name, el.id);
+  });
+}
+
+function renderMarker(latlng, name, id) {
+  const m = L.marker(latlng).bindPopup(name);
+  m.dbId = id;
+  m.on("click", (e) => {
+    L.DomEvent.stopPropagation(e);
+    if (currentMode === "delete") handleDelete(m);
+  });
+  m.addTo(drawnItems);
+}
+
+async function handleDelete(l) {
+  if (confirm("¿Borrar elemento?")) {
+    if (l.dbId && !String(l.dbId).startsWith("omega"))
+      await fetch(`/api/elements/${l.dbId}`, { method: "DELETE" });
+    drawnItems.removeLayer(l);
+    omegaLayer.removeLayer(l);
+  }
+}
+
+// Municipios, PDF, Sidebar...
 async function cargarMunicipios() {
   const zonas = [
     { name: "Iribarren", id: 2211603, col: "#2980b9" },
@@ -522,64 +593,6 @@ async function cargarMunicipios() {
   });
 }
 
-async function loadData() {
-  const res = await fetch("/api/elements");
-  const data = await res.json();
-  data.forEach((el) => {
-    let geo =
-      typeof el.geometry === "string" ? JSON.parse(el.geometry) : el.geometry;
-    if (el.type === "route") renderRoute(geo, el.name, el.id);
-    else renderMarker(geo, el.name, el.id);
-  });
-}
-
-async function saveLayer(l) {
-  if (!l.dbId || String(l.dbId).startsWith("omega")) return;
-  await fetch(`/api/elements/${l.dbId}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ geometry: l.routeLine.getLatLngs() }),
-  });
-  l.isDirty = false;
-}
-
-async function saveElement(n, t, g) {
-  const res = await fetch("/api/elements", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name: n, type: t, geometry: g }),
-  });
-  const d = await res.json();
-  return d.id;
-}
-
-async function saveAllChanges() {
-  const p = [];
-  drawnItems.eachLayer((l) => {
-    if (l.isDirty) p.push(saveLayer(l));
-  });
-  await Promise.all(p);
-  alert("Sincronizado");
-}
-
-function renderMarker(latlng, name, id) {
-  const m = L.marker(latlng).bindPopup(name);
-  m.dbId = id;
-  m.on("click", (e) => {
-    L.DomEvent.stopPropagation(e);
-    if (currentMode === "delete") handleDelete(m);
-  });
-  m.addTo(drawnItems);
-}
-
-async function handleDelete(l) {
-  if (confirm("¿Borrar?")) {
-    if (l.dbId) await fetch(`/api/elements/${l.dbId}`, { method: "DELETE" });
-    drawnItems.removeLayer(l);
-    omegaLayer.removeLayer(l);
-  }
-}
-
 function resetModes() {
   currentMode = null;
   smartRoutePoints = [];
@@ -595,6 +608,7 @@ function resetModes() {
     map.removeLayer(eraserCircle);
     eraserCircle = null;
   }
+  map.getContainer().style.cursor = "";
   document.getElementById("status").innerText = "Modo: Inactivo";
 }
 
@@ -616,7 +630,7 @@ window.toggleSmartRoute = () => {
 window.toggleGoToTubrica = () => {
   resetModes();
   currentMode = "to-tubrica";
-  setStatus("Ir a TUBRICA: Haga clic en su origen");
+  setStatus("Ruta a TUBRICA");
 };
 window.enableMarker = () => {
   resetModes();
@@ -636,7 +650,7 @@ window.toggleEraser = () => {
   eraserCircle = L.circle([0, 0], {
     radius: eraserSize,
     color: "red",
-    fillOpacity: 0.2,
+    fillOpacity: 0.1,
   }).addTo(map);
 };
 
@@ -651,6 +665,20 @@ document.getElementById("eraserSlider").oninput = (e) => {
   eraserSize = parseInt(e.target.value);
   if (eraserCircle) eraserCircle.setRadius(eraserSize);
 };
+
+async function fetchOSRMDirect(points) {
+  const coords = points.map((p) => `${p.lng},${p.lat}`).join(";");
+  const res = await fetch(
+    `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`,
+  );
+  const data = await res.json();
+  if (data.routes && data.routes.length > 0) {
+    const full = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
+    const name = prompt("Nombre ruta a Sede:");
+    if (name) renderRoute(full, name, await saveElement(name, "route", full));
+  }
+  resetModes();
+}
 
 async function finalizeSmart() {
   const coords = smartRoutePoints.map((p) => `${p.lng},${p.lat}`).join(";");
@@ -681,3 +709,22 @@ async function updatePreview() {
         ).addTo(map);
     });
 }
+
+window.exportMapToPDF = function () {
+  const btn = document.querySelector(".btn-pdf");
+  btn.innerHTML = "⏳ Generando...";
+  setTimeout(() => {
+    html2canvas(document.getElementById("map"), {
+      useCORS: true,
+      scale: 3,
+    }).then((canvas) => {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF("l", "mm", "a4");
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 10, 22, 277, 175);
+      pdf.setFontSize(14);
+      pdf.text("REPORTE LOGÍSTICO - TUBRICA", 10, 12);
+      pdf.save(`Planificacion_Tubrica_${new Date().getTime()}.pdf`);
+      btn.innerHTML = "📄 Exportar PDF";
+    });
+  }, 500);
+};
