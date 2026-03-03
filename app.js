@@ -1,10 +1,11 @@
 // ==========================================
-// 1. CONFIGURACIÓN Y PUNTOS DE PASO (PDF OCR)
+// 1. CONFIGURACIÓN Y DATASET OMEGA COMPLETO (17 RUTAS)
 // ==========================================
 const TUBRICA_LOCATION = L.latLng(10.09673945749423, -69.35846137671071);
 
-// Coordenadas basadas en los hitos del documento PDF
+// Dataset extraído íntegramente del PDF (Páginas 1 y 2)
 const OMEGA_WAYPOINTS = [
+  // --- PAGINA 1 ---
   {
     name: "OESTE (Admin)",
     points: [
@@ -14,10 +15,10 @@ const OMEGA_WAYPOINTS = [
       [10.09, -69.378],
       [10.0967, -69.3584],
     ],
-    desc: "Cerro Mara - La Y - Rio Linare - El Caribe - Nueva Paz - El Tostado",
+    desc: "Cerro Mara - La Y - Rio Linare - El Caribe - El Tostado - TUBRICA",
   },
   {
-    name: "SUR OESTE",
+    name: "SUR OESTE (Admin)",
     points: [
       [10.052, -69.358],
       [10.055, -69.362],
@@ -25,16 +26,36 @@ const OMEGA_WAYPOINTS = [
       [10.075, -69.355],
       [10.0967, -69.3584],
     ],
-    desc: "Horcones - Carucieña - Cerrajones - Ruiz Pineda - Sta Isabel",
+    desc: "Horcones - Carucieña - Cerrajones - Ruiz Pineda - Sta Isabel - TUBRICA",
   },
   {
     name: "PAVIA (Admin)",
     points: [
-      [10.125, -69.412],
-      [10.108, -69.395],
+      [10.101963955594941, -69.4369901160083],
+      [10.076212201255366, -69.4002094662229],
+      [10.09673919002261, -69.35846256186029],
+    ],
+    desc: "Punto Fe y Alegría - Altos de Pavía - TUBRICA",
+  },
+  {
+    name: "SUR OESTE (Rot)",
+    points: [
+      [10.052, -69.358],
+      [10.06, -69.365],
+      [10.068, -69.36],
       [10.0967, -69.3584],
     ],
-    desc: "Punto Fe y Alegría - Altos de Pavía",
+    desc: "Gimnasio Los Horcones - Carucieña - Ruiz Pineda - TUBRICA",
+  },
+  {
+    name: "OESTE (Rot)",
+    points: [
+      [10.063, -69.395],
+      [10.072, -69.388],
+      [10.082, -69.375],
+      [10.0967, -69.3584],
+    ],
+    desc: "Cerro Mara - La Y - Rio Linare - Nueva Paz - Valle Dorado - TUBRICA",
   },
   {
     name: "CABUDARE (Rot)",
@@ -45,10 +66,19 @@ const OMEGA_WAYPOINTS = [
       [10.078, -69.335],
       [10.0967, -69.3584],
     ],
-    desc: "Trigal - Plaza Bolivar - Chucho Briceño - Agua Viva",
+    desc: "Trigal - Plaza Bolivar - Chucho Briceño - Agua Viva - TUBRICA",
   },
   {
-    name: "CABUDARE A",
+    name: "PAVIA (Rot)",
+    points: [
+      [10.102243296082907, -69.43746036939227],
+      [10.076212201255366, -69.4002094662229],
+      [10.09673919002261, -69.35846256186029],
+    ],
+    desc: "C.C. Quatro's C.A. - TUBRICA",
+  },
+  {
+    name: "CABUDARE A (Admin)",
     points: [
       [10.012, -69.255],
       [10.021, -69.268],
@@ -56,10 +86,10 @@ const OMEGA_WAYPOINTS = [
       [10.045, -69.305],
       [10.0967, -69.3584],
     ],
-    desc: "Loma Alta - Agua Viva - Fermin Toro - Ribereña",
+    desc: "Loma Alta - Agua Viva - Fermin Toro - Cabudare Centro - Ribereña - TUBRICA",
   },
   {
-    name: "CABUDARE B",
+    name: "CABUDARE B (Admin)",
     points: [
       [10.002, -69.245],
       [10.018, -69.265],
@@ -67,10 +97,10 @@ const OMEGA_WAYPOINTS = [
       [10.048, -69.315],
       [10.0967, -69.3584],
     ],
-    desc: "El Recreo - La Campiña - La Mora - El Palmar",
+    desc: "El Recreo - La Campiña - La Mora - El Palmar - TUBRICA",
   },
   {
-    name: "RUEZGA / UNION",
+    name: "RUEZGA / UNION (Rot)",
     points: [
       [10.108, -69.315],
       [10.102, -69.325],
@@ -78,10 +108,10 @@ const OMEGA_WAYPOINTS = [
       [10.088, -69.345],
       [10.0967, -69.3584],
     ],
-    desc: "Ruezga Sect 4 - Santos Luzardo - B. Union - La Peña",
+    desc: "Ruezga Sect 4 y 7 - Santos Luzardo - B. Union - La Peña - TUBRICA",
   },
   {
-    name: "ESTE-CENTRO",
+    name: "ESTE-CENTRO (Rot)",
     points: [
       [10.078, -69.295],
       [10.072, -69.305],
@@ -89,7 +119,7 @@ const OMEGA_WAYPOINTS = [
       [10.082, -69.338],
       [10.0967, -69.3584],
     ],
-    desc: "Rio Lama - Vargas - Libertador - Metropolis",
+    desc: "Rio Lama - Vargas - Libertador - Metropolis - Seguro - TUBRICA",
   },
   {
     name: "NORTE (Rot)",
@@ -100,26 +130,106 @@ const OMEGA_WAYPOINTS = [
       [10.108, -69.348],
       [10.0967, -69.3584],
     ],
-    desc: "Ali Primera - Yucatan - Via Duaca - El Cuji",
+    desc: "Ali Primera - Yucatan - Via Duaca - El Cuji - Circunvalacion - TUBRICA",
   },
   {
-    name: "MANZANO CENTRO",
+    name: "ESTE 1 (Admin)",
+    points: [
+      [10.082, -69.228],
+      [10.085, -69.255],
+      [10.078, -69.28],
+      [10.088, -69.298],
+      [10.0967, -69.3584],
+    ],
+    desc: "Plaza del Cercado - Brisas del Este - Los Proceres - El Jebe - TUBRICA",
+  },
+  {
+    name: "ESTE 2 (Admin)",
+    points: [
+      [10.005, -69.242],
+      [10.015, -69.265],
+      [10.035, -69.295],
+      [10.0967, -69.3584],
+    ],
+    desc: "El Recreo - Piedad Norte - La Mora - TUBRICA",
+  },
+  {
+    name: "MANZANO CENTRO (Admin)",
     points: [
       [10.042, -69.325],
       [10.058, -69.335],
       [10.068, -69.335],
+      [10.075, -69.315],
       [10.085, -69.345],
       [10.0967, -69.3584],
     ],
-    desc: "Puente Macuto - Carrera 18 - Calle 54",
+    desc: "Puente Macuto - Carr 18 - Calle 24, 35 y 54 - TUBRICA",
+  },
+  // --- PAGINA 2 ---
+  {
+    name: "NORTE (Admin)",
+    points: [
+      [10.206372210955742, -69.30584636546004],
+      [10.200856688748825, -69.30466524850138],
+      [10.160180927668621, -69.31536263157473],
+      [10.157543563660772, -69.31991577890504],
+      [10.150661968584746, -69.31536013377229],
+      [10.106394505275713, -69.32653213802232],
+      [10.098970543680181, -69.35439162942978],
+      [10.098543698731946, -69.35458657496032],
+      [10.096740149398737, -69.35844076694916],
+    ],
+    desc: "Yucatan - Tamaca - Sabana Grande - Macias Mujica - Zona Ind II - TUBRICA",
+  },
+  {
+    name: "RUEZGA / UNION (Admin)",
+    points: [
+      [10.102015067019032, -69.33458629573151],
+      [10.098963762024699, -69.33325106601977],
+      [10.097009673728325, -69.33113748525108],
+      [10.089174319765958, -69.32882803130896],
+      [10.088809898525101, -69.33009403400054],
+      [10.087156794104592, -69.3298016731991],
+      [10.08884158734706, -69.33118032864812],
+      [10.090347079495286, -69.33171842129163],
+      [10.09063844031557, -69.33175506366452],
+      [10.09077748495229, -69.33178688136164],
+      [10.09146629041387, -69.33176048572396],
+      [10.093744639904859, -69.33224084725906],
+      [10.093493413182822, -69.33585796949542],
+      [10.091034521245547, -69.33574314019548],
+      [10.089963889151008, -69.33557556123255],
+      [10.087672202272339, -69.3480262031196],
+      [10.086533880588435, -69.34936200723237],
+      [10.085312548045113, -69.34892895889281],
+      [10.081501960822061, -69.34946124740897],
+      [10.083722588207095, -69.34927629968347],
+      [10.086467262550498, -69.34961912958794],
+      [10.086240999758296, -69.3509962782471],
+      [10.085617322097857, -69.3579113117615],
+      [10.083916821628973, -69.35851551832934],
+      [10.079312920284323, -69.36211988169612],
+      [10.0743320907289, -69.37016431026224],
+      [10.07139254867341, -69.37082776826064],
+      [10.074267204448484, -69.37907216326282],
+      [10.08584924401383, -69.37006444454457],
+      [10.089159478406902, -69.36632811172477],
+      [10.090638285043777, -69.36722933400247],
+      [10.092591622549229, -69.3644841578903],
+      [10.088088298261177, -69.35970258275245],
+      [10.091646764883889, -69.35621685518034],
+      [10.092188582313796, -69.35634316094072],
+      [10.09665966024831, -69.35843952529602],
+    ],
+    desc: "Circunvalacion - Barrio Lindo - Los Luises - Delicia - Crepusculos - TUBRICA",
   },
 ];
 
 // ==========================================
-// 2. INICIALIZACIÓN DEL MAPA
+// 2. INICIALIZACIÓN DEL MAPA (preferCanvas: true para fix de PDF)
 // ==========================================
 const map = L.map("map", {
-  preferCanvas: true, // Crucial para que las líneas se vean en el PDF
+  preferCanvas: true,
   doubleClickZoom: false,
   zoomControl: false,
 }).setView(TUBRICA_LOCATION, 13);
@@ -148,16 +258,17 @@ L.marker(TUBRICA_LOCATION, { interactive: false })
 
 async function init() {
   cargarMunicipios();
-  loadData(); // Carga de SQLite
-  await cargarRutasOmegaInteligentes(); // Carga rutas del PDF por calle
+  loadData();
+  await cargarRutasOmegaInteligentes();
 }
 init();
 
 // ==========================================
-// 3. TRAZADO INTELIGENTE DESDE PDF
+// 3. TRAZADO INTELIGENTE (OSRM)
 // ==========================================
 async function cargarRutasOmegaInteligentes() {
   const list = document.getElementById("omega-route-list");
+  list.innerHTML = ""; // Limpiar antes de cargar
 
   for (let i = 0; i < OMEGA_WAYPOINTS.length; i++) {
     const routeData = OMEGA_WAYPOINTS[i];
@@ -190,7 +301,7 @@ async function cargarRutasOmegaInteligentes() {
         OMEGA_WAYPOINTS[i].layer = layer;
       }
     } catch (e) {
-      console.error("Error ruta:", routeData.name);
+      console.error("Error cargando:", routeData.name);
     }
   }
 }
@@ -209,16 +320,16 @@ function focusRoute(i) {
 
 function toggleAllOmega(show) {
   OMEGA_WAYPOINTS.forEach((r, i) => {
-    const chk = document.querySelectorAll(".omega-item input")[i];
-    if (chk) {
-      chk.checked = show;
+    const checks = document.querySelectorAll(".omega-item input");
+    if (checks[i]) {
+      checks[i].checked = show;
       toggleOmegaLayer(i, show);
     }
   });
 }
 
 // ==========================================
-// 4. RENDERIZADO Y HERRAMIENTA IR A TUBRICA
+// 4. RENDERIZADO Y HERRAMIENTAS
 // ==========================================
 function renderRoute(latlngs, name, id, dur = null, isOmega = false) {
   if (!latlngs || latlngs.length < 2) return;
@@ -294,7 +405,6 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false) {
   return group;
 }
 
-// FIX: HERRAMIENTA IR A TUBRICA
 map.on("click", (e) => {
   if (currentMode === "marker") {
     const n = prompt("Nombre:");
@@ -317,7 +427,6 @@ map.on("click", (e) => {
     tempMarkers.push(m);
     if (smartRoutePoints.length >= 2) updatePreview();
   } else if (currentMode === "to-tubrica") {
-    // Ejecución directa de ruta inteligente a sede
     fetchOSRMDirect([e.latlng, TUBRICA_LOCATION]);
   }
 });
@@ -329,17 +438,14 @@ async function fetchOSRMDirect(points) {
   const data = await res.json();
   if (data.routes && data.routes.length > 0) {
     const full = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
-    const name = prompt("Nombre de ruta personalizada a TUBRICA:");
-    if (name) {
-      const id = await saveElement(name, "route", full);
-      renderRoute(full, name, id);
-    }
+    const name = prompt("Nombre de ruta a TUBRICA:");
+    if (name) renderRoute(full, name, await saveElement(name, "route", full));
   }
   resetModes();
 }
 
 // ==========================================
-// 5. BORRADOR Y PDF MEJORADOS
+// 5. BORRADOR Y PDF
 // ==========================================
 map.on("mousemove", (e) => {
   if (currentMode !== "eraser" || !eraserCircle) return;
@@ -387,7 +493,7 @@ window.exportMapToPDF = function () {
 };
 
 // ==========================================
-// OTROS (Municipios, Persistencia)
+// OTROS
 // ==========================================
 async function cargarMunicipios() {
   const zonas = [
@@ -555,7 +661,7 @@ async function finalizeSmart() {
   if (data.routes) {
     const pts = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
     const n = prompt("Nombre:");
-    if (n) saveElement(n, "route", pts).then((id) => renderRoute(pts, n, id));
+    if (n) renderRoute(pts, n, await saveElement(n, "route", pts));
   }
   resetModes();
 }
