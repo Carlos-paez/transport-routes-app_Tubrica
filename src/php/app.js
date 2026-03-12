@@ -81,7 +81,7 @@ L.marker(TUBRICA_LOCATION, { interactive: false }).addTo(map).bindPopup("<b>📍
 // ==========================================
 const OMEGA_WAYPOINTS = [
     // --- PAGINA 1 ---
-    {
+    /*{
       name: "OESTE (Admin)",
       points: [
           [10.036946792710989, -69.39457370120459],
@@ -128,7 +128,7 @@ const OMEGA_WAYPOINTS = [
         [10.0967, -69.3584],
       ],
       desc: "Horcones - Carucieña - Cerrajones - Ruiz Pineda - Sta Isabel - TUBRICA",
-    },*/
+    },
     {
         name: "PAVIA (Admin)",
         points: [
@@ -138,7 +138,7 @@ const OMEGA_WAYPOINTS = [
         ],
         desc: "Punto Fe y Alegría - Altos de Pavía - TUBRICA",
     },
-    /*{
+    {
       name: "SUR OESTE (Rot)",
       points: [
         [10.052, -69.358],
