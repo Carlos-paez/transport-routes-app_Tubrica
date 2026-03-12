@@ -33,30 +33,29 @@ mostrar_menu() {
 
 js_start() {
     echo -e "${YELLOW}Iniciando versión JavaScript...${NC}"
-    cd "javascript version"
+    cd "../src/javascript"
     docker-compose up -d
-    cd ..
+    cd "../../scripts"
     echo -e "${GREEN}✓ Aplicación JavaScript iniciada en http://localhost:3000${NC}"
     read -p "Presione Enter para continuar..."
 }
 
 php_start() {
     echo -e "${YELLOW}Iniciando versión PHP...${NC}"
-    cd "php version"
+    cd "../src/php"
     docker-compose up -d
-    cd ..
+    cd "../../scripts"
     echo -e "${GREEN}✓ Aplicación PHP iniciada en http://localhost:8080${NC}"
     read -p "Presione Enter para continuar..."
 }
 
 both_start() {
     echo -e "${YELLOW}Iniciando ambas versiones...${NC}"
-    cd "javascript version"
+    cd "../src/javascript"
     docker-compose up -d
-    cd ..
-    cd "php version"
+    cd "../php"
     docker-compose up -d
-    cd ..
+    cd "../../scripts"
     echo -e "${GREEN}✓ JavaScript: http://localhost:3000${NC}"
     echo -e "${GREEN}✓ PHP: http://localhost:8080${NC}"
     read -p "Presione Enter para continuar..."
@@ -64,68 +63,67 @@ both_start() {
 
 js_stop() {
     echo -e "${YELLOW}Deteniendo versión JavaScript...${NC}"
-    cd "javascript version"
+    cd "../src/javascript"
     docker-compose down
-    cd ..
+    cd "../../scripts"
     echo -e "${GREEN}✓ Versión JavaScript detenida${NC}"
     read -p "Presione Enter para continuar..."
 }
 
 php_stop() {
     echo -e "${YELLOW}Deteniendo versión PHP...${NC}"
-    cd "php version"
+    cd "../src/php"
     docker-compose down
-    cd ..
+    cd "../../scripts"
     echo -e "${GREEN}✓ Versión PHP detenida${NC}"
     read -p "Presione Enter para continuar..."
 }
 
 both_stop() {
     echo -e "${YELLOW}Deteniendo ambas versiones...${NC}"
-    cd "javascript version"
+    cd "../src/javascript"
     docker-compose down
-    cd ..
-    cd "php version"
+    cd "../php"
     docker-compose down
-    cd ..
+    cd "../../scripts"
     echo -e "${GREEN}✓ Ambas versiones detenidas${NC}"
     read -p "Presione Enter para continuar..."
 }
 
 js_logs() {
     echo -e "${YELLOW}Mostrando logs de JavaScript (Ctrl+C para salir)...${NC}"
-    cd "javascript version"
+    cd "../src/javascript"
     docker-compose logs -f
-    cd ..
+    cd "../../scripts"
     read -p "Presione Enter para continuar..."
 }
 
 php_logs() {
     echo -e "${YELLOW}Mostrando logs de PHP (Ctrl+C para salir)...${NC}"
-    cd "php version"
+    cd "../src/php"
     docker-compose logs -f
-    cd ..
+    cd "../../scripts"
     read -p "Presione Enter para continuar..."
 }
 
 js_rebuild() {
     echo -e "${YELLOW}Reconstruyendo versión JavaScript...${NC}"
-    cd "javascript version"
+    cd "../src/javascript"
     docker-compose down
     docker-compose build --no-cache
     docker-compose up -d
-    cd ..
+    cd "../../scripts"
     echo -e "${GREEN}✓ JavaScript reconstruido e iniciado${NC}"
     read -p "Presione Enter para continuar..."
 }
 
 php_rebuild() {
     echo -e "${YELLOW}Reconstruyendo versión PHP...${NC}"
-    cd "php version"
+    cd "../src/php"
     docker-compose down
     docker-compose build --no-cache
     docker-compose up -d
-    cd ..
+    cd "../../scripts"
     echo -e "${GREEN}✓ PHP reconstruido e iniciado${NC}"
     read -p "Presione Enter para continuar..."
 }

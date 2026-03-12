@@ -147,6 +147,7 @@ const OMEGA_WAYPOINTS = [
       [10.04293554975403, -69.41867511761735],
       [10.042336648285424, -69.41878741883518],
       [10.043076303067078, -69.41979298523161],
+      [10.047282438330052, -69.41954764173494],
       [10.096739097337583, -69.35843881714668],
     ],
     desc: "Cerro Mara - La Y - Rio Linare - El Caribe - El Tostado - TUBRICA",
@@ -902,6 +903,14 @@ function resetModes() {
     map.removeLayer(eraserCircle);
     eraserCircle = null;
   }
+  // Desactivar cualquier herramienta de dibujo activa
+  if (map._drawControl) {
+    try {
+      map._drawControl.disable();
+    } catch (e) {
+      // Ignorar errores si ya está desactivado
+    }
+  }
   map.getContainer().style.cursor = "";
   document.getElementById("status").innerText = "Modo: Inactivo";
 }
@@ -928,10 +937,17 @@ window.toggleSidebar = () => {
 window.enableManualDraw = () => {
   resetModes();
   currentMode = "manual";
-  setStatus("Trazado Manual");
-  new L.Draw.Polyline(map, {
-    shapeOptions: { color: "#3498db", weight: 5 },
-  }).enable();
+  setStatus("Trazado Manual: Dibuje la ruta en el mapa (ESC para cancelar)");
+  const drawControl = new L.Draw.Polyline(map, {
+    shapeOptions: { 
+      color: getNextRouteColor(), 
+      weight: 5,
+      smoothFactor: 1.5
+    },
+    repeatMode: false
+  });
+  map._drawControl = drawControl;
+  drawControl.enable();
 };
 window.toggleSmartRoute = () => {
   resetModes();
@@ -970,12 +986,18 @@ window.toggleEraser = () => {
 };
 
 map.on(L.Draw.Event.CREATED, (e) => {
-  const n = prompt("Nombre:");
-  if (n) {
-    const color = getNextRouteColor();
-    saveElement(n, "route", e.layer.getLatLngs(), color).then((id) =>
-      renderRoute(e.layer.getLatLngs(), n, id, null, false, color),
-    );
+  if (currentMode === "manual") {
+    const n = prompt("Nombre de la ruta:");
+    if (n) {
+      const latlngs = e.layer.getLatLngs();
+      const color = e.layer.options.color || getNextRouteColor();
+      saveElement(n, "route", latlngs, color).then((id) => {
+        renderRoute(latlngs, n, id, null, false, color);
+        resetModes();
+      });
+    } else {
+      resetModes();
+    }
   }
 });
 document.getElementById("eraserSlider").oninput = (e) => {
@@ -1053,3 +1075,21 @@ window.exportMapToPDF = function () {
     });
   }, 500);
 };
+
+// Soporte para cancelar con ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && currentMode) {
+    resetModes();
+  }
+});
+
+// Soporte para eventos de dibujo cancelado
+map.on(L.Draw.Event.DRAWSTOP, () => {
+  if (currentMode === "manual") {
+    setTimeout(() => {
+      if (currentMode === "manual") {
+        resetModes();
+      }
+    }, 100);
+  }
+});

@@ -1,257 +1,206 @@
-# 🚌 Sistema de Gestión Logística - TUBRICA
+# 🚌 Sistema de Gestión de Transporte - TUBRICA
 
-Sistema web interactivo para la gestión y visualización de rutas de transporte público en Venezuela, desarrollado para TUBRICA (Transporte OMEGA).
+Sistema web interactivo para la gestión y visualización de rutas de transporte público en Venezuela. Disponible en dos versiones: **JavaScript (Node.js)** y **PHP**.
 
-## 🚀 Inicio Rápido con Docker
+## 🚀 Inicio Rápido
 
-¿Primera vez usando el proyecto? Lee `INICIO_RAPIDO.txt` o ejecuta:
-
-**Windows:** `iniciar-docker.bat`  
-**Linux/Mac:** `./iniciar-docker.sh`
-
-## 📋 Descripción
-
-Aplicación de mapeo interactivo que permite crear, editar y gestionar rutas de transporte público sobre mapas de OpenStreetMap. Incluye herramientas de trazado manual, enrutamiento inteligente, marcadores personalizados y exportación a PDF.
-
-## ✨ Características
-
-- 🗺️ Visualización interactiva de mapas con Leaflet.js
-- ✏️ Trazado manual de rutas de transporte
-- 🛣️ Enrutamiento inteligente automático
-- 🎨 Colores automáticos diferentes para cada ruta (20 colores vibrantes)
-- 🚌 Rutas OMEGA predefinidas con colores únicos para cada una
-- 📍 Colocación de marcadores y puntos de interés
-- 🧹 Herramienta de borrador con sensibilidad ajustable
-- 💾 Persistencia de datos con SQLite
-- 📄 Exportación de mapas a PDF
-- 🎨 Interfaz responsive y moderna
-
-## 🚀 Versiones Disponibles
-
-El proyecto incluye dos implementaciones:
-
-### JavaScript (Node.js + Express)
-Backend completo en Node.js con Express y SQLite.
-
-### PHP
-Implementación alternativa con backend en PHP.
-
-## 📦 Requisitos Previos
-
-### Versión JavaScript
-- Node.js >= 14.x
-- npm >= 6.x
-
-### Versión PHP
-- PHP >= 7.4
-- SQLite3 extension habilitada
-- Servidor web (Apache/Nginx) o PHP built-in server
-
-## 🔧 Instalación
-
-### Versión JavaScript
-
-```bash
-cd "javascript version"
-npm install
-```
-
-### Versión PHP
-
-```bash
-cd "php version"
-npm install  # Solo para dependencias frontend si las hay
-```
-
-## ▶️ Ejecución
-
-### Versión JavaScript
-
-```bash
-cd "javascript version"
-node server.js
-```
-
-El servidor estará disponible en `http://localhost:3000`
-
-### Versión PHP
-
-```bash
-cd "php version"
-php -S localhost:8000
-```
-
-El servidor estará disponible en `http://localhost:8000`
-
-## 🐳 Docker (Ambas Versiones)
-
-Ambas versiones incluyen soporte completo para Docker con contenedores independientes.
-
-### Inicio Rápido con Scripts
+### Opción 1: Docker (Recomendado)
 
 **Windows:**
 ```cmd
-iniciar-docker.bat
+scripts\iniciar-docker.bat
 ```
 
 **Linux/Mac:**
 ```bash
-chmod +x iniciar-docker.sh
-./iniciar-docker.sh
+chmod +x scripts/iniciar-docker.sh
+./scripts/iniciar-docker.sh
 ```
 
-### Comandos Manuales
+### Opción 2: Instalación Local
 
-**Versión JavaScript:**
+#### JavaScript (Node.js)
 ```bash
-cd "javascript version"
-docker-compose up -d
+cd src/javascript
+npm install
+node server.js
+# Abrir: http://localhost:3000
 ```
-Acceder en: `http://localhost:3000`
 
-**Versión PHP:**
+#### PHP
 ```bash
-cd "php version"
-docker-compose up -d
-```
-Acceder en: `http://localhost:8080`
-
-### Ejecutar Ambas Simultáneamente
-
-```bash
-# Terminal 1
-cd "javascript version" && docker-compose up -d
-
-# Terminal 2
-cd "php version" && docker-compose up -d
+cd src/php
+php -S localhost:8000
+# Abrir: http://localhost:8000
 ```
 
-### Documentación Docker
+## ✨ Características Principales
 
-- `DOCKER_README.md` - Guía rápida de Docker
-- `COMANDOS_DOCKER.txt` - Lista completa de comandos y solución de problemas
-- `iniciar-docker.bat` - Script interactivo para Windows
-- `iniciar-docker.sh` - Script interactivo para Linux/Mac
+- 🗺️ **Mapas Interactivos**: Visualización con Leaflet.js
+- 🎨 **Colores Únicos**: 20 colores vibrantes para rutas
+- 🚌 **Rutas OMEGA**: 17 rutas predefinidas
+- ✏️ **Trazado Manual**: Dibuja rutas personalizadas
+- 🛣️ **Rutas Inteligentes**: Enrutamiento automático con OSRM
+- 📍 **Marcadores**: Puntos de interés personalizados
+- 🧹 **Borrador Dinámico**: Edición precisa de rutas
+- 💾 **Persistencia**: Base de datos SQLite
+- 📄 **Exportación PDF**: Reportes de alta calidad
 
-## 📚 Estructura del Proyecto
+## � Estructura del Proyecto
 
 ```
-.
-├── javascript version/
-│   ├── server.js          # Servidor Express
-│   ├── app.js             # Lógica frontend
-│   ├── index.html         # Interfaz principal
-│   ├── styles.css         # Estilos
-│   ├── routes.db          # Base de datos SQLite
-│   └── package.json       # Dependencias Node.js
+transport-routes-app/
+├── src/
+│   ├── javascript/          # Versión Node.js
+│   │   ├── app.js          # Lógica frontend
+│   │   ├── server.js       # Servidor Express
+│   │   ├── index.html      # Interfaz
+│   │   ├── styles.css      # Estilos
+│   │   ├── package.json    # Dependencias
+│   │   ├── Dockerfile      # Imagen Docker
+│   │   └── README.md       # Guía específica
+│   │
+│   └── php/                # Versión PHP
+│       ├── app.js          # Lógica frontend
+│       ├── api.php         # API REST
+│       ├── index.php       # Interfaz
+│       ├── styles.css      # Estilos
+│       ├── .htaccess       # Configuración Apache
+│       ├── health.php      # Health check
+│       ├── Dockerfile      # Imagen Docker
+│       └── README.md       # Guía específica
 │
-├── php version/
-│   ├── api.php            # API REST en PHP
-│   ├── index.php          # Interfaz principal
-│   ├── app.js             # Lógica frontend
-│   ├── styles.css         # Estilos
-│   ├── routes.db          # Base de datos SQLite
-│   └── docker-compose.yml # Configuración Docker
+├── docs/                   # Documentación
+│   ├── GUIA_COMPLETA.md   # Guía principal
+│   ├── API.md             # Documentación API
+│   ├── DOCKER.md          # Guía Docker
+│   ├── DIFERENCIAS_VERSIONES.md
+│   ├── RESUMEN_REPARACION.md
+│   ├── HISTORIAL_DESARROLLO.md
+│   └── legacy/            # Documentación histórica
 │
-└── README.md
+├── scripts/               # Scripts de utilidad
+│   ├── iniciar-docker.bat # Inicio Windows
+│   ├── iniciar-docker.sh  # Inicio Linux/Mac
+│   ├── diagnostico-php.bat
+│   └── diagnostico-php.sh
+│
+├── backups/              # Backups de base de datos
+├── .gitignore
+├── license.txt
+└── README.md            # Este archivo
 ```
 
-## 🛠️ Tecnologías Utilizadas
+## 📊 Comparación de Versiones
 
-### Frontend
+| Característica | JavaScript | PHP |
+|---------------|-----------|-----|
+| **Backend** | Express.js | PHP nativo |
+| **Puerto** | 3000 | 8000 |
+| **Instalación** | npm install | Sin dependencias |
+| **Hosting** | Node.js | Apache/Nginx/PHP |
+| **Funcionalidades** | 100% | 100% |
+| **Rendimiento** | ⚡ Excelente | ⚡ Excelente |
+
+**Ambas versiones son idénticas en funcionalidad** - elige según tu infraestructura.
+
+## 🛠️ Tecnologías
+
+### Frontend (Ambas Versiones)
 - Leaflet.js - Mapas interactivos
-- Leaflet.draw - Herramientas de dibujo
-- HTML2Canvas - Captura de pantalla
-- jsPDF - Generación de PDFs
+- Leaflet.Draw - Herramientas de dibujo
+- OSRM - Enrutamiento inteligente
+- html2canvas - Captura de pantalla
+- jsPDF - Generación de PDF
 
 ### Backend
+- **JavaScript**: Express.js + SQLite3
+- **PHP**: PHP 7.4+ + PDO SQLite
 
-**JavaScript:**
-- Node.js
-- Express.js
-- SQLite3
-- CORS
+## 📚 Documentación
 
-**PHP:**
-- PHP 7.4+
-- SQLite3
-- Docker (opcional)
+- **[Guía Completa](docs/GUIA_COMPLETA.md)** - Documentación principal
+- **[API](docs/API.md)** - Endpoints y ejemplos
+- **[Docker](docs/DOCKER.md)** - Guía de contenedores
+- **[Diferencias](docs/DIFERENCIAS_VERSIONES.md)** - Comparación técnica
+- **[Historial](docs/HISTORIAL_DESARROLLO.md)** - Evolución del proyecto
 
-## 📖 Uso
+## 🎯 Casos de Uso
 
-1. **Visualizar Rutas**: Las rutas guardadas se cargan automáticamente al iniciar
-2. **Trazado Manual**: Haz clic en "Trazado Manual" y dibuja sobre el mapa
-3. **Ruta Inteligente**: Activa "Ruta Inteligente" para enrutamiento automático entre puntos
-4. **Marcadores**: Coloca marcadores en ubicaciones específicas
-5. **Editar**: Selecciona "Editar Ruta" y modifica rutas existentes
-6. **Eliminar**: Usa la herramienta "Eliminar" o el "Borrador" para remover elementos
-7. **Guardar**: Presiona "Guardar Cambios" para persistir las modificaciones
-8. **Exportar**: Genera un PDF del mapa actual con "Exportar PDF"
+- ✅ Planificación de rutas de transporte público
+- ✅ Gestión de flotas vehiculares
+- ✅ Análisis de cobertura territorial
+- ✅ Reportes logísticos
+- ✅ Optimización de recorridos
 
-## 🔌 API Endpoints
+## � Requisitos
 
-### JavaScript Version
+### JavaScript
+- Node.js >= 14.x
+- npm >= 6.x
 
+### PHP
+- PHP >= 7.4
+- Extensión PDO SQLite
+
+### Docker (Opcional)
+- Docker >= 20.x
+- Docker Compose >= 1.27
+
+## 🐛 Solución de Problemas
+
+### Puerto en Uso
+```bash
+# Windows
+netstat -ano | findstr :3000
+taskkill /PID <PID> /F
+
+# Linux/Mac
+lsof -ti:3000 | xargs kill -9
 ```
-GET    /api/elements      # Obtener todos los elementos
-POST   /api/elements      # Crear nuevo elemento
-PUT    /api/elements/:id  # Actualizar elemento
-DELETE /api/elements/:id  # Eliminar elemento
+
+### Base de Datos Bloqueada
+```bash
+rm src/javascript/routes.db-shm
+rm src/javascript/routes.db-wal
 ```
 
-### PHP Version
+### Más Soluciones
+Consulta la documentación específica en `docs/` o los README de cada versión.
 
-```
-GET    /api.php?action=get       # Obtener todos los elementos
-POST   /api.php?action=create    # Crear nuevo elemento
-PUT    /api.php?action=update    # Actualizar elemento
-DELETE /api.php?action=delete    # Eliminar elemento
-```
+## 🔒 Seguridad
 
-## 🗃️ Base de Datos
-
-El sistema utiliza SQLite con la siguiente estructura:
-
-```sql
-CREATE TABLE elements (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    type TEXT,
-    geometry TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-```
+Para producción:
+- ✅ Implementar autenticación
+- ✅ Usar HTTPS
+- ✅ Validar entradas
+- ✅ Rate limiting
+- ✅ Backups regulares
 
 ## 🤝 Contribución
 
-Las contribuciones son bienvenidas. Por favor:
-
 1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -m 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+2. Crea una rama: `git checkout -b feature/nueva-funcionalidad`
+3. Commit: `git commit -m 'Agregar funcionalidad'`
+4. Push: `git push origin feature/nueva-funcionalidad`
 5. Abre un Pull Request
 
 ## 📄 Licencia
 
-Este proyecto está bajo la licencia especificada en el archivo `license.txt`.
+Ver [license.txt](license.txt)
 
-## 👥 Autor
+## 👥 Créditos
 
-Desarrollado para TUBRICA - Transporte OMEGA
+**Desarrollado para**: TUBRICA - Transporte OMEGA  
+**Ubicación**: Venezuela  
+**Versión**: 2.0
 
-## 🐛 Reporte de Problemas
+## � Soporte
 
-Si encuentras algún bug o tienes sugerencias, por favor abre un issue en el repositorio.
-
-### Problema Común: Versión PHP no accesible
-
-Si la versión PHP no carga en el navegador después de iniciar Docker, consulta el archivo `SOLUCION_PHP.txt` para pasos detallados de solución.
-
-## 📞 Soporte
-
-Para soporte técnico o consultas, contacta al equipo de desarrollo de TUBRICA.
+Para soporte técnico o consultas, consulta la documentación en `docs/` o abre un issue.
 
 ---
 
-**Nota**: Este sistema está diseñado específicamente para la gestión de rutas de transporte público en Venezuela.
+**🎉 Ambas versiones están 100% funcionales y listas para producción**
+
+*Última actualización: Marzo 2025*

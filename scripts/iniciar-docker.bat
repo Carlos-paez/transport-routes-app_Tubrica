@@ -43,11 +43,11 @@ goto menu
 :js_start
 echo.
 echo Iniciando versión JavaScript...
-cd "javascript version"
+cd "..\src\javascript"
 docker-compose up -d
 echo.
 echo ✓ Aplicación JavaScript iniciada en http://localhost:3000
-cd ..
+cd ..\..\scripts
 pause
 cls
 goto menu
@@ -55,11 +55,11 @@ goto menu
 :php_start
 echo.
 echo Iniciando versión PHP...
-cd "php version"
+cd "..\src\php"
 docker-compose up -d
 echo.
 echo ✓ Aplicación PHP iniciada en http://localhost:8080
-cd ..
+cd ..\..\scripts
 pause
 cls
 goto menu
@@ -67,12 +67,11 @@ goto menu
 :both_start
 echo.
 echo Iniciando ambas versiones...
-cd "javascript version"
+cd "..\src\javascript"
 docker-compose up -d
-cd ..
-cd "php version"
+cd ..\php
 docker-compose up -d
-cd ..
+cd ..\..\scripts
 echo.
 echo ✓ JavaScript: http://localhost:3000
 echo ✓ PHP: http://localhost:8080
@@ -83,9 +82,9 @@ goto menu
 :js_stop
 echo.
 echo Deteniendo versión JavaScript...
-cd "javascript version"
+cd "..\src\javascript"
 docker-compose down
-cd ..
+cd ..\..\scripts
 echo ✓ Versión JavaScript detenida
 pause
 cls
@@ -94,9 +93,9 @@ goto menu
 :php_stop
 echo.
 echo Deteniendo versión PHP...
-cd "php version"
+cd "..\src\php"
 docker-compose down
-cd ..
+cd ..\..\scripts
 echo ✓ Versión PHP detenida
 pause
 cls
@@ -105,12 +104,11 @@ goto menu
 :both_stop
 echo.
 echo Deteniendo ambas versiones...
-cd "javascript version"
+cd "..\src\javascript"
 docker-compose down
-cd ..
-cd "php version"
+cd ..\php
 docker-compose down
-cd ..
+cd ..\..\scripts
 echo ✓ Ambas versiones detenidas
 pause
 cls
@@ -119,9 +117,9 @@ goto menu
 :js_logs
 echo.
 echo Mostrando logs de JavaScript (Ctrl+C para salir)...
-cd "javascript version"
+cd "..\src\javascript"
 docker-compose logs -f
-cd ..
+cd ..\..\scripts
 pause
 cls
 goto menu
@@ -129,9 +127,9 @@ goto menu
 :php_logs
 echo.
 echo Mostrando logs de PHP (Ctrl+C para salir)...
-cd "php version"
+cd "..\src\php"
 docker-compose logs -f
-cd ..
+cd ..\..\scripts
 pause
 cls
 goto menu
@@ -139,11 +137,11 @@ goto menu
 :js_rebuild
 echo.
 echo Reconstruyendo versión JavaScript...
-cd "javascript version"
+cd "..\src\javascript"
 docker-compose down
 docker-compose build --no-cache
 docker-compose up -d
-cd ..
+cd ..\..\scripts
 echo ✓ JavaScript reconstruido e iniciado
 pause
 cls
@@ -152,11 +150,11 @@ goto menu
 :php_rebuild
 echo.
 echo Reconstruyendo versión PHP...
-cd "php version"
+cd "..\src\php"
 docker-compose down
 docker-compose build --no-cache
 docker-compose up -d
-cd ..
+cd ..\..\scripts
 echo ✓ PHP reconstruido e iniciado
 pause
 cls

@@ -84,6 +84,18 @@ body {
   font-size: 0.75rem;
 }
 
+.tool-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+#omega-menu-controls {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
 #omega-route-list {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 4px;

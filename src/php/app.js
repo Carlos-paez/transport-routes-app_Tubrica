@@ -81,18 +81,44 @@ L.marker(TUBRICA_LOCATION, { interactive: false }).addTo(map).bindPopup("<b>📍
 // ==========================================
 const OMEGA_WAYPOINTS = [
     // --- PAGINA 1 ---
-    /*{
+    {
       name: "OESTE (Admin)",
       points: [
-        [10.063, -69.395],
-        [10.07, -69.39],
-        [10.073, -69.375],
-        [10.09, -69.378],
-        [10.0967, -69.3584],
+          [10.036946792710989, -69.39457370120459],
+          [10.032282058857287, -69.39408152059802],
+          [10.031163726980445, -69.39583285176832],
+          [10.028725053031852, -69.40243904859514],
+          [10.02574641877343, -69.40681424505227],
+          [10.025948719737052, -69.40619745864109],
+          [10.028763233795685, -69.40242558800593],
+          [10.02923403199984, -69.40246380948507],
+          [10.032026715454714, -69.40392633651274],
+          [10.032399693378599, -69.40399967911662],
+          [10.045804381239233, -69.40531726754776],
+          [10.046143178189599, -69.40598440978118],
+          [10.04588667086682, -69.40834989287501],
+          [10.04569729099272, -69.41001940974678],
+          [10.045655209233393, -69.4103135123892],
+          [10.045558651038721, -69.41132922038818],
+          [10.045440924114077, -69.41210693969653],
+          [10.021068015176473, -69.46800009861842],
+          [10.020661886181786, -69.46821654637175],
+          [10.019815238031994, -69.46977377563877],
+          [10.020081563065773, -69.46916915194362],
+          [10.02113143638665, -69.46757190248336],
+          [10.022156667131751, -69.46480927458],
+          [10.019235517395934, -69.46282166482864],
+          [10.020402372331773, -69.45750032035023],
+          [10.0247774815911, -69.45923439219241],
+          [10.02542939075191, -69.45889484570729],
+          [10.04293554975403, -69.41867511761735],
+          [10.042336648285424, -69.41878741883518],
+          [10.043076303067078, -69.41979298523161],
+          [10.096739097337583, -69.35843881714668],
       ],
       desc: "Cerro Mara - La Y - Rio Linare - El Caribe - El Tostado - TUBRICA",
     },
-    {
+    /*{
       name: "SUR OESTE (Admin)",
       points: [
         [10.052, -69.358],
@@ -537,31 +563,64 @@ async function cargarRutasOmegaInteligentes() {
     const list = document.getElementById("omega-route-list");
     list.innerHTML = "";
 
+    // Primero cargar rutas guardadas desde la BD
+    const res = await fetch('api.php');
+    const savedData = await res.json();
+    const savedOmegaRoutes = savedData.filter(el => el.type === 'route' && el.name && el.name.includes('(Admin)') || el.name.includes('(Rot)'));
+    
+    // Crear un mapa de rutas guardadas por nombre
+    const savedRoutesMap = {};
+    savedOmegaRoutes.forEach(route => {
+        savedRoutesMap[route.name] = route;
+    });
+
     for (let i = 0; i < OMEGA_WAYPOINTS.length; i++) {
         const routeData = OMEGA_WAYPOINTS[i];
-        const coordsStr = routeData.points.map((p) => `${p[1]},${p[0]}`).join(";");
-        const url = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
-
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data.routes && data.routes.length > 0) {
-                const polyCoords = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
-                // Asignar un color diferente a cada ruta OMEGA
-                const omegaColor = getNextRouteColor();
-                const layer = renderRoute(polyCoords, routeData.name, `omega-${i}`, null, false, omegaColor);
-
-                const item = document.createElement("div");
-                item.className = "omega-item";
-                item.innerHTML = `
+        
+        // Verificar si existe una versión guardada
+        const savedRoute = savedRoutesMap[routeData.name];
+        
+        if (savedRoute) {
+            // Usar la versión guardada (editada)
+            const omegaColor = savedRoute.color || getNextRouteColor();
+            const layer = renderRoute(savedRoute.geometry, routeData.name, savedRoute.id, null, true, omegaColor);
+            
+            const item = document.createElement("div");
+            item.className = "omega-item";
+            item.innerHTML = `
           <input type="checkbox" checked id="chk-omega-${i}" onchange="window.toggleOmegaLayer(${i}, this.checked)">
           <span onclick="window.focusRoute(${i})">${routeData.name}</span>
         `;
-                list.appendChild(item);
-                OMEGA_WAYPOINTS[i].layer = layer;
-            }
-            await new Promise(r => setTimeout(r, 100));
-        } catch (e) { console.error("Error cargando:", routeData.name); }
+            list.appendChild(item);
+            OMEGA_WAYPOINTS[i].layer = layer;
+        } else {
+            // Generar desde coordenadas originales y guardar
+            const coordsStr = routeData.points.map((p) => `${p[1]},${p[0]}`).join(";");
+            const url = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
+
+            try {
+                const fetchRes = await fetch(url);
+                const data = await fetchRes.json();
+                if (data.routes && data.routes.length > 0) {
+                    const polyCoords = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
+                    const omegaColor = getNextRouteColor();
+                    
+                    // Guardar en BD la primera vez
+                    const newId = await saveElement(routeData.name, 'route', polyCoords, omegaColor);
+                    const layer = renderRoute(polyCoords, routeData.name, newId, null, true, omegaColor);
+
+                    const item = document.createElement("div");
+                    item.className = "omega-item";
+                    item.innerHTML = `
+          <input type="checkbox" checked id="chk-omega-${i}" onchange="window.toggleOmegaLayer(${i}, this.checked)">
+          <span onclick="window.focusRoute(${i})">${routeData.name}</span>
+        `;
+                    list.appendChild(item);
+                    OMEGA_WAYPOINTS[i].layer = layer;
+                }
+                await new Promise(r => setTimeout(r, 100));
+            } catch (e) { console.error("Error cargando:", routeData.name); }
+        }
     }
 }
 
@@ -712,6 +771,7 @@ map.on("mousemove", (e) => {
 map.on("mouseup", async () => {
     if (currentMode === "eraser") {
         drawnItems.eachLayer(async (g) => { if (g.isDirty && g.dbId) await saveLayer(g); });
+        omegaLayer.eachLayer(async (g) => { if (g.isDirty && g.dbId) await saveLayer(g); });
     }
 });
 
@@ -721,7 +781,8 @@ async function saveElement(n, t, g, color = null) {
 }
 
 async function saveLayer(l) {
-    if (!l.dbId || String(l.dbId).startsWith('omega')) return;
+    if (!l.dbId) return;
+    // Ahora también guardamos las rutas Omega editadas
     await fetch(`api.php?id=${l.dbId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ geometry: l.routeLine.getLatLngs(), color: l.routeColor }) });
     l.isDirty = false;
 }
@@ -729,9 +790,13 @@ async function saveLayer(l) {
 async function loadData() {
     const res = await fetch('api.php');
     const data = await res.json();
+    // Solo cargar rutas que NO sean Omega (las Omega se cargan en cargarRutasOmegaInteligentes)
     data.forEach(el => {
-        if (el.type === 'route') renderRoute(el.geometry, el.name, el.id, null, false, el.color);
-        else renderMarker(el.geometry, el.name, el.id);
+        const isOmegaRoute = el.type === 'route' && el.name && (el.name.includes('(Admin)') || el.name.includes('(Rot)'));
+        if (!isOmegaRoute) {
+            if (el.type === 'route') renderRoute(el.geometry, el.name, el.id, null, false, el.color);
+            else renderMarker(el.geometry, el.name, el.id);
+        }
     });
 }
 
@@ -743,7 +808,7 @@ function renderMarker(latlng, name, id) {
 
 async function handleDelete(l) { 
     if (confirm("¿Borrar elemento?")) { 
-        if(l.dbId && !String(l.dbId).startsWith('omega')) 
+        if(l.dbId) 
             await fetch(`api.php?id=${l.dbId}`, { method: 'DELETE' }); 
         drawnItems.removeLayer(l); 
         omegaLayer.removeLayer(l); 
@@ -835,12 +900,20 @@ function setStatus(msg) {
 
 window.saveAllChanges = async function() {
     let count = 0;
+    // Guardar cambios en rutas normales
     for (const layer of drawnItems.getLayers()) {
-        if (layer.isDirty && layer.dbId && !String(layer.dbId).startsWith('omega')) {
+        if (layer.isDirty && layer.dbId) {
             await saveLayer(layer);
             count++;
         }
     }
+    // Guardar cambios en rutas Omega
+    omegaLayer.eachLayer(async (layer) => {
+        if (layer.isDirty && layer.dbId) {
+            await saveLayer(layer);
+            count++;
+        }
+    });
     alert(count > 0 ? `✅ ${count} cambio(s) guardado(s)` : "No hay cambios pendientes");
 };
 

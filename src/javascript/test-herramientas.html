@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Herramientas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-section {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        #log {
+            background: #1a1a1a;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .log-entry {
+            margin: 2px 0;
+        }
+        .log-success { color: #0f0; }
+        .log-error { color: #f00; }
+        .log-info { color: #0ff; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test de Herramientas - TUBRICA</h1>
+    
+    <div class="test-section">
+        <h2>Instrucciones</h2>
+        <p>1. Abra la aplicación principal en otra pestaña</p>
+        <p>2. Abra la consola del navegador (F12)</p>
+        <p>3. Pruebe cada herramienta y observe los logs</p>
+        <p>4. Use los botones de abajo para verificar que las funciones existen</p>
+    </div>
+
+    <div class="test-section">
+        <h2>Verificación de Funciones</h2>
+        <button onclick="testFunctions()">🔍 Verificar Todas las Funciones</button>
+        <button onclick="clearLog()">🧹 Limpiar Log</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Individual</h2>
+        <button onclick="testFunction('enableManualDraw')">Test Trazado Manual</button>
+        <button onclick="testFunction('toggleSmartRoute')">Test Ruta Inteligente</button>
+        <button onclick="testFunction('toggleGoToTubrica')">Test Ir a TUBRICA</button>
+        <button onclick="testFunction('enableMarker')">Test Marcador</button>
+        <button onclick="testFunction('enableEditMode')">Test Editar</button>
+        <button onclick="testFunction('enableDelete')">Test Eliminar</button>
+        <button onclick="testFunction('toggleEraser')">Test Borrador</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Log de Resultados</h2>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+            log('Log limpiado', 'info');
+        }
+
+        function testFunction(funcName) {
+            log(`Testing ${funcName}...`, 'info');
+            
+            // Verificar si la función existe en window
+            if (typeof window[funcName] === 'function') {
+                log(`✓ ${funcName} existe como función`, 'success');
+            } else if (typeof window[funcName] !== 'undefined') {
+                log(`✗ ${funcName} existe pero NO es una función (tipo: ${typeof window[funcName]})`, 'error');
+            } else {
+                log(`✗ ${funcName} NO existe en window`, 'error');
+            }
+        }
+
+        function testFunctions() {
+            log('=== INICIANDO VERIFICACIÓN COMPLETA ===', 'info');
+            
+            const functions = [
+                'enableManualDraw',
+                'toggleSmartRoute',
+                'toggleGoToTubrica',
+                'enableMarker',
+                'enableEditMode',
+                'enableDelete',
+                'toggleEraser',
+                'saveAllChanges',
+                'toggleSidebar',
+                'exportMapToPDF'
+            ];
+
+            let successCount = 0;
+            let failCount = 0;
+
+            functions.forEach(funcName => {
+                if (typeof window[funcName] === 'function') {
+                    log(`✓ ${funcName}`, 'success');
+                    successCount++;
+                } else {
+                    log(`✗ ${funcName} - NO ENCONTRADA`, 'error');
+                    failCount++;
+                }
+            });
+
+            log(`=== RESUMEN: ${successCount} OK, ${failCount} FALLOS ===`, 'info');
+            
+            // Verificar variables globales importantes
+            log('--- Variables Globales ---', 'info');
+            log(`map: ${typeof map}`, typeof map === 'object' ? 'success' : 'error');
+            log(`currentMode: ${typeof currentMode} (valor: ${currentMode})`, 'info');
+            log(`drawnItems: ${typeof drawnItems}`, typeof drawnItems === 'object' ? 'success' : 'error');
+            log(`omegaLayer: ${typeof omegaLayer}`, typeof omegaLayer === 'object' ? 'success' : 'error');
+        }
+
+        // Auto-ejecutar al cargar
+        window.addEventListener('load', () => {
+            log('Página de test cargada', 'success');
+            log('NOTA: Este test solo verifica si las funciones existen en window', 'info');
+            log('Para probar funcionalidad real, use la aplicación principal', 'info');
+        });
+    </script>
+</body>
+</html>
