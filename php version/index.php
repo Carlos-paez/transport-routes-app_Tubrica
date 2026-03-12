@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Logística - TUBRICA</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="toolbar">
+    <button id="toggle-btn" onclick="toggleSidebar()">☰</button>
+    <div class="logo">🇻🇪 Gestión de Transporte - TUBRICA</div>
+    <button class="btn btn-pdf" onclick="exportMapToPDF()">📄 Exportar PDF</button>
+</div>
+
+<div id="main-container">
+    <div id="sidebar">
+        <button class="btn btn-save" onclick="saveAllChanges()">💾 Guardar Cambios</button>
+
+        <h3>🚌 Transporte OMEGA</h3>
+        <div id="omega-menu-controls">
+            <button class="btn btn-tool btn-small" onclick="toggleAllOmega(true)">Mostrar</button>
+            <button class="btn btn-tool btn-small" onclick="toggleAllOmega(false)">Ocultar</button>
+        </div>
+        <div id="omega-route-list"></div>
+
+        <h3>🛠️ Herramientas</h3>
+        <div class="tool-grid">
+            <button class="btn btn-tool" onclick="enableManualDraw()">📈 Trazado Manual</button>
+            <button class="btn btn-tool" onclick="toggleSmartRoute()">🛣 Ruta Inteligente</button>
+            <button class="btn btn-tool" onclick="toggleGoToTubrica()">🧭 Ir a TUBRICA</button>
+            <button class="btn btn-tool" onclick="enableMarker()">📍 Marcador</button>
+            <button class="btn btn-tool" onclick="enableEditMode()">✏️ Editar Ruta</button>
+            <button class="btn btn-tool" onclick="enableDelete()">🗑 Eliminar</button>
+            <button class="btn btn-tool btn-eraser" onclick="toggleEraser()">🧹 Borrador</button>
+        </div>
+
+        <hr />
+        <label>Sensibilidad Borrador</label>
+        <input type="range" min="10" max="100" value="30" id="eraserSlider" />
+        <div id="status">Modo: Inactivo</div>
+    </div>
+    <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
