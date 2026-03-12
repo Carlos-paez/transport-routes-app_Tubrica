@@ -741,7 +741,14 @@ function renderMarker(latlng, name, id) {
     m.addTo(drawnItems);
 }
 
-async function handleDelete(l) { if (confirm("¿Borrar?")) { if(l.dbId && !String(l.dbId).startsWith('omega')) await fetch(`api.php?id=${l.dbId}`, { method: 'DELETE' }); drawnItems.removeLayer(l); omegaLayer.removeLayer(l); } }
+async function handleDelete(l) { 
+    if (confirm("¿Borrar elemento?")) { 
+        if(l.dbId && !String(l.dbId).startsWith('omega')) 
+            await fetch(`api.php?id=${l.dbId}`, { method: 'DELETE' }); 
+        drawnItems.removeLayer(l); 
+        omegaLayer.removeLayer(l); 
+    } 
+}
 
 async function cargarMunicipios() {
     const zonas = [{name:"Iribarren", id:2211603, col:"#2980b9"}, {name:"Palavecino", id:2211604, col:"#27ae60"}, {name:"Ayacucho", id:7293700, col:"#c0392b"}];
@@ -759,17 +766,18 @@ function resetModes() {
     tempMarkers.forEach(m => map.removeLayer(m)); tempMarkers = [];
     if (previewLine) map.removeLayer(previewLine);
     if (eraserCircle) { map.removeLayer(eraserCircle); eraserCircle = null; }
+    map.getContainer().style.cursor = "";
     document.getElementById("status").innerText = "Modo: Inactivo";
 }
 
 window.toggleSidebar = () => { document.getElementById("sidebar").classList.toggle("collapsed"); setTimeout(() => map.invalidateSize(), 300); };
-window.enableManualDraw = () => { resetModes(); currentMode = 'manual'; new L.Draw.Polyline(map, { shapeOptions: { color: '#3498db', weight: 5 } }).enable(); };
-window.toggleSmartRoute = () => { resetModes(); currentMode = 'smart'; };
-window.toggleGoToTubrica = () => { resetModes(); currentMode = 'to-tubrica'; setStatus("Ir a TUBRICA: Haga clic en su origen"); };
-window.enableMarker = () => { resetModes(); currentMode = 'marker'; };
-window.enableEditMode = () => { resetModes(); currentMode = 'edit'; setStatus("Edición: Clic en ruta"); };
-window.enableDelete = () => { resetModes(); currentMode = "delete"; };
-window.toggleEraser = () => { resetModes(); currentMode = "eraser"; eraserCircle = L.circle([0, 0], { radius: eraserSize, color: "red", fillOpacity: 0.1 }).addTo(map); };
+window.enableManualDraw = () => { resetModes(); currentMode = 'manual'; setStatus("Trazado Manual"); new L.Draw.Polyline(map, { shapeOptions: { color: '#3498db', weight: 5 } }).enable(); };
+window.toggleSmartRoute = () => { resetModes(); currentMode = 'smart'; setStatus("Ruta Inteligente: Haga clic en puntos"); };
+window.toggleGoToTubrica = () => { resetModes(); currentMode = 'to-tubrica'; setStatus("Ruta a TUBRICA"); };
+window.enableMarker = () => { resetModes(); currentMode = 'marker'; setStatus("Marcador: Haga clic en el mapa"); };
+window.enableEditMode = () => { resetModes(); currentMode = 'edit'; setStatus("Editar Ruta: Haga clic en una ruta"); };
+window.enableDelete = () => { resetModes(); currentMode = "delete"; setStatus("Eliminar: Haga clic en elemento"); };
+window.toggleEraser = () => { resetModes(); currentMode = "eraser"; setStatus("Borrador Activo"); eraserCircle = L.circle([0, 0], { radius: eraserSize, color: "red", fillOpacity: 0.1 }).addTo(map); };
 
 map.on(L.Draw.Event.CREATED, e => { 
     const n = prompt("Nombre:"); 
@@ -786,7 +794,7 @@ async function fetchOSRMDirect(points) {
     const data = await res.json();
     if (data.routes && data.routes.length > 0) {
         const full = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
-        const name = prompt("Nombre de ruta a TUBRICA:");
+        const name = prompt("Nombre ruta a Sede:");
         if (name) {
             const color = getNextRouteColor();
             const id = await saveElement(name, 'route', full, color);
@@ -820,3 +828,63 @@ async function updatePreview() {
         if (data.routes) previewLine = L.polyline(data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]), { color: '#e67e22', weight: 3, dashArray: '5,10' }).addTo(map);
     });
 }
+
+function setStatus(msg) {
+    document.getElementById("status").innerText = `Modo: ${msg}`;
+}
+
+window.saveAllChanges = async function() {
+    let count = 0;
+    for (const layer of drawnItems.getLayers()) {
+        if (layer.isDirty && layer.dbId && !String(layer.dbId).startsWith('omega')) {
+            await saveLayer(layer);
+            count++;
+        }
+    }
+    alert(count > 0 ? `✅ ${count} cambio(s) guardado(s)` : "No hay cambios pendientes");
+};
+
+
+window.exportMapToPDF = function () {
+    const btn = document.querySelector(".btn-pdf");
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "⏳ Generando...";
+    btn.disabled = true;
+    
+    setTimeout(() => {
+        html2canvas(document.getElementById("map"), {
+            useCORS: true,
+            scale: 3,
+            logging: false,
+            backgroundColor: '#ffffff'
+        }).then((canvas) => {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF("l", "mm", "a4");
+            
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            
+            // CALCULO DE PROPORCIÓN PARA EVITAR DISTORSIÓN
+            const canvasRatio = canvas.height / canvas.width;
+            const imgWidth = pdfWidth - 20;
+            const imgHeight = imgWidth * canvasRatio;
+            
+            const imgData = canvas.toDataURL("image/png");
+            
+            // Título y Fecha
+            pdf.setFontSize(14);
+            pdf.text("REPORTE LOGÍSTICO - TUBRICA", 10, 12);
+            pdf.setFontSize(8);
+            pdf.text(`Generado: ${new Date().toLocaleString()}`, 10, 18);
+            
+            // Insertar imagen centrada
+            const yOffset = (pdfHeight - imgHeight) / 2 + 10;
+            pdf.addImage(imgData, 'PNG', 10, yOffset > 25 ? yOffset : 25, imgWidth, imgHeight);
+            
+            pdf.save(`Planificacion_Tubrica_${new Date().getTime()}.pdf`);
+            
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+    }, 500);
+};

@@ -906,6 +906,21 @@ function resetModes() {
   document.getElementById("status").innerText = "Modo: Inactivo";
 }
 
+function setStatus(msg) {
+  document.getElementById("status").innerText = `Modo: ${msg}`;
+}
+
+window.saveAllChanges = async function() {
+  let count = 0;
+  for (const layer of drawnItems.getLayers()) {
+    if (layer.isDirty && layer.dbId && !String(layer.dbId).startsWith('omega')) {
+      await saveLayer(layer);
+      count++;
+    }
+  }
+  alert(count > 0 ? `✅ ${count} cambio(s) guardado(s)` : "No hay cambios pendientes");
+};
+
 window.toggleSidebar = () => {
   document.getElementById("sidebar").classList.toggle("collapsed");
   setTimeout(() => map.invalidateSize(), 300);
@@ -913,6 +928,7 @@ window.toggleSidebar = () => {
 window.enableManualDraw = () => {
   resetModes();
   currentMode = "manual";
+  setStatus("Trazado Manual");
   new L.Draw.Polyline(map, {
     shapeOptions: { color: "#3498db", weight: 5 },
   }).enable();
@@ -920,6 +936,7 @@ window.enableManualDraw = () => {
 window.toggleSmartRoute = () => {
   resetModes();
   currentMode = "smart";
+  setStatus("Ruta Inteligente: Haga clic en puntos");
 };
 window.toggleGoToTubrica = () => {
   resetModes();
@@ -929,18 +946,22 @@ window.toggleGoToTubrica = () => {
 window.enableMarker = () => {
   resetModes();
   currentMode = "marker";
+  setStatus("Marcador: Haga clic en el mapa");
 };
 window.enableEditMode = () => {
   resetModes();
   currentMode = "edit";
+  setStatus("Editar Ruta: Haga clic en una ruta");
 };
 window.enableDelete = () => {
   resetModes();
   currentMode = "delete";
+  setStatus("Eliminar: Haga clic en elemento");
 };
 window.toggleEraser = () => {
   resetModes();
   currentMode = "eraser";
+  setStatus("Borrador Activo");
   eraserCircle = L.circle([0, 0], {
     radius: eraserSize,
     color: "red",
