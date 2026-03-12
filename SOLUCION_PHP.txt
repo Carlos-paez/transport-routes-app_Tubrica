@@ -1,0 +1,246 @@
+═══════════════════════════════════════════════════════════════════════════════
+  SOLUCIÓN - VERSIÓN PHP NO ACCESIBLE
+═══════════════════════════════════════════════════════════════════════════════
+
+Se han realizado las siguientes correcciones para solucionar el problema:
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  CAMBIOS REALIZADOS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. ✅ Creado archivo .htaccess
+   - Configuración de reescritura de URLs
+   - Headers CORS para desarrollo
+   - Tipos MIME correctos
+   - DirectoryIndex configurado
+
+2. ✅ Mejorado Dockerfile
+   - Configuración de ServerName
+   - Permisos correctos para base de datos
+   - Creación automática de routes.db
+   - Healthcheck mejorado
+
+3. ✅ Actualizado docker-compose.yml
+   - Variables de entorno de Apache
+   - Healthcheck apuntando a health.php
+   - start_period agregado
+
+4. ✅ Archivos de diagnóstico creados
+   - test.php (phpinfo)
+   - health.php (verificación de estado)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PASOS PARA APLICAR LA SOLUCIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
+PASO 1: Detener el contenedor actual (si está corriendo)
+--------
+cd "php version"
+docker-compose down
+
+
+PASO 2: Reconstruir la imagen sin caché
+--------
+docker-compose build --no-cache
+
+
+PASO 3: Iniciar el contenedor
+--------
+docker-compose up -d
+
+
+PASO 4: Verificar que el contenedor está corriendo
+--------
+docker ps
+
+Deberías ver algo como:
+CONTAINER ID   IMAGE          STATUS                    PORTS
+abc123def456   tubrica-php    Up 10 seconds (healthy)   0.0.0.0:8080->80/tcp
+
+
+PASO 5: Ver los logs
+--------
+docker logs tubrica-php
+
+Deberías ver mensajes de Apache iniciando correctamente.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  VERIFICACIÓN DE FUNCIONAMIENTO
+═══════════════════════════════════════════════════════════════════════════════
+
+Prueba estos URLs en tu navegador:
+
+1. Página principal:
+   http://localhost:8080
+   
+   Debería mostrar la interfaz de TUBRICA
+
+2. Verificación de salud:
+   http://localhost:8080/health.php
+   
+   Debería mostrar un JSON con:
+   {
+     "status": "ok",
+     "php_version": "8.2.x",
+     "sqlite_available": true,
+     "database": "connected",
+     ...
+   }
+
+3. Información de PHP (opcional):
+   http://localhost:8080/test.php
+   
+   Debería mostrar la página de phpinfo()
+
+4. API REST:
+   http://localhost:8080/api.php
+   
+   Debería devolver un array JSON (puede estar vacío: [])
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  DIAGNÓSTICO DE PROBLEMAS
+═══════════════════════════════════════════════════════════════════════════════
+
+Si aún no funciona, ejecuta estos comandos para diagnosticar:
+
+1. Ver logs en tiempo real:
+   docker logs -f tubrica-php
+
+2. Entrar al contenedor:
+   docker exec -it tubrica-php bash
+
+3. Dentro del contenedor, verificar archivos:
+   ls -la /var/www/html/
+   
+   Deberías ver:
+   - index.php
+   - api.php
+   - app.js
+   - styles.css
+   - .htaccess
+   - routes.db (con permisos de escritura)
+
+4. Verificar permisos de la base de datos:
+   ls -la /var/www/html/routes.db
+   
+   Debería mostrar permisos de escritura (rw-rw-rw-)
+
+5. Probar PHP desde dentro del contenedor:
+   php -v
+   php -m | grep pdo_sqlite
+   
+   Debería mostrar que PDO SQLite está disponible
+
+6. Verificar Apache:
+   apache2ctl -t
+   
+   Debería decir "Syntax OK"
+
+7. Ver logs de Apache:
+   tail -f /var/log/apache2/error.log
+   tail -f /var/log/apache2/access.log
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PROBLEMAS COMUNES Y SOLUCIONES
+═══════════════════════════════════════════════════════════════════════════════
+
+PROBLEMA: "Connection refused" o no carga la página
+SOLUCIÓN:
+  - Verifica que el contenedor esté corriendo: docker ps
+  - Verifica los logs: docker logs tubrica-php
+  - Asegúrate de usar el puerto correcto: 8080
+
+PROBLEMA: "404 Not Found"
+SOLUCIÓN:
+  - Verifica que index.php existe en el contenedor
+  - Ejecuta: docker exec tubrica-php ls -la /var/www/html/
+  - Reconstruye sin caché: docker-compose build --no-cache
+
+PROBLEMA: "500 Internal Server Error"
+SOLUCIÓN:
+  - Revisa los logs de Apache: docker exec tubrica-php tail /var/log/apache2/error.log
+  - Verifica permisos: docker exec tubrica-php ls -la /var/www/html/
+  - Verifica que SQLite esté disponible: docker exec tubrica-php php -m | grep pdo_sqlite
+
+PROBLEMA: La página carga pero no guarda datos
+SOLUCIÓN:
+  - Verifica permisos de routes.db
+  - Ejecuta: docker exec tubrica-php chmod 666 /var/www/html/routes.db
+  - Verifica que el directorio tenga permisos: chmod 777 /var/www/html/
+
+PROBLEMA: "Access denied" o errores de CORS
+SOLUCIÓN:
+  - Verifica que .htaccess existe
+  - Verifica que mod_rewrite y mod_headers están habilitados
+  - Ejecuta: docker exec tubrica-php apache2ctl -M | grep -E "rewrite|headers"
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  COMANDOS RÁPIDOS DE SOLUCIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
+# Solución completa (detener, limpiar, reconstruir, iniciar)
+cd "php version"
+docker-compose down -v
+docker-compose build --no-cache
+docker-compose up -d
+docker logs -f tubrica-php
+
+# Verificar estado
+docker ps
+docker logs tubrica-php
+curl http://localhost:8080/health.php
+
+# Reiniciar Apache dentro del contenedor (sin reconstruir)
+docker exec tubrica-php apache2ctl restart
+
+# Dar permisos a la base de datos
+docker exec tubrica-php chmod 666 /var/www/html/routes.db
+docker exec tubrica-php chmod 777 /var/www/html/
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  ARCHIVOS MODIFICADOS/CREADOS
+═══════════════════════════════════════════════════════════════════════════════
+
+Nuevos archivos:
+✓ php version/.htaccess          - Configuración de Apache
+✓ php version/test.php            - Prueba de PHP
+✓ php version/health.php          - Verificación de salud
+✓ SOLUCION_PHP.txt                - Este archivo
+
+Archivos modificados:
+✓ php version/Dockerfile          - Mejorado con permisos y configuración
+✓ php version/docker-compose.yml  - Healthcheck actualizado
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PRÓXIMOS PASOS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Ejecuta los comandos del PASO 1 al PASO 5
+2. Verifica el funcionamiento con los URLs de prueba
+3. Si hay problemas, usa la sección de diagnóstico
+4. Una vez funcionando, puedes eliminar test.php si lo deseas
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  NOTAS IMPORTANTES
+═══════════════════════════════════════════════════════════════════════════════
+
+• Los cambios requieren reconstruir la imagen (--no-cache)
+• El archivo .htaccess es crucial para el funcionamiento correcto
+• Los permisos de routes.db deben ser 666 (rw-rw-rw-)
+• El directorio /var/www/html/ debe tener permisos 777
+• Apache debe tener mod_rewrite y mod_headers habilitados
+• El healthcheck ahora usa health.php en lugar de index.php
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  FIN DEL DOCUMENTO
+═══════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,19 @@
+# Habilitar reescritura de URLs
+RewriteEngine On
+
+# Permitir acceso a archivos estáticos
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Configuración de CORS para desarrollo
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header set Access-Control-Allow-Headers "Content-Type"
+
+# Configuración de tipos MIME
+AddType application/javascript .js
+AddType text/css .css
+AddType text/html .html .php
+
+# Página de inicio por defecto
+DirectoryIndex index.php index.html

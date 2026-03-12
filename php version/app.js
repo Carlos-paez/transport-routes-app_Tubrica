@@ -3,6 +3,44 @@
 // ==========================================
 const TUBRICA_LOCATION = L.latLng(10.09673945749423, -69.35846137671071);
 
+// Paleta de colores vibrantes para las rutas
+const ROUTE_COLORS = [
+    "#e74c3c", // Rojo
+    "#3498db", // Azul
+    "#2ecc71", // Verde
+    "#f39c12", // Naranja
+    "#9b59b6", // Púrpura
+    "#1abc9c", // Turquesa
+    "#e67e22", // Naranja oscuro
+    "#34495e", // Gris oscuro
+    "#16a085", // Verde azulado
+    "#27ae60", // Verde esmeralda
+    "#2980b9", // Azul oscuro
+    "#8e44ad", // Púrpura oscuro
+    "#c0392b", // Rojo oscuro
+    "#d35400", // Naranja quemado
+    "#f1c40f", // Amarillo
+    "#e91e63", // Rosa
+    "#00bcd4", // Cian
+    "#4caf50", // Verde claro
+    "#ff9800", // Naranja brillante
+    "#795548", // Marrón
+];
+
+let colorIndex = 0;
+
+// Función para obtener el siguiente color
+function getNextRouteColor() {
+    const color = ROUTE_COLORS[colorIndex % ROUTE_COLORS.length];
+    colorIndex++;
+    return color;
+}
+
+// Función para obtener un color aleatorio
+function getRandomRouteColor() {
+    return ROUTE_COLORS[Math.floor(Math.random() * ROUTE_COLORS.length)];
+}
+
 // Capas Base con crossOrigin para permitir captura de PDF sin distorsión
 const mapaCalle = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19, crossOrigin: true, attribution: '© OpenStreetMap'
@@ -509,7 +547,9 @@ async function cargarRutasOmegaInteligentes() {
             const data = await res.json();
             if (data.routes && data.routes.length > 0) {
                 const polyCoords = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
-                const layer = renderRoute(polyCoords, routeData.name, `omega-${i}`, null, true);
+                // Asignar un color diferente a cada ruta OMEGA
+                const omegaColor = getNextRouteColor();
+                const layer = renderRoute(polyCoords, routeData.name, `omega-${i}`, null, false, omegaColor);
 
                 const item = document.createElement("div");
                 item.className = "omega-item";
@@ -528,16 +568,25 @@ async function cargarRutasOmegaInteligentes() {
 // ==========================================
 // 4. RENDERIZADO Y PERSISTENCIA (PHP)
 // ==========================================
-function renderRoute(latlngs, name, id, dur = null, isOmega = false) {
+function renderRoute(latlngs, name, id, dur = null, isOmega = false, savedColor = null) {
     if (!latlngs || latlngs.length < 2) return;
-    const poly = L.polyline(latlngs, { color: isOmega ? "#e67e22" : "#3498db", weight: 5, smoothFactor: 1.5 });
+    
+    // Asignar color: usar color guardado, naranja para OMEGA, o color único para cada ruta nueva
+    const routeColor = savedColor || (isOmega ? "#e67e22" : getNextRouteColor());
+    
+    const poly = L.polyline(latlngs, { color: routeColor, weight: 5, smoothFactor: 1.5 });
 
     const start = L.circleMarker(latlngs[0], { radius: 4, color: '#2ecc71', fillColor: 'white', fillOpacity: 1 });
     const end = L.circleMarker(latlngs[latlngs.length-1], { radius: 4, color: '#e74c3c', fillColor: 'white', fillOpacity: 1 });
     const label = L.marker([0,0], { interactive: false, icon: L.divIcon({ className: "route-label", html: "", iconSize: null }) });
 
     const group = L.layerGroup([poly, label, start, end]);
-    group.dbId = id; group.type = 'route'; group.name = name; group.routeLine = poly; group.isDirty = false;
+    group.dbId = id; 
+    group.type = 'route'; 
+    group.name = name; 
+    group.routeLine = poly; 
+    group.routeColor = routeColor; // Guardar el color
+    group.isDirty = false;
 
     group.refreshStats = function () {
         const pts = poly.getLatLngs();
@@ -666,14 +715,14 @@ map.on("mouseup", async () => {
     }
 });
 
-async function saveElement(n, t, g) {
-    const res = await fetch('api.php', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name: n, type: t, geometry: g }) });
+async function saveElement(n, t, g, color = null) {
+    const res = await fetch('api.php', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name: n, type: t, geometry: g, color: color }) });
     const d = await res.json(); return d.id;
 }
 
 async function saveLayer(l) {
     if (!l.dbId || String(l.dbId).startsWith('omega')) return;
-    await fetch(`api.php?id=${l.dbId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ geometry: l.routeLine.getLatLngs() }) });
+    await fetch(`api.php?id=${l.dbId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ geometry: l.routeLine.getLatLngs(), color: l.routeColor }) });
     l.isDirty = false;
 }
 
@@ -681,7 +730,7 @@ async function loadData() {
     const res = await fetch('api.php');
     const data = await res.json();
     data.forEach(el => {
-        if (el.type === 'route') renderRoute(el.geometry, el.name, el.id);
+        if (el.type === 'route') renderRoute(el.geometry, el.name, el.id, null, false, el.color);
         else renderMarker(el.geometry, el.name, el.id);
     });
 }
@@ -722,7 +771,13 @@ window.enableEditMode = () => { resetModes(); currentMode = 'edit'; setStatus("E
 window.enableDelete = () => { resetModes(); currentMode = "delete"; };
 window.toggleEraser = () => { resetModes(); currentMode = "eraser"; eraserCircle = L.circle([0, 0], { radius: eraserSize, color: "red", fillOpacity: 0.1 }).addTo(map); };
 
-map.on(L.Draw.Event.CREATED, e => { const n = prompt("Nombre:"); if (n) saveElement(n, 'route', e.layer.getLatLngs()).then(id => renderRoute(e.layer.getLatLngs(), n, id)); });
+map.on(L.Draw.Event.CREATED, e => { 
+    const n = prompt("Nombre:"); 
+    if (n) {
+        const color = getNextRouteColor();
+        saveElement(n, 'route', e.layer.getLatLngs(), color).then(id => renderRoute(e.layer.getLatLngs(), n, id, null, false, color));
+    }
+});
 document.getElementById("eraserSlider").oninput = e => { eraserSize = parseInt(e.target.value); if (eraserCircle) eraserCircle.setRadius(eraserSize); };
 
 async function fetchOSRMDirect(points) {
@@ -732,7 +787,11 @@ async function fetchOSRMDirect(points) {
     if (data.routes && data.routes.length > 0) {
         const full = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
         const name = prompt("Nombre de ruta a TUBRICA:");
-        if (name) renderRoute(full, name, await saveElement(name, 'route', full));
+        if (name) {
+            const color = getNextRouteColor();
+            const id = await saveElement(name, 'route', full, color);
+            renderRoute(full, name, id, null, false, color);
+        }
     }
     resetModes();
 }
@@ -744,7 +803,11 @@ async function finalizeSmart() {
     if (data.routes) {
         const pts = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
         const n = prompt("Nombre:");
-        if (n) renderRoute(pts, n, await saveElement(n, 'route', pts));
+        if (n) {
+            const color = getNextRouteColor();
+            const id = await saveElement(n, 'route', pts, color);
+            renderRoute(pts, n, id, null, false, color);
+        }
     }
     resetModes();
 }

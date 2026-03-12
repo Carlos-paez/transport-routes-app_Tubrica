@@ -15,6 +15,7 @@ try {
         name TEXT,
         type TEXT,
         geometry TEXT,
+        color TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )");
 
@@ -32,8 +33,9 @@ try {
 
         case 'POST':
             $input = json_decode(file_get_contents('php://input'), true);
-            $stmt = $pdo->prepare("INSERT INTO elements (name, type, geometry) VALUES (?, ?, ?)");
-            $stmt->execute([$input['name'], $input['type'], json_encode($input['geometry'])]);
+            $color = $input['color'] ?? null;
+            $stmt = $pdo->prepare("INSERT INTO elements (name, type, geometry, color) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$input['name'], $input['type'], json_encode($input['geometry']), $color]);
             echo json_encode(["id" => $pdo->lastInsertId()]);
             break;
 
@@ -41,8 +43,14 @@ try {
             $id = $_GET['id'] ?? null;
             $input = json_decode(file_get_contents('php://input'), true);
             if ($id && isset($input['geometry'])) {
-                $stmt = $pdo->prepare("UPDATE elements SET geometry = ? WHERE id = ?");
-                $stmt->execute([json_encode($input['geometry']), $id]);
+                $color = $input['color'] ?? null;
+                if ($color) {
+                    $stmt = $pdo->prepare("UPDATE elements SET geometry = ?, color = ? WHERE id = ?");
+                    $stmt->execute([json_encode($input['geometry']), $color, $id]);
+                } else {
+                    $stmt = $pdo->prepare("UPDATE elements SET geometry = ? WHERE id = ?");
+                    $stmt->execute([json_encode($input['geometry']), $id]);
+                }
                 echo json_encode(["status" => "ok"]);
             }
             break;

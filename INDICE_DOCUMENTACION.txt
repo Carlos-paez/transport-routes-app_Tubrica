@@ -1,0 +1,433 @@
+═══════════════════════════════════════════════════════════════════════════════
+  📚 ÍNDICE DE DOCUMENTACIÓN - SISTEMA TUBRICA
+═══════════════════════════════════════════════════════════════════════════════
+
+Este archivo te ayuda a encontrar rápidamente la información que necesitas.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  🎯 EMPEZAR AQUÍ
+═══════════════════════════════════════════════════════════════════════════════
+
+Si es tu primera vez con el proyecto, lee estos archivos en orden:
+
+1. 📄 INICIO_RAPIDO.txt
+   → Cómo poner en marcha las aplicaciones en 5 minutos
+   → Comandos básicos para iniciar y detener
+   → Solución de problemas comunes
+
+2. 📄 README.md
+   → Descripción general del proyecto
+   → Características y funcionalidades
+   → Tecnologías utilizadas
+   → Guía de uso de la aplicación
+
+3. 📄 DOCKER_README.md
+   → Guía rápida de Docker
+   → Comandos esenciales
+   → Estructura de archivos Docker
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  📖 DOCUMENTACIÓN GENERAL
+═══════════════════════════════════════════════════════════════════════════════
+
+README.md
+├─ Descripción del proyecto
+├─ Características principales (incluye sistema de colores)
+├─ Requisitos previos
+├─ Instalación (JavaScript y PHP)
+├─ Ejecución (con y sin Docker)
+├─ Estructura del proyecto
+├─ Tecnologías utilizadas
+├─ Guía de uso de la aplicación
+├─ API Endpoints
+├─ Esquema de base de datos
+├─ Información de contribución
+└─ Licencia y contacto
+
+license.txt
+└─ Términos de licencia del proyecto
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  🐳 DOCUMENTACIÓN DOCKER
+═══════════════════════════════════════════════════════════════════════════════
+
+INICIO_RAPIDO.txt
+├─ Inicio rápido con scripts interactivos
+├─ Comandos manuales básicos
+├─ Verificación de funcionamiento
+├─ Detener aplicaciones
+├─ Solución de problemas comunes
+├─ Comandos útiles del día a día
+└─ Próximos pasos
+
+DOCKER_README.md
+├─ Guía rápida de inicio
+├─ Comandos manuales rápidos
+├─ Verificar estado
+├─ Solución rápida de problemas
+├─ Documentación relacionada
+├─ Estructura de archivos Docker
+├─ Características de los contenedores
+└─ Persistencia de datos
+
+COMANDOS_DOCKER.txt
+├─ Requisitos previos
+├─ Comandos para versión JavaScript
+│  ├─ Construcción de imagen
+│  ├─ Iniciar/detener contenedor
+│  ├─ Ver logs
+│  ├─ Reiniciar
+│  ├─ Reconstruir
+│  ├─ Ejecutar comandos dentro del contenedor
+│  └─ Limpiar todo
+├─ Comandos para versión PHP
+│  ├─ Construcción de imagen
+│  ├─ Iniciar/detener contenedor
+│  ├─ Ver logs
+│  ├─ Reiniciar
+│  ├─ Reconstruir
+│  ├─ Ejecutar comandos dentro del contenedor
+│  └─ Limpiar todo
+├─ Ejecutar ambas versiones simultáneamente
+├─ Comandos útiles de Docker
+├─ Solución de problemas
+├─ Flujo de trabajo recomendado
+├─ Notas importantes
+└─ Comandos rápidos (copiar y pegar)
+
+ARQUITECTURA_DOCKER.txt
+├─ Diagrama de arquitectura general
+├─ Componentes de cada contenedor
+│  ├─ Contenedor JavaScript (Node.js)
+│  └─ Contenedor PHP (Apache)
+├─ Flujo de datos
+├─ Persistencia de datos
+├─ Networking
+├─ Healthchecks
+├─ Ciclo de vida de los contenedores
+│  ├─ Build (construcción)
+│  ├─ Start (inicio)
+│  ├─ Running (en ejecución)
+│  ├─ Stop (detención)
+│  └─ Remove (eliminación)
+├─ Recursos y límites
+├─ Seguridad
+├─ Escalabilidad
+└─ Monitoreo
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  🔧 SCRIPTS Y HERRAMIENTAS
+═══════════════════════════════════════════════════════════════════════════════
+
+iniciar-docker.bat (Windows)
+├─ Menú interactivo
+├─ Iniciar versión JavaScript
+├─ Iniciar versión PHP
+├─ Iniciar ambas versiones
+├─ Detener versiones
+├─ Ver logs
+└─ Reconstruir contenedores
+
+iniciar-docker.sh (Linux/Mac)
+├─ Menú interactivo con colores
+├─ Iniciar versión JavaScript
+├─ Iniciar versión PHP
+├─ Iniciar ambas versiones
+├─ Detener versiones
+├─ Ver logs
+├─ Reconstruir contenedores
+└─ Ver estado de contenedores
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  📁 ARCHIVOS DE CONFIGURACIÓN DOCKER
+═══════════════════════════════════════════════════════════════════════════════
+
+javascript version/
+├─ Dockerfile
+│  └─ Configuración de imagen Node.js 18
+├─ docker-compose.yml
+│  └─ Orquestación del contenedor JavaScript
+└─ .dockerignore
+   └─ Archivos excluidos de la imagen
+
+php version/
+├─ Dockerfile
+│  └─ Configuración de imagen PHP 8.2 + Apache
+├─ docker-compose.yml
+│  └─ Orquestación del contenedor PHP
+└─ .dockerignore
+   └─ Archivos excluidos de la imagen
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  🗂️ ESTRUCTURA DEL PROYECTO
+═══════════════════════════════════════════════════════════════════════════════
+
+Raíz del proyecto/
+│
+├─ 📄 Documentación General
+│  ├─ README.md
+│  ├─ license.txt
+│  └─ INDICE_DOCUMENTACION.txt (este archivo)
+│
+├─ 🎨 Sistema de Colores (NUEVO)
+│  ├─ COLORES_RUTAS.md
+│  ├─ CAMBIOS_COLORES.txt
+│  └─ APLICAR_CAMBIOS_COLORES.txt
+│
+├─ 🐳 Documentación Docker
+│  ├─ INICIO_RAPIDO.txt
+│  ├─ DOCKER_README.md
+│  ├─ COMANDOS_DOCKER.txt
+│  └─ ARQUITECTURA_DOCKER.txt
+│
+├─ 🔧 Scripts de Automatización
+│  ├─ iniciar-docker.bat
+│  └─ iniciar-docker.sh
+│
+├─ 📂 javascript version/
+│  ├─ Archivos Docker
+│  │  ├─ Dockerfile
+│  │  ├─ docker-compose.yml
+│  │  └─ .dockerignore
+│  ├─ Código fuente
+│  │  ├─ server.js
+│  │  ├─ app.js
+│  │  ├─ index.html
+│  │  └─ styles.css
+│  ├─ Configuración
+│  │  ├─ package.json
+│  │  └─ package-lock.json
+│  └─ Base de datos
+│     ├─ routes.db
+│     ├─ routes.db-shm
+│     └─ routes.db-wal
+│
+└─ 📂 php version/
+   ├─ Archivos Docker
+   │  ├─ Dockerfile
+   │  ├─ docker-compose.yml
+   │  └─ .dockerignore
+   ├─ Código fuente
+   │  ├─ index.php
+   │  ├─ api.php
+   │  ├─ app.js
+   │  └─ styles.css
+   ├─ Configuración
+   │  ├─ package.json
+   │  └─ package-lock.json
+   └─ Base de datos
+      ├─ routes.db
+      ├─ routes.db-shm
+      └─ routes.db-wal
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  🔍 BUSCAR INFORMACIÓN ESPECÍFICA
+═══════════════════════════════════════════════════════════════════════════════
+
+¿Quieres saber sobre...?
+
+INSTALACIÓN Y CONFIGURACIÓN:
+→ README.md (sección "Instalación")
+→ INICIO_RAPIDO.txt
+
+DOCKER - PRIMEROS PASOS:
+→ INICIO_RAPIDO.txt
+→ DOCKER_README.md
+
+DOCKER - COMANDOS COMPLETOS:
+→ COMANDOS_DOCKER.txt
+
+DOCKER - ARQUITECTURA Y FUNCIONAMIENTO:
+→ ARQUITECTURA_DOCKER.txt
+
+CARACTERÍSTICAS DE LA APLICACIÓN:
+→ README.md (sección "Características")
+→ COLORES_RUTAS.md (sistema de colores automáticos)
+
+SISTEMA DE COLORES:
+→ COLORES_RUTAS.md (documentación completa)
+→ CAMBIOS_COLORES.txt (resumen de cambios)
+→ APLICAR_CAMBIOS_COLORES.txt (cómo aplicar)
+
+CÓMO USAR LA APLICACIÓN:
+→ README.md (sección "Uso")
+
+API REST:
+→ README.md (sección "API Endpoints")
+
+BASE DE DATOS:
+→ README.md (sección "Base de Datos")
+→ ARQUITECTURA_DOCKER.txt (sección "Persistencia de Datos")
+
+SOLUCIÓN DE PROBLEMAS:
+→ INICIO_RAPIDO.txt (sección "Solución de Problemas Comunes")
+→ COMANDOS_DOCKER.txt (sección "Solución de Problemas")
+
+TECNOLOGÍAS UTILIZADAS:
+→ README.md (sección "Tecnologías Utilizadas")
+
+SCRIPTS AUTOMATIZADOS:
+→ iniciar-docker.bat (Windows)
+→ iniciar-docker.sh (Linux/Mac)
+
+CONTRIBUIR AL PROYECTO:
+→ README.md (sección "Contribución")
+
+LICENCIA:
+→ license.txt
+→ README.md (sección "Licencia")
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  📋 CASOS DE USO COMUNES
+═══════════════════════════════════════════════════════════════════════════════
+
+"Quiero iniciar la aplicación por primera vez"
+→ Lee: INICIO_RAPIDO.txt
+→ Ejecuta: iniciar-docker.bat (Windows) o ./iniciar-docker.sh (Linux/Mac)
+
+"Necesito todos los comandos de Docker"
+→ Lee: COMANDOS_DOCKER.txt
+
+"Quiero entender cómo funciona Docker en este proyecto"
+→ Lee: ARQUITECTURA_DOCKER.txt
+
+"Tengo un problema y no sé qué hacer"
+→ Lee: INICIO_RAPIDO.txt (Solución de Problemas Comunes)
+→ Lee: COMANDOS_DOCKER.txt (Solución de Problemas)
+
+"Quiero saber qué hace la aplicación"
+→ Lee: README.md
+
+"Necesito modificar el código"
+→ Lee: README.md (Estructura del Proyecto)
+→ Lee: COMANDOS_DOCKER.txt (Reconstruir después de cambios)
+
+"Quiero hacer backup de la base de datos"
+→ Lee: COMANDOS_DOCKER.txt (sección "Copiar archivos")
+
+"Necesito cambiar el puerto"
+→ Lee: INICIO_RAPIDO.txt (Solución de Problemas - Puerto en uso)
+
+"Quiero ejecutar ambas versiones al mismo tiempo"
+→ Lee: COMANDOS_DOCKER.txt (sección "Ejecutar ambas versiones")
+→ O usa: iniciar-docker.bat/sh (opción 3)
+
+"Necesito ver los logs de la aplicación"
+→ Lee: COMANDOS_DOCKER.txt (sección "Ver logs")
+→ O usa: iniciar-docker.bat/sh (opciones 7 y 8)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  🎓 RUTA DE APRENDIZAJE RECOMENDADA
+═══════════════════════════════════════════════════════════════════════════════
+
+NIVEL 1 - PRINCIPIANTE (Empezar a usar):
+1. INICIO_RAPIDO.txt
+2. Ejecutar iniciar-docker.bat o iniciar-docker.sh
+3. README.md (secciones: Descripción, Características, Uso)
+
+NIVEL 2 - INTERMEDIO (Entender el proyecto):
+1. README.md (completo)
+2. DOCKER_README.md
+3. COMANDOS_DOCKER.txt (secciones básicas)
+
+NIVEL 3 - AVANZADO (Dominar Docker):
+1. COMANDOS_DOCKER.txt (completo)
+2. ARQUITECTURA_DOCKER.txt
+3. Archivos Dockerfile y docker-compose.yml
+
+NIVEL 4 - EXPERTO (Modificar y contribuir):
+1. Código fuente (server.js, api.php, app.js)
+2. README.md (sección Contribución)
+3. Experimentar con modificaciones
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  ⚡ COMANDOS MÁS USADOS (REFERENCIA RÁPIDA)
+═══════════════════════════════════════════════════════════════════════════════
+
+Iniciar JavaScript:
+  cd "javascript version" && docker-compose up -d
+
+Iniciar PHP:
+  cd "php version" && docker-compose up -d
+
+Ver contenedores:
+  docker ps
+
+Ver logs:
+  docker logs tubrica-javascript
+  docker logs tubrica-php
+
+Detener todo:
+  docker stop tubrica-javascript tubrica-php
+
+Reconstruir:
+  docker-compose down && docker-compose build --no-cache && docker-compose up -d
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  📞 SOPORTE Y AYUDA
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Consulta la documentación relevante según tu necesidad
+2. Revisa la sección de solución de problemas
+3. Verifica los logs de los contenedores
+4. Contacta al equipo de desarrollo de TUBRICA
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  ✅ CHECKLIST DE DOCUMENTACIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
+Archivos de documentación disponibles:
+
+✓ README.md                    - Documentación general
+✓ INICIO_RAPIDO.txt            - Guía de inicio rápido
+✓ DOCKER_README.md             - Guía rápida Docker
+✓ COMANDOS_DOCKER.txt          - Comandos completos Docker
+✓ ARQUITECTURA_DOCKER.txt      - Arquitectura y diagramas
+✓ INDICE_DOCUMENTACION.txt     - Este índice
+✓ iniciar-docker.bat           - Script Windows
+✓ iniciar-docker.sh            - Script Linux/Mac
+✓ license.txt                  - Licencia del proyecto
+
+Archivos de configuración Docker:
+
+✓ javascript version/Dockerfile
+✓ javascript version/docker-compose.yml
+✓ javascript version/.dockerignore
+✓ php version/Dockerfile
+✓ php version/docker-compose.yml
+✓ php version/.dockerignore
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  🎯 RESUMEN
+═══════════════════════════════════════════════════════════════════════════════
+
+Este proyecto incluye documentación completa y organizada para facilitar su uso:
+
+• 8 archivos de documentación
+• 2 scripts de automatización
+• 6 archivos de configuración Docker
+• Guías paso a paso
+• Solución de problemas
+• Diagramas de arquitectura
+• Comandos de referencia rápida
+
+Todo está diseñado para que puedas empezar a usar el sistema rápidamente y
+tener toda la información necesaria cuando la necesites.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  FIN DEL ÍNDICE
+═══════════════════════════════════════════════════════════════════════════════

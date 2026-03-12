@@ -1,0 +1,153 @@
+═══════════════════════════════════════════════════════════════════════════════
+  🎨 SISTEMA DE COLORES AUTOMÁTICOS PARA RUTAS
+═══════════════════════════════════════════════════════════════════════════════
+
+CAMBIO IMPLEMENTADO:
+Ahora cada ruta trazada (manual o automática) se muestra con un color diferente,
+facilitando la distinción visual entre múltiples rutas en el mapa.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  ANTES vs DESPUÉS
+═══════════════════════════════════════════════════════════════════════════════
+
+ANTES:
+------
+❌ Todas las rutas tenían el mismo color azul (#3498db)
+❌ Difícil distinguir entre múltiples rutas
+❌ Confusión visual cuando hay muchas rutas
+
+DESPUÉS:
+--------
+✅ Cada ruta tiene un color único de una paleta de 20 colores
+✅ Fácil identificación visual de cada ruta
+✅ Mejor experiencia de usuario
+✅ Las rutas OMEGA mantienen su color naranja característico
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  CÓMO FUNCIONA
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Al crear una ruta nueva, se asigna automáticamente el siguiente color
+2. Los colores se asignan en secuencia de una paleta de 20 colores
+3. Después de usar los 20 colores, el ciclo vuelve a empezar
+4. Las rutas OMEGA siempre mantienen el color naranja (#e67e22)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PALETA DE 20 COLORES
+═══════════════════════════════════════════════════════════════════════════════
+
+Ruta 1:  🔴 Rojo          (#e74c3c)
+Ruta 2:  🔵 Azul          (#3498db)
+Ruta 3:  🟢 Verde         (#2ecc71)
+Ruta 4:  🟠 Naranja       (#f39c12)
+Ruta 5:  🟣 Púrpura       (#9b59b6)
+Ruta 6:  🔷 Turquesa      (#1abc9c)
+Ruta 7:  🟠 Naranja oscuro (#e67e22)
+Ruta 8:  ⚫ Gris oscuro   (#34495e)
+Ruta 9:  🔷 Verde azulado (#16a085)
+Ruta 10: 🟢 Verde esmeralda (#27ae60)
+Ruta 11: 🔵 Azul oscuro   (#2980b9)
+Ruta 12: 🟣 Púrpura oscuro (#8e44ad)
+Ruta 13: 🔴 Rojo oscuro   (#c0392b)
+Ruta 14: 🟠 Naranja quemado (#d35400)
+Ruta 15: 🟡 Amarillo      (#f1c40f)
+Ruta 16: 🩷 Rosa          (#e91e63)
+Ruta 17: 🔷 Cian          (#00bcd4)
+Ruta 18: 🟢 Verde claro   (#4caf50)
+Ruta 19: 🟠 Naranja brillante (#ff9800)
+Ruta 20: 🟤 Marrón        (#795548)
+
+Ruta 21: 🔴 Vuelve a Rojo (ciclo se repite)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  ARCHIVOS MODIFICADOS
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ javascript version/app.js
+  - Agregada paleta de 20 colores (ROUTE_COLORS)
+  - Agregada función getNextRouteColor()
+  - Agregada función getRandomRouteColor()
+  - Modificada función renderRoute() para usar colores automáticos
+
+✓ php version/app.js
+  - Agregada paleta de 20 colores (ROUTE_COLORS)
+  - Agregada función getNextRouteColor()
+  - Agregada función getRandomRouteColor()
+  - Modificada función renderRoute() para usar colores automáticos
+
+✓ README.md
+  - Actualizada sección de características
+
+✓ COLORES_RUTAS.md (NUEVO)
+  - Documentación completa del sistema de colores
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  CÓMO PROBAR
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Inicia la aplicación (JavaScript o PHP)
+2. Crea varias rutas usando cualquier método:
+   - Trazado manual
+   - Ruta inteligente
+3. Observa que cada ruta tiene un color diferente
+4. Las rutas OMEGA siguen siendo naranjas
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PERSONALIZACIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
+Para cambiar los colores, edita el array ROUTE_COLORS en app.js:
+
+const ROUTE_COLORS = [
+  "#e74c3c", // Rojo
+  "#3498db", // Azul
+  "#TU_COLOR_AQUI", // Agrega más colores
+];
+
+Puedes:
+- Agregar más colores al array
+- Cambiar los colores existentes
+- Reordenar los colores
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  NOTAS TÉCNICAS
+═══════════════════════════════════════════════════════════════════════════════
+
+• El contador de colores (colorIndex) se reinicia al recargar la página
+• Cada versión (JS y PHP) tiene su propio contador independiente
+• Los colores se asignan en el momento de crear la ruta
+• Las rutas guardadas mantienen su color al recargar
+• El sistema usa operador módulo (%) para ciclar los colores
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  BENEFICIOS
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Mejor experiencia visual
+✓ Fácil identificación de rutas
+✓ Reducción de confusión con múltiples rutas
+✓ Interfaz más profesional y moderna
+✓ Sin necesidad de configuración manual
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  COMPATIBILIDAD
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Funciona en ambas versiones (JavaScript y PHP)
+✓ Compatible con todas las funcionalidades existentes
+✓ No afecta el rendimiento
+✓ No requiere cambios en la base de datos
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  FIN DEL DOCUMENTO
+═══════════════════════════════════════════════════════════════════════════════

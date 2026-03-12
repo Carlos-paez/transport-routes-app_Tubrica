@@ -1,0 +1,187 @@
+═══════════════════════════════════════════════════════════════════════════════
+  🚀 INICIO RÁPIDO - SISTEMA TUBRICA CON DOCKER
+═══════════════════════════════════════════════════════════════════════════════
+
+Este archivo te ayudará a poner en marcha las aplicaciones en menos de 5 minutos.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  OPCIÓN 1: USAR SCRIPTS INTERACTIVOS (MÁS FÁCIL)
+═══════════════════════════════════════════════════════════════════════════════
+
+WINDOWS:
+--------
+1. Haz doble clic en: iniciar-docker.bat
+2. Selecciona la opción que desees del menú
+3. ¡Listo!
+
+LINUX/MAC:
+----------
+1. Abre la terminal en la carpeta del proyecto
+2. Ejecuta: chmod +x iniciar-docker.sh
+3. Ejecuta: ./iniciar-docker.sh
+4. Selecciona la opción que desees del menú
+5. ¡Listo!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  OPCIÓN 2: COMANDOS MANUALES
+═══════════════════════════════════════════════════════════════════════════════
+
+VERSIÓN JAVASCRIPT:
+-------------------
+1. Abre la terminal
+2. cd "javascript version"
+3. docker-compose up -d
+4. Abre tu navegador en: http://localhost:3000
+
+VERSIÓN PHP:
+------------
+1. Abre la terminal
+2. cd "php version"
+3. docker-compose up -d
+4. Abre tu navegador en: http://localhost:8080
+
+AMBAS VERSIONES:
+----------------
+Terminal 1:
+  cd "javascript version"
+  docker-compose up -d
+
+Terminal 2:
+  cd "php version"
+  docker-compose up -d
+
+Acceder:
+  JavaScript: http://localhost:3000
+  PHP:        http://localhost:8080
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  VERIFICAR QUE TODO FUNCIONA
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Ver contenedores en ejecución:
+   docker ps
+
+   Deberías ver algo como:
+   CONTAINER ID   IMAGE                  STATUS         PORTS
+   abc123def456   tubrica-javascript     Up 2 minutes   0.0.0.0:3000->3000/tcp
+   xyz789ghi012   tubrica-php            Up 2 minutes   0.0.0.0:8080->80/tcp
+
+2. Ver logs:
+   docker logs tubrica-javascript
+   docker logs tubrica-php
+
+3. Probar en el navegador:
+   http://localhost:3000  (JavaScript)
+   http://localhost:8080  (PHP)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  DETENER LAS APLICACIONES
+═══════════════════════════════════════════════════════════════════════════════
+
+VERSIÓN JAVASCRIPT:
+  cd "javascript version"
+  docker-compose down
+
+VERSIÓN PHP:
+  cd "php version"
+  docker-compose down
+
+AMBAS:
+  docker stop tubrica-javascript tubrica-php
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  SOLUCIÓN DE PROBLEMAS COMUNES
+═══════════════════════════════════════════════════════════════════════════════
+
+PROBLEMA: "Docker no está instalado"
+SOLUCIÓN: Instala Docker Desktop desde https://www.docker.com/products/docker-desktop
+
+PROBLEMA: "Puerto 3000 o 8080 ya está en uso"
+SOLUCIÓN: 
+  1. Edita docker-compose.yml en la carpeta correspondiente
+  2. Cambia "3000:3000" por "3001:3000" (o el puerto que prefieras)
+  3. Guarda y ejecuta: docker-compose up -d
+
+PROBLEMA: "El contenedor no inicia"
+SOLUCIÓN:
+  1. Ver logs: docker-compose logs
+  2. Reconstruir: docker-compose down
+                  docker-compose build --no-cache
+                  docker-compose up -d
+
+PROBLEMA: "No puedo acceder a la aplicación"
+SOLUCIÓN:
+  1. Verifica que el contenedor esté corriendo: docker ps
+  2. Verifica el puerto correcto en el navegador
+  3. Revisa los logs: docker logs tubrica-javascript (o tubrica-php)
+
+PROBLEMA: "Los cambios en el código no se reflejan"
+SOLUCIÓN:
+  1. Detén el contenedor: docker-compose down
+  2. Reconstruye: docker-compose build --no-cache
+  3. Inicia de nuevo: docker-compose up -d
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  COMANDOS ÚTILES DEL DÍA A DÍA
+═══════════════════════════════════════════════════════════════════════════════
+
+Ver logs en tiempo real:
+  docker-compose logs -f
+
+Reiniciar contenedor:
+  docker-compose restart
+
+Ver uso de recursos:
+  docker stats
+
+Entrar al contenedor (para debugging):
+  docker exec -it tubrica-javascript sh
+  docker exec -it tubrica-php bash
+
+Hacer backup de la base de datos:
+  docker cp tubrica-javascript:/app/routes.db ./backup-routes.db
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  ARCHIVOS DE DOCUMENTACIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
+📄 README.md                  → Documentación general del proyecto
+📄 DOCKER_README.md           → Guía rápida de Docker
+📄 COMANDOS_DOCKER.txt        → Lista completa de comandos Docker
+📄 ARQUITECTURA_DOCKER.txt    → Diagramas y arquitectura detallada
+📄 INICIO_RAPIDO.txt          → Este archivo (inicio rápido)
+
+🔧 iniciar-docker.bat         → Script interactivo para Windows
+🔧 iniciar-docker.sh          → Script interactivo para Linux/Mac
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PRÓXIMOS PASOS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. ✅ Inicia la aplicación con Docker
+2. 📖 Lee README.md para entender las funcionalidades
+3. 🎨 Personaliza la aplicación según tus necesidades
+4. 🔧 Consulta COMANDOS_DOCKER.txt para operaciones avanzadas
+5. 📊 Revisa ARQUITECTURA_DOCKER.txt para entender la estructura
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  ¿NECESITAS AYUDA?
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Revisa la documentación en los archivos .txt y .md
+2. Verifica los logs: docker-compose logs
+3. Consulta la sección de solución de problemas en COMANDOS_DOCKER.txt
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  ¡DISFRUTA USANDO EL SISTEMA TUBRICA!
+═══════════════════════════════════════════════════════════════════════════════

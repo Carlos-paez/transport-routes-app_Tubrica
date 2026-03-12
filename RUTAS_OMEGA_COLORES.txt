@@ -1,0 +1,235 @@
+═══════════════════════════════════════════════════════════════════════════════
+  🎨 RUTAS OMEGA CON COLORES DIFERENTES
+═══════════════════════════════════════════════════════════════════════════════
+
+CAMBIO IMPLEMENTADO:
+Las rutas OMEGA (rutas predefinidas de transporte) ahora se muestran cada una
+con un color diferente, facilitando su identificación visual en el mapa.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  ANTES vs DESPUÉS
+═══════════════════════════════════════════════════════════════════════════════
+
+ANTES:
+------
+❌ Todas las rutas OMEGA eran color naranja (#e67e22)
+❌ Difícil distinguir entre las diferentes rutas OMEGA
+❌ Confusión visual cuando se muestran múltiples rutas
+
+DESPUÉS:
+--------
+✅ Cada ruta OMEGA tiene un color único de la paleta
+✅ Fácil identificación visual de cada ruta
+✅ Mejor experiencia de usuario
+✅ Colores vibrantes y diferenciados
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  CÓMO FUNCIONA
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Al cargar la aplicación, se procesan las rutas OMEGA
+2. Cada ruta recibe el siguiente color de la paleta de 20 colores
+3. Las rutas se trazan automáticamente con sus colores únicos
+4. Los colores se asignan en el orden en que aparecen en OMEGA_WAYPOINTS
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  EJEMPLO VISUAL
+═══════════════════════════════════════════════════════════════════════════════
+
+Antes:
+  Ruta OMEGA 1: ━━━━━━━━ (Naranja)
+  Ruta OMEGA 2: ━━━━━━━━ (Naranja)
+  Ruta OMEGA 3: ━━━━━━━━ (Naranja)
+  ❌ Todas iguales
+
+Después:
+  Ruta OMEGA 1: ━━━━━━━━ (Rojo)
+  Ruta OMEGA 2: ━━━━━━━━ (Azul)
+  Ruta OMEGA 3: ━━━━━━━━ (Verde)
+  Ruta OMEGA 4: ━━━━━━━━ (Naranja)
+  Ruta OMEGA 5: ━━━━━━━━ (Púrpura)
+  ✅ Cada una diferente
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  ARCHIVOS MODIFICADOS
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ php version/app.js
+  - Función cargarRutasOmegaInteligentes()
+  - Cambio: isOmega = false, color = getNextRouteColor()
+
+✓ javascript version/app.js
+  - Función cargarRutasOmegaInteligentes()
+  - Cambio: isOmega = false, color = getNextRouteColor()
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  CÓDIGO MODIFICADO
+═══════════════════════════════════════════════════════════════════════════════
+
+ANTES:
+------
+const layer = renderRoute(polyCoords, routeData.name, `omega-${i}`, null, true);
+                                                                          ^^^^
+                                                                    isOmega = true
+                                                                    (todas naranjas)
+
+DESPUÉS:
+--------
+const omegaColor = getNextRouteColor();
+const layer = renderRoute(polyCoords, routeData.name, `omega-${i}`, null, false, omegaColor);
+                                                                          ^^^^^  ^^^^^^^^^^^
+                                                                    isOmega = false
+                                                                    color único
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  APLICAR CAMBIOS
+═══════════════════════════════════════════════════════════════════════════════
+
+OPCIÓN 1: Con Docker
+--------------------
+
+Versión PHP:
+cd "php version"
+docker-compose restart
+
+Versión JavaScript:
+cd "javascript version"
+docker-compose restart
+
+
+OPCIÓN 2: Sin Docker
+---------------------
+Simplemente recarga la página en tu navegador (F5 o Ctrl+R)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  VERIFICAR QUE FUNCIONA
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Abre la aplicación en tu navegador:
+   - JavaScript: http://localhost:3000
+   - PHP: http://localhost:8080
+
+2. Observa el panel lateral "🚌 Transporte OMEGA"
+
+3. Verifica que cada ruta OMEGA tiene un color diferente en el mapa
+
+4. Usa los checkboxes para mostrar/ocultar rutas individuales
+
+5. Haz clic en el nombre de una ruta para hacer zoom a ella
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PALETA DE COLORES PARA RUTAS OMEGA
+═══════════════════════════════════════════════════════════════════════════════
+
+Las rutas OMEGA usarán estos colores en orden:
+
+Ruta 1:  🔴 Rojo          (#e74c3c)
+Ruta 2:  🔵 Azul          (#3498db)
+Ruta 3:  🟢 Verde         (#2ecc71)
+Ruta 4:  🟠 Naranja       (#f39c12)
+Ruta 5:  🟣 Púrpura       (#9b59b6)
+Ruta 6:  🔷 Turquesa      (#1abc9c)
+Ruta 7:  🟠 Naranja oscuro (#e67e22)
+Ruta 8:  ⚫ Gris oscuro   (#34495e)
+Ruta 9:  🔷 Verde azulado (#16a085)
+Ruta 10: 🟢 Verde esmeralda (#27ae60)
+Ruta 11: 🔵 Azul oscuro   (#2980b9)
+Ruta 12: 🟣 Púrpura oscuro (#8e44ad)
+Ruta 13: 🔴 Rojo oscuro   (#c0392b)
+Ruta 14: 🟠 Naranja quemado (#d35400)
+Ruta 15: 🟡 Amarillo      (#f1c40f)
+Ruta 16: 🩷 Rosa          (#e91e63)
+Ruta 17: 🔷 Cian          (#00bcd4)
+Ruta 18: 🟢 Verde claro   (#4caf50)
+Ruta 19: 🟠 Naranja brillante (#ff9800)
+Ruta 20: 🟤 Marrón        (#795548)
+
+Si hay más de 20 rutas, el ciclo se repite.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  DIFERENCIAS ENTRE TIPOS DE RUTAS
+═══════════════════════════════════════════════════════════════════════════════
+
+RUTAS OMEGA (Predefinidas):
+✓ Se cargan automáticamente al iniciar
+✓ Cada una con color diferente de la paleta
+✓ No se guardan en la base de datos
+✓ Se pueden mostrar/ocultar desde el panel
+
+RUTAS MANUALES (Creadas por el usuario):
+✓ Se crean con trazado manual
+✓ Cada una con color diferente de la paleta
+✓ Se guardan en la base de datos
+✓ Color persistente entre sesiones
+
+RUTAS INTELIGENTES (OSRM):
+✓ Se crean con enrutamiento automático
+✓ Cada una con color diferente de la paleta
+✓ Se guardan en la base de datos
+✓ Color persistente entre sesiones
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  NOTAS TÉCNICAS
+═══════════════════════════════════════════════════════════════════════════════
+
+• Las rutas OMEGA se procesan en orden secuencial
+• Cada ruta obtiene el siguiente color disponible
+• El contador de colores es compartido con las rutas del usuario
+• Si creas rutas de usuario antes de cargar OMEGA, los colores se mezclan
+• Los colores se asignan en el orden de carga
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PERSONALIZACIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
+Si deseas cambiar los colores de las rutas OMEGA:
+
+1. Edita el array ROUTE_COLORS en app.js
+2. Agrega, elimina o reordena colores según prefieras
+3. Los cambios se aplicarán automáticamente
+
+Ejemplo:
+const ROUTE_COLORS = [
+  "#FF0000", // Rojo brillante
+  "#00FF00", // Verde brillante
+  "#0000FF", // Azul brillante
+  // ... más colores
+];
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  BENEFICIOS
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Mejor identificación visual de rutas OMEGA
+✓ Facilita el análisis de múltiples rutas simultáneas
+✓ Interfaz más profesional y moderna
+✓ Reduce confusión al trabajar con muchas rutas
+✓ Mejora la experiencia del usuario
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  COMPATIBILIDAD
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Funciona en ambas versiones (JavaScript y PHP)
+✓ Compatible con todas las funcionalidades existentes
+✓ No afecta el rendimiento
+✓ No requiere cambios en la base de datos
+✓ Retrocompatible con código existente
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  FIN DEL DOCUMENTO
+═══════════════════════════════════════════════════════════════════════════════

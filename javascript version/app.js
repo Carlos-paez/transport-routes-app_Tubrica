@@ -3,6 +3,44 @@
 // ==========================================
 const TUBRICA_LOCATION = L.latLng(10.09673945749423, -69.35846137671071);
 
+// Paleta de colores vibrantes para las rutas
+const ROUTE_COLORS = [
+  "#e74c3c", // Rojo
+  "#3498db", // Azul
+  "#2ecc71", // Verde
+  "#f39c12", // Naranja
+  "#9b59b6", // Púrpura
+  "#1abc9c", // Turquesa
+  "#e67e22", // Naranja oscuro
+  "#34495e", // Gris oscuro
+  "#16a085", // Verde azulado
+  "#27ae60", // Verde esmeralda
+  "#2980b9", // Azul oscuro
+  "#8e44ad", // Púrpura oscuro
+  "#c0392b", // Rojo oscuro
+  "#d35400", // Naranja quemado
+  "#f1c40f", // Amarillo
+  "#e91e63", // Rosa
+  "#00bcd4", // Cian
+  "#4caf50", // Verde claro
+  "#ff9800", // Naranja brillante
+  "#795548", // Marrón
+];
+
+let colorIndex = 0;
+
+// Función para obtener el siguiente color
+function getNextRouteColor() {
+  const color = ROUTE_COLORS[colorIndex % ROUTE_COLORS.length];
+  colorIndex++;
+  return color;
+}
+
+// Función para obtener un color aleatorio
+function getRandomRouteColor() {
+  return ROUTE_COLORS[Math.floor(Math.random() * ROUTE_COLORS.length)];
+}
+
 // Capas Base
 const mapaCalle = L.tileLayer(
   "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -79,11 +117,37 @@ const OMEGA_WAYPOINTS = [
   {
     name: "OESTE (Admin)",
     points: [
-      [10.063, -69.395],
-      [10.07, -69.39],
-      [10.073, -69.375],
-      [10.09, -69.378],
-      [10.0967, -69.3584],
+      [10.036946792710989, -69.39457370120459],
+      [10.032282058857287, -69.39408152059802],
+      [10.031163726980445, -69.39583285176832],
+      [10.028725053031852, -69.40243904859514],
+      [10.02574641877343, -69.40681424505227],
+      [10.025948719737052, -69.40619745864109],
+      [10.028763233795685, -69.40242558800593],
+      [10.02923403199984, -69.40246380948507],
+      [10.032026715454714, -69.40392633651274],
+      [10.032399693378599, -69.40399967911662],
+      [10.045804381239233, -69.40531726754776],
+      [10.046143178189599, -69.40598440978118],
+      [10.04588667086682, -69.40834989287501],
+      [10.04569729099272, -69.41001940974678],
+      [10.045655209233393, -69.4103135123892],
+      [10.045558651038721, -69.41132922038818],
+      [10.045440924114077, -69.41210693969653],
+      [10.021068015176473, -69.46800009861842],
+      [10.020661886181786, -69.46821654637175],
+      [10.019815238031994, -69.46977377563877],
+      [10.020081563065773, -69.46916915194362],
+      [10.02113143638665, -69.46757190248336],
+      [10.022156667131751, -69.46480927458],
+      [10.019235517395934, -69.46282166482864],
+      [10.020402372331773, -69.45750032035023],
+      [10.0247774815911, -69.45923439219241],
+      [10.02542939075191, -69.45889484570729],
+      [10.04293554975403, -69.41867511761735],
+      [10.042336648285424, -69.41878741883518],
+      [10.043076303067078, -69.41979298523161],
+      [10.096739097337583, -69.35843881714668],
     ],
     desc: "Cerro Mara - La Y - Rio Linare - El Caribe - El Tostado - TUBRICA",
   },
@@ -545,12 +609,15 @@ async function cargarRutasOmega() {
           c[1],
           c[0],
         ]);
+        // Asignar un color diferente a cada ruta OMEGA
+        const omegaColor = getNextRouteColor();
         const layer = renderRoute(
           polyCoords,
           routeData.name,
           `omega-${i}`,
           null,
-          true,
+          false,
+          omegaColor,
         );
 
         const item = document.createElement("div");
@@ -603,10 +670,14 @@ window.focusRoute = function (i) {
 // ==========================================
 // 4. FUNCIONES CORE (RENDER, SAVE, DELETE)
 // ==========================================
-function renderRoute(latlngs, name, id, dur = null, isOmega = false) {
+function renderRoute(latlngs, name, id, dur = null, isOmega = false, savedColor = null) {
   if (!latlngs || latlngs.length < 2) return;
+  
+  // Asignar color: usar color guardado, naranja para OMEGA, o color único para cada ruta nueva
+  const routeColor = savedColor || (isOmega ? "#e67e22" : getNextRouteColor());
+  
   const poly = L.polyline(latlngs, {
-    color: isOmega ? "#e67e22" : "#3498db",
+    color: routeColor,
     weight: 5,
     smoothFactor: 1.5,
   });
@@ -633,6 +704,7 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false) {
   group.type = "route";
   group.name = name;
   group.routeLine = poly;
+  group.routeColor = routeColor; // Guardar el color
   group.isDirty = false;
 
   group.refreshStats = function () {
@@ -737,11 +809,11 @@ map.on("mouseup", async () => {
 // ==========================================
 // 6. UTILIDADES Y PERSISTENCIA
 // ==========================================
-async function saveElement(n, t, g) {
+async function saveElement(n, t, g, color = null) {
   const res = await fetch("/api/elements", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name: n, type: t, geometry: g }),
+    body: JSON.stringify({ name: n, type: t, geometry: g, color: color }),
   });
   const d = await res.json();
   return d.id;
@@ -752,7 +824,7 @@ async function saveLayer(l) {
   await fetch(`/api/elements/${l.dbId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ geometry: l.routeLine.getLatLngs() }),
+    body: JSON.stringify({ geometry: l.routeLine.getLatLngs(), color: l.routeColor }),
   });
   l.isDirty = false;
 }
@@ -763,7 +835,7 @@ async function loadData() {
   data.forEach((el) => {
     let geo =
       typeof el.geometry === "string" ? JSON.parse(el.geometry) : el.geometry;
-    if (el.type === "route") renderRoute(geo, el.name, el.id);
+    if (el.type === "route") renderRoute(geo, el.name, el.id, null, false, el.color);
     else renderMarker(geo, el.name, el.id);
   });
 }
@@ -878,10 +950,12 @@ window.toggleEraser = () => {
 
 map.on(L.Draw.Event.CREATED, (e) => {
   const n = prompt("Nombre:");
-  if (n)
-    saveElement(n, "route", e.layer.getLatLngs()).then((id) =>
-      renderRoute(e.layer.getLatLngs(), n, id),
+  if (n) {
+    const color = getNextRouteColor();
+    saveElement(n, "route", e.layer.getLatLngs(), color).then((id) =>
+      renderRoute(e.layer.getLatLngs(), n, id, null, false, color),
     );
+  }
 });
 document.getElementById("eraserSlider").oninput = (e) => {
   eraserSize = parseInt(e.target.value);
@@ -897,7 +971,11 @@ async function fetchOSRMDirect(points) {
   if (data.routes && data.routes.length > 0) {
     const full = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
     const name = prompt("Nombre ruta a Sede:");
-    if (name) renderRoute(full, name, await saveElement(name, "route", full));
+    if (name) {
+      const color = getNextRouteColor();
+      const id = await saveElement(name, "route", full, color);
+      renderRoute(full, name, id, null, false, color);
+    }
   }
   resetModes();
 }
@@ -911,7 +989,11 @@ async function finalizeSmart() {
   if (data.routes) {
     const pts = data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]);
     const n = prompt("Nombre:");
-    if (n) renderRoute(pts, n, await saveElement(n, "route", pts));
+    if (n) {
+      const color = getNextRouteColor();
+      const id = await saveElement(n, "route", pts, color);
+      renderRoute(pts, n, id, null, false, color);
+    }
   }
   resetModes();
 }

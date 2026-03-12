@@ -22,6 +22,7 @@ db.serialize(() => {
     name TEXT,
     type TEXT,
     geometry TEXT,
+    color TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 });
@@ -36,10 +37,10 @@ app.get("/api/elements", (req, res) => {
 
 // Guardar nuevo
 app.post("/api/elements", (req, res) => {
-  const { name, type, geometry } = req.body;
+  const { name, type, geometry, color } = req.body;
   db.run(
-    "INSERT INTO elements (name, type, geometry) VALUES (?, ?, ?)",
-    [name, type, JSON.stringify(geometry)],
+    "INSERT INTO elements (name, type, geometry, color) VALUES (?, ?, ?, ?)",
+    [name, type, JSON.stringify(geometry), color || null],
     function (err) {
       res.json({ id: this.lastID });
     },
@@ -48,11 +49,20 @@ app.post("/api/elements", (req, res) => {
 
 // Actualizar (Borrador)
 app.put("/api/elements/:id", (req, res) => {
-  db.run(
-    "UPDATE elements SET geometry = ? WHERE id = ?",
-    [JSON.stringify(req.body.geometry), req.params.id],
-    () => res.json({ status: "ok" }),
-  );
+  const { geometry, color } = req.body;
+  if (color) {
+    db.run(
+      "UPDATE elements SET geometry = ?, color = ? WHERE id = ?",
+      [JSON.stringify(geometry), color, req.params.id],
+      () => res.json({ status: "ok" }),
+    );
+  } else {
+    db.run(
+      "UPDATE elements SET geometry = ? WHERE id = ?",
+      [JSON.stringify(geometry), req.params.id],
+      () => res.json({ status: "ok" }),
+    );
+  }
 });
 
 // Eliminar

@@ -1,20 +1,40 @@
-# Usamos la imagen oficial de PHP con Apache
+# Imagen base de PHP con Apache
 FROM php:8.2-apache
 
-# Instalamos la librería de desarrollo de sqlite3 en el sistema operativo
-# Pero NO intentamos reinstalar las extensiones de PHP que ya vienen incluidas
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     libsqlite3-dev \
+    curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Habilitamos el módulo de reescritura de Apache
-RUN a2enmod rewrite
+# Habilitar módulos de Apache necesarios
+RUN a2enmod rewrite headers
 
-# Copiamos los archivos de la aplicación
+# Configurar Apache para permitir .htaccess
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+
+# Configurar ServerName para evitar warnings
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+# Copiar archivos de la aplicación
 COPY . /var/www/html/
 
-# Ajustamos permisos para que Apache (www-data) pueda escribir en la DB y crear archivos temporales
-RUN chown -R www-data:www-data /var/www/html/ \
-    && chmod -R 775 /var/www/html/
+# Crear directorio para la base de datos si no existe
+RUN mkdir -p /var/www/html/
 
+# Ajustar permisos para que Apache pueda escribir en la base de datos
+RUN chown -R www-data:www-data /var/www/html/ \
+    && chmod -R 755 /var/www/html/ \
+    && chmod 777 /var/www/html/ \
+    && touch /var/www/html/routes.db \
+    && chmod 666 /var/www/html/routes.db
+
+# Exponer puerto
 EXPOSE 80
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+    CMD curl -f http://localhost/ || exit 1
+
+# Comando de inicio
+CMD ["apache2-foreground"]
