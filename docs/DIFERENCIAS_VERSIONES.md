@@ -17,7 +17,7 @@ Ambas versiones ahora funcionan **exactamente igual** con todas las funcionalida
 - **Servidor**: `api.php` (REST API)
 - **Puerto**: Depende del servidor web (Apache/Nginx/PHP built-in)
 - **Base de datos**: SQLite con PDO
-- **Inicio**: `php -S localhost:8000` (desde la carpeta php version)
+- **Inicio**: `php -S localhost:8000` (desde la carpeta `src/php`)
 
 ### Frontend
 Ambas versiones usan el **mismo código frontend**:
@@ -47,7 +47,7 @@ DELETE api.php?id=X
 
 ### Versión JavaScript
 ```bash
-cd "javascript version"
+cd src/javascript
 npm install
 node server.js
 # Abrir: http://localhost:3000
@@ -55,12 +55,12 @@ node server.js
 
 ### Versión PHP
 ```bash
-cd "php version"
+cd src/php
 php -S localhost:8000
 # Abrir: http://localhost:8000
 ```
 
-O usar Apache/Nginx apuntando a la carpeta `php version`.
+O usar Apache/Nginx apuntando a la carpeta `src/php`.
 
 ## ✨ Funcionalidades Implementadas (Ambas Versiones)
 

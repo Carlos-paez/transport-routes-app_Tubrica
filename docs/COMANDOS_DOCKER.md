@@ -24,7 +24,7 @@ y gestionar las aplicaciones en contenedores Docker.
 
 --- CONSTRUCCIÓN DE LA IMAGEN ---
 
-cd "javascript version"
+cd src/javascript
 docker-compose build
 
 
@@ -96,7 +96,7 @@ docker rmi tubrica-javascript
 
 --- CONSTRUCCIÓN DE LA IMAGEN ---
 
-cd "php version"
+cd src/php
 docker-compose build
 
 
@@ -172,11 +172,11 @@ docker rmi tubrica-php
 --- INICIAR AMBAS APLICACIONES ---
 
 # Terminal 1 - Versión JavaScript
-cd "javascript version"
+cd src/javascript
 docker-compose up -d
 
 # Terminal 2 - Versión PHP
-cd "php version"
+cd src/php
 docker-compose up -d
 
 
@@ -194,11 +194,11 @@ Versión PHP:        http://localhost:8080
 --- DETENER AMBAS APLICACIONES ---
 
 # Terminal 1
-cd "javascript version"
+cd src/javascript
 docker-compose down
 
 # Terminal 2
-cd "php version"
+cd src/php
 docker-compose down
 
 
@@ -306,7 +306,7 @@ docker exec tubrica-php chmod 777 /var/www/html/
 ═══════════════════════════════════════════════════════════════════════════════
 
 1. DESARROLLO INICIAL:
-   cd "javascript version"  (o "php version")
+   cd src/javascript  (o src/php)
    docker-compose build
    docker-compose up
 
@@ -334,7 +334,7 @@ docker exec tubrica-php chmod 777 /var/www/html/
 • Los contenedores se reinician automáticamente si fallan (restart: unless-stopped)
 • Cada versión corre en un contenedor independiente y aislado
 • Los puertos pueden cambiarse en docker-compose.yml si hay conflictos
-• Para Windows, usar comillas dobles en rutas con espacios: cd "javascript version"
+• Para Windows, revisar las rutas: cd src/javascript
 • Los healthchecks verifican automáticamente que las aplicaciones estén funcionando
 
 
@@ -343,10 +343,10 @@ docker exec tubrica-php chmod 777 /var/www/html/
 ═══════════════════════════════════════════════════════════════════════════════
 
 # JavaScript - Inicio rápido
-cd "javascript version" && docker-compose up -d && docker-compose logs -f
+cd src/javascript && docker-compose up -d && docker-compose logs -f
 
 # PHP - Inicio rápido
-cd "php version" && docker-compose up -d && docker-compose logs -f
+cd src/php && docker-compose up -d && docker-compose logs -f
 
 # Detener todo
 docker stop tubrica-javascript tubrica-php

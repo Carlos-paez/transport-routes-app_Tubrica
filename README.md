@@ -203,4 +203,4 @@ Para soporte técnico o consultas, consulta la documentación en `docs/` o abre 
 
 **🎉 Ambas versiones están 100% funcionales y listas para producción**
 
-*Última actualización: Marzo 2025*
+*Última actualización: Marzo 2026*

@@ -130,12 +130,12 @@ los contenedores se detienen o eliminan:
 │                                                                             │
 │  Host (Tu computadora)              Contenedor Docker                      │
 │                                                                             │
-│  javascript version/                /app/                                  │
+│  src/javascript/                    /app/                                  │
 │  ├── routes.db          ←──────────→ routes.db                             │
 │  ├── routes.db-shm      ←──────────→ routes.db-shm                         │
 │  └── routes.db-wal      ←──────────→ routes.db-wal                         │
 │                                                                             │
-│  php version/                       /var/www/html/                         │
+│  src/php/                           /var/www/html/                         │
 │  ├── routes.db          ←──────────→ routes.db                             │
 │  ├── routes.db-shm      ←──────────→ routes.db-shm                         │
 │  └── routes.db-wal      ←──────────→ routes.db-wal                         │

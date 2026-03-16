@@ -65,7 +65,7 @@
 
 ---
 
-### 6. [RESUMEN_REPARACION.md](RESUMEN_REPARACION.md)
+### 6. [RESUMEN_REPARACION.md](legacy/RESUMEN_REPARACION.md)
 **Descripción**: Cambios de la última reparación  
 **Contenido**:
 - Problemas encontrados
@@ -74,6 +74,16 @@
 - Archivos modificados
 
 **Cuándo usar**: Entender cambios recientes
+
+---
+
+### 7. [REORGANIZACION_COMPLETA.md](legacy/REORGANIZACION_COMPLETA.md)
+**Descripción**: Detalles sobre la migración a la estructura src/
+**Contenido**:
+- Archivos movidos
+- Estado final de directorios
+
+**Cuándo usar**: Entender por qué se movieron los archivos.
 
 ---
 
@@ -103,6 +113,8 @@ Archivos históricos consolidados en `HISTORIAL_DESARROLLO.md`:
 - VERIFICACION.txt
 - INDICE_DOCUMENTACION.txt
 - INICIO_RAPIDO.txt
+- RESUMEN_REPARACION.md
+- REORGANIZACION_COMPLETA.md
 
 **Nota**: Estos archivos se mantienen por referencia histórica pero su contenido está consolidado en la documentación actual.
 
