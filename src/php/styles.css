@@ -148,6 +148,107 @@ body {
   display: block;
 }
 
+/* Barra lateral derecha para información de rutas */
+#routes-sidebar {
+  width: 260px;
+  background: #1a1a2e;
+  color: white;
+  padding: 15px;
+  transition: transform 0.3s;
+  z-index: 1000;
+  flex-shrink: 0;
+  overflow-y: auto;
+  border-left: 3px solid #e94560;
+  position: relative;
+}
+
+#routes-sidebar.collapsed {
+  transform: translateX(260px);
+  margin-left: -260px;
+}
+
+#routes-toggle-btn {
+  position: absolute;
+  left: -25px;
+  top: 10px;
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 8px 10px;
+  cursor: pointer;
+  border-radius: 4px 0 0 4px;
+  font-size: 12px;
+  z-index: 1001;
+}
+
+#routes-sidebar h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e94560;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e94560;
+}
+
+#routes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.route-info-card {
+  background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+  border-radius: 8px;
+  padding: 12px;
+  border-left: 4px solid #e94560;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.route-info-card .route-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+.route-info-card .route-stats {
+  font-size: 0.8rem;
+  color: #a0a0a0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.route-info-card .route-stats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.route-info-card .route-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.route-info-card .route-actions button {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  background: #e94560;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.route-info-card .route-actions button:hover {
+  background: #c73e54;
+}
+
 .label-municipio {
   background: rgba(0, 0, 0, 0.5);
   color: white;

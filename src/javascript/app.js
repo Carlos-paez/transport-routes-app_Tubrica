@@ -78,6 +78,12 @@ const map = L.map("map", {
   layers: [mapaCalle],
 }).setView(TUBRICA_LOCATION, 13);
 
+// Capas de Contenido
+const boundaryLayer = L.layerGroup().addTo(map);
+const omegaLayer = L.layerGroup().addTo(map);
+const drawnItems = L.featureGroup().addTo(map);
+const markersLayer = L.layerGroup().addTo(map); // <--- NUEVA CAPA DE MARCADORES
+
 // Controles de Interfaz
 L.control
   .layers(
@@ -86,16 +92,13 @@ L.control
       Satélite: satelitePuro,
       "Vista Híbrida": mapaHibrido,
     },
-    null,
+    {
+      "📍 Marcadores": markersLayer, // Añadido al menu nativo
+    },
     { position: "topright", collapsed: false },
   )
   .addTo(map);
 L.control.zoom({ position: "bottomright" }).addTo(map);
-
-// Capas de Contenido
-const boundaryLayer = L.layerGroup().addTo(map);
-const omegaLayer = L.layerGroup().addTo(map);
-const drawnItems = L.featureGroup().addTo(map);
 
 let currentMode = null,
   smartRoutePoints = [],
@@ -105,7 +108,7 @@ let currentMode = null,
   eraserSize = 30;
 
 L.marker(TUBRICA_LOCATION, { interactive: false })
-  .addTo(map)
+  .addTo(markersLayer) // Asociado a su propia capa 
   .bindPopup("<b>📍 SEDE TUBRICA</b>")
   .openPopup();
 
@@ -621,6 +624,9 @@ async function cargarRutasOmega() {
           omegaColor,
         );
 
+        // Guardar el color en el objeto route para usar en la barra lateral
+        OMEGA_WAYPOINTS[i].color = omegaColor;
+        
         const item = document.createElement("div");
         item.className = "omega-item";
         item.innerHTML = `
@@ -695,8 +701,10 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false, savedColor 
     fillColor: "white",
     fillOpacity: 1,
   });
+  // Ocultar etiquetas de texto de las rutas - solo mostrar líneas
   const label = L.marker([0, 0], {
     interactive: false,
+    opacity: 0, // Hacer invisible la etiqueta
     icon: L.divIcon({ className: "route-label", html: "", iconSize: null }),
   });
 
@@ -708,6 +716,7 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false, savedColor 
   group.routeColor = routeColor; // Guardar el color
   group.isDirty = false;
 
+  group.routeName = name; // Guardar el nombre para la leyenda
   group.refreshStats = function () {
     const pts = poly.getLatLngs();
     if (pts.length < 2) return;
@@ -715,6 +724,8 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false, savedColor 
     for (let i = 1; i < pts.length; i++) m += map.distance(pts[i - 1], pts[i]);
     const dist = (m / 1000).toFixed(1);
     const time = Math.round(m / 11.11 / 60);
+    group.totalDistance = m;
+    group.totalTime = m / 11.11;
     label.setLatLng(pts[Math.floor(pts.length / 2)]);
     label.setIcon(
       L.divIcon({
@@ -725,6 +736,7 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false, savedColor 
     );
     start.setLatLng(pts[0]);
     end.setLatLng(pts[pts.length - 1]);
+    updateLegend(); // Actualizar la barra de leyenda derecha
   };
   group.refreshStats();
 
@@ -755,11 +767,13 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false, savedColor 
 // ==========================================
 map.on("click", (e) => {
   if (currentMode === "marker") {
-    const n = prompt("Nombre:");
-    if (n)
-      saveElement(n, "marker", e.latlng).then((id) =>
-        renderMarker(e.latlng, n, id),
-      );
+    const n = prompt("Nombre del marcador:");
+    if (n) {
+      saveElement(n, "marker", e.latlng).then(id => {
+        renderMarker(e.latlng, n, id);
+        setStatus("Marcador creado: " + n);
+      });
+    }
   } else if (currentMode === "smart") {
     smartRoutePoints.push(e.latlng);
     const m = L.circleMarker(e.latlng, {
@@ -848,7 +862,7 @@ function renderMarker(latlng, name, id) {
     L.DomEvent.stopPropagation(e);
     if (currentMode === "delete") handleDelete(m);
   });
-  m.addTo(drawnItems);
+  m.addTo(markersLayer); // Lo añadimos a la capa controlable de marcadores
 }
 
 async function handleDelete(l) {
@@ -857,6 +871,7 @@ async function handleDelete(l) {
       await fetch(`/api/elements/${l.dbId}`, { method: "DELETE" });
     drawnItems.removeLayer(l);
     omegaLayer.removeLayer(l);
+    markersLayer.removeLayer(l); // Asegurar que lo removemos si era un marcador
   }
 }
 
@@ -907,6 +922,7 @@ function resetModes() {
   if (map._drawControl) {
     try {
       map._drawControl.disable();
+      map._drawControl = null;
     } catch (e) {
       // Ignorar errores si ya está desactivado
     }
@@ -934,6 +950,109 @@ window.toggleSidebar = () => {
   document.getElementById("sidebar").classList.toggle("collapsed");
   setTimeout(() => map.invalidateSize(), 300);
 };
+
+// ==========================================
+// BARRA LATERAL DERECHA - INFORMACIÓN DE RUTAS
+// ==========================================
+window.toggleRoutesSidebar = () => {
+  const sidebar = document.getElementById("routes-sidebar");
+  const btn = document.getElementById("routes-toggle-btn");
+  sidebar.classList.toggle("collapsed");
+  if (sidebar.classList.contains("collapsed")) {
+    btn.textContent = "▶";
+  } else {
+    btn.textContent = "◀";
+  }
+  setTimeout(() => map.invalidateSize(), 300);
+};
+
+window.updateRoutesList = () => {
+  const list = document.getElementById("routes-list");
+  list.innerHTML = "";
+  
+  // Agregar rutas OMEGA
+  OMEGA_WAYPOINTS.forEach((route, i) => {
+    if (route.layer) {
+      const card = document.createElement("div");
+      card.className = "route-info-card";
+      card.style.borderLeftColor = route.color || "#3498db";
+      
+      // Calcular distancia y tiempo si está disponible
+      const distance = route.layer.totalDistance || 0;
+      const time = route.layer.totalTime || 0;
+      const distanciaKm = (distance / 1000).toFixed(1);
+      const tiempoMin = Math.round(time / 60);
+      
+      card.innerHTML = `
+        <div class="route-title">${route.name}</div>
+        <div class="route-stats">
+          <span>📏 ${distanciaKm} km</span>
+          <span>⏱ ${tiempoMin} min</span>
+          <span>👥 ${route.passengers || "?"} pers</span>
+        </div>
+        <div class="route-actions">
+          <button onclick="focusRoute(${i})">👁 Ver</button>
+        </div>
+      `;
+      list.appendChild(card);
+    }
+  });
+  
+  // Agregar rutas dibujadas por el usuario
+  if (drawnItems && drawnItems.getLayers) {
+    drawnItems.getLayers().forEach((layer, i) => {
+      if (layer instanceof L.Polyline) {
+        const card = document.createElement("div");
+        card.className = "route-info-card";
+        const routeName = layer.routeName || `Ruta ${i + 1}`;
+        const distance = layer.routeDistance || 0;
+        const time = layer.routeTime || 0;
+        const distanciaKm = (distance / 1000).toFixed(1);
+        const tiempoMin = Math.round(time / 60);
+        
+        card.innerHTML = `
+          <div class="route-title">${routeName}</div>
+          <div class="route-stats">
+            <span>📏 ${distanciaKm} km</span>
+            <span>⏱ ${tiempoMin} min</span>
+          </div>
+          <div class="route-actions">
+            <button onclick="focusDrawnRoute(${i})">👁 Ver</button>
+            <button onclick="deleteDrawnRoute(${i})">🗑</button>
+          </div>
+        `;
+        list.appendChild(card);
+      }
+    });
+  }
+};
+
+window.focusDrawnRoute = (i) => {
+  if (drawnItems && drawnItems.getLayers) {
+    const layers = drawnItems.getLayers();
+    if (layers[i]) {
+      map.fitBounds(layers[i].getBounds());
+    }
+  }
+};
+
+window.deleteDrawnRoute = (i) => {
+  if (drawnItems && drawnItems.getLayers) {
+    const layers = drawnItems.getLayers();
+    if (layers[i]) {
+      drawnItems.removeLayer(layers[i]);
+      updateRoutesList();
+    }
+  }
+};
+
+// Actualizar la lista cuando se cargan las rutas omega
+const originalCargarRutasOmega = cargarRutasOmega;
+cargarRutasOmega = async function() {
+  await originalCargarRutasOmega();
+  updateRoutesList();
+};
+
 window.enableManualDraw = () => {
   resetModes();
   currentMode = "manual";
@@ -991,9 +1110,11 @@ map.on(L.Draw.Event.CREATED, (e) => {
     if (n) {
       const latlngs = e.layer.getLatLngs();
       const color = e.layer.options.color || getNextRouteColor();
-      saveElement(n, "route", latlngs, color).then((id) => {
+      saveElement(n, "route", latlngs, color).then(id => {
         renderRoute(latlngs, n, id, null, false, color);
         resetModes();
+        updateRoutesList();
+        setStatus("Ruta creada: " + n);
       });
     } else {
       resetModes();
@@ -1093,3 +1214,52 @@ map.on(L.Draw.Event.DRAWSTOP, () => {
     }, 100);
   }
 });
+
+// ==========================================
+// BARRA DE LEYENDA - PANEL DERECHO
+// ==========================================
+function updateLegend() {
+  const container = document.getElementById("legend-content");
+  if (!container) return;
+  container.innerHTML = "";
+
+  const allLayers = [];
+  omegaLayer.eachLayer((l) => { if (l.routeLine) allLayers.push(l); });
+  drawnItems.eachLayer((l) => { if (l.routeLine) allLayers.push(l); });
+
+  if (allLayers.length === 0) {
+    container.innerHTML = '<p style="color:#aaa;font-size:12px;padding:8px;">Sin rutas activas</p>';
+    return;
+  }
+
+  allLayers.forEach((group) => {
+    const name = group.routeName || "Ruta sin nombre";
+    const color = group.routeColor || "#3498db";
+    const dist = group.totalDistance ? (group.totalDistance / 1000).toFixed(2) + " km" : "—";
+    const time = group.totalTime ? Math.round(group.totalTime / 60) + " min" : "—";
+    const pax = group.passengers !== undefined ? group.passengers : "N/D";
+    const card = document.createElement("div");
+    card.className = "legend-card";
+    card.style.borderLeft = `4px solid ${color}`;
+    card.innerHTML = `<div class="legend-card-name" style="color:${color};">${name}</div><div class="legend-card-stats"><span>📎 ${dist}</span><span>⏱ ${time}</span><span>👥 ${pax}</span></div>`;
+    container.appendChild(card);
+  });
+}
+
+window.toggleRightSidebar = function () {
+  const sidebar = document.getElementById("right-sidebar");
+  const btn = document.getElementById("toggle-right-sidebar");
+  sidebar.classList.toggle("collapsed");
+  btn.textContent = sidebar.classList.contains("collapsed") ? "◄" : "►";
+};
+
+function refreshStats(group) {
+  if (group) {
+    const lls = group.routeLine.getLatLngs();
+    let dist = 0;
+    for (let i = 1; i < lls.length; i++) dist += lls[i - 1].distanceTo(lls[i]);
+    group.totalDistance = dist;
+    group.totalTime = (dist / 1000 / 40) * 3600;
+  }
+  updateLegend();
+}

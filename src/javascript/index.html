@@ -74,6 +74,12 @@
         <div id="status">Modo: Inactivo</div>
       </div>
       <div id="map"></div>
+      <!-- Barra lateral derecha colapsable para información de rutas -->
+      <div id="routes-sidebar">
+        <button id="routes-toggle-btn" onclick="toggleRoutesSidebar()">◀</button>
+        <h3>📋 Rutas</h3>
+        <div id="routes-list"></div>
+      </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
