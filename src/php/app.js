@@ -119,7 +119,7 @@ L.marker(TUBRICA_LOCATION, { interactive: false }).addTo(markersLayer).bindPopup
 const OMEGA_WAYPOINTS = [
   // --- PAGINA 1 ---
   {
-    name: "OESTE (Admin)",
+    name: "OESTE (Admin)", passengers: 27,
     points: [
       [10.036948, -69.394599],
   [10.036409, -69.394497],
@@ -707,7 +707,7 @@ const OMEGA_WAYPOINTS = [
     desc: "Cerro Mara - La Y - Rio Linare - El Caribe - El Tostado - TUBRICA",
   },
   /*{
-    name: "SUR OESTE (Admin)",
+    name: "SUR OESTE (Admin)", passengers: 25,
     points: [
       [10.052, -69.358],
       [10.055, -69.362],
@@ -718,7 +718,7 @@ const OMEGA_WAYPOINTS = [
     desc: "Horcones - Carucieña - Cerrajones - Ruiz Pineda - Sta Isabel - TUBRICA",
   },*/
   {
-    name: "PAVIA (Admin y Rot)",
+    name: "PAVIA (Admin y Rot)", passengers: 10,
     points: [
       [10.101963955594941, -69.4369901160083],
       [10.076212201255366, -69.4002094662229],
@@ -727,7 +727,7 @@ const OMEGA_WAYPOINTS = [
     desc: "Punto Fe y Alegría - Altos de Pavía - TUBRICA",
   },
   /*{
-    name: "SUR OESTE (Rot)",
+    name: "SUR OESTE (Rot)", passengers: 20,
     points: [
       [10.052, -69.358],
       [10.06, -69.365],
@@ -737,7 +737,7 @@ const OMEGA_WAYPOINTS = [
     desc: "Gimnasio Los Horcones - Carucieña - Ruiz Pineda - TUBRICA",
   },
   {
-    name: "OESTE (Rot)",
+    name: "OESTE (Rot)", passengers: 10,
     points: [
       [10.063, -69.395],
       [10.072, -69.388],
@@ -747,7 +747,7 @@ const OMEGA_WAYPOINTS = [
     desc: "Cerro Mara - La Y - Rio Linare - Nueva Paz - Valle Dorado - TUBRICA",
   },
   {
-    name: "CABUDARE (Rot)",
+    name: "CABUDARE (Rot)", passengers: 4,
     points: [
       [10.035, -69.268],
       [10.042, -69.285],
@@ -758,7 +758,7 @@ const OMEGA_WAYPOINTS = [
     desc: "Trigal - Plaza Bolivar - Chucho Briceño - Agua Viva - TUBRICA",
   },
   {
-    name: "PAVIA (Rot)",
+    name: "PAVIA (Rot)", passengers: 4,
     points: [
       [10.102243296082907, -69.43746036939227],
       [10.076212201255366, -69.4002094662229],
@@ -767,7 +767,7 @@ const OMEGA_WAYPOINTS = [
     desc: "C.C. Quatro's C.A. - TUBRICA",
   },*/
   {
-    name: "CABUDARE A (Admin)",
+    name: "CABUDARE A (Admin)", passengers: 10,
     points: [
       [10.01131109931415, -69.30110831668796],
       [10.017873706427734, -69.30305997339077],
@@ -811,7 +811,7 @@ const OMEGA_WAYPOINTS = [
     desc: "Loma Alta - Agua Viva - Fermin Toro - Cabudare Centro - Ribereña - TUBRICA",
   },
   {
-    name: "CABUDARE B (Admin)",
+    name: "CABUDARE B (Admin)", passengers: 13,
     points: [
       [10.032446362056294, -69.25246424678818],
       [10.032139864373757, -69.25256729455693],
@@ -880,7 +880,7 @@ const OMEGA_WAYPOINTS = [
     desc: "El Recreo - La Campiña - La Mora - El Palmar - TUBRICA",
   },
   {
-    name: "CABUDARE B 'la Mora' (Admin)",
+    name: "CABUDARE B 'la Mora' (Admin)", passengers: 6,
     points: [
   [10.012676, -69.243369],
   [10.013293, -69.242893],
@@ -1297,7 +1297,7 @@ const OMEGA_WAYPOINTS = [
     desc: "El Recreo - La Campiña - La Mora - El Palmar - TUBRICA",
   },
   /*{
-    name: "RUEZGA / UNION (Rot)",
+    name: "RUEZGA / UNION (Rot)", passengers: 37,
     points: [
       [10.108, -69.315],
       [10.102, -69.325],
@@ -1308,7 +1308,7 @@ const OMEGA_WAYPOINTS = [
     desc: "Ruezga Sect 4 y 7 - Santos Luzardo - B. Union - La Peña - TUBRICA",
   },
   {
-    name: "ESTE-CENTRO (Rot)",
+    name: "ESTE-CENTRO (Rot)", passengers: 18,
     points: [
       [10.078, -69.295],
       [10.072, -69.305],
@@ -1319,7 +1319,7 @@ const OMEGA_WAYPOINTS = [
     desc: "Rio Lama - Vargas - Libertador - Metropolis - Seguro - TUBRICA",
   },
  {
-    name: "NORTE (Rot)",
+    name: "NORTE (Rot)", passengers: 4,
     points: [
       [10.155, -69.305],
       [10.132, -69.325],
@@ -1330,7 +1330,7 @@ const OMEGA_WAYPOINTS = [
     desc: "Ali Primera - Yucatan - Via Duaca - El Cuji - Circunvalacion - TUBRICA",
   },*/
   {
-    name: "ESTE 1 (Admin)",
+    name: "ESTE 1 (Admin)", passengers: 16,
     points: [
       [10.117361844713395, -69.2473873897263],
       [10.109304574665842, -69.25114866052009],
@@ -1377,7 +1377,7 @@ const OMEGA_WAYPOINTS = [
     desc: "Plaza del Cercado - Brisas del Este - Los Proceres - El Jebe - TUBRICA",
   },
   /*{
-    name: "ESTE 2 (Admin)",
+    name: "ESTE 2 (Admin)", passengers: 6,
     points: [
       [10.005, -69.242],
       [10.015, -69.265],
@@ -1387,7 +1387,7 @@ const OMEGA_WAYPOINTS = [
     desc: "El Recreo - Piedad Norte - La Mora - TUBRICA",
   },*/
   {
-    name: "MANZANO CENTRO (Admin)",
+    name: "MANZANO CENTRO (Admin)", passengers: 6,
     points: [
       [10.065754563512881, -69.30827898493779],
       [10.0610509948013, -69.31484988417411],
@@ -1420,7 +1420,7 @@ const OMEGA_WAYPOINTS = [
   },
   // --- PAGINA 2 ---
   {
-    name: "NORTE (Admin)",
+    name: "NORTE (Admin)", passengers: 21,
     points: [
       [10.206372210955742, -69.30584636546004],
       [10.200856688748825, -69.30466524850138],
@@ -1435,8 +1435,8 @@ const OMEGA_WAYPOINTS = [
     desc: "Yucatan - Tamaca - Sabana Grande - Macias Mujica - Zona Ind II - TUBRICA",
   },
   {
-    //traza desvios erroneos cerca del callejon y la calle 11 con calle 1, son lineas rectas, sin cruces
-    name: "RUEZGA / UNION (Admin)",
+    
+    name: "RUEZGA / UNION (Admin)", passengers: 26,
     points: [
       [10.102015067019032, -69.33458629573151],
       [10.098963762024699, -69.33325106601977],
@@ -1529,11 +1529,12 @@ async function cargarRutasOmegaInteligentes() {
             } else if (!usedColors.includes(omegaColor)) {
                 usedColors.push(omegaColor);
             }
-            const layer = renderRoute(savedRoute.geometry, routeData.name, savedRoute.id, null, true, omegaColor);
+            const layer = renderRoute(savedRoute.geometry, routeData.name, savedRoute.id, null, true, omegaColor, routeData.passengers);
             // layer.addTo(omegaLayer); // Ya se agrega dentro de renderRoute si isOmega=true
             
             // Guardar el color en el objeto route para usar en la barra lateral
             OMEGA_WAYPOINTS[i].color = omegaColor;
+            OMEGA_WAYPOINTS[i].passengers = routeData.passengers || "N/D"; // Asegurar que pase al sidebar
             
             const item = document.createElement("div");
             item.className = "omega-item";
@@ -1552,9 +1553,10 @@ async function cargarRutasOmegaInteligentes() {
                 
                 // Guardar en BD la primera vez para consistencia
                 saveElement(routeData.name, 'route', polyCoords, omegaColor).then(newId => {
-                    const layer = renderRoute(polyCoords, routeData.name, newId, null, true, omegaColor);
+                    const layer = renderRoute(polyCoords, routeData.name, newId, null, true, omegaColor, routeData.passengers);
                     // layer.addTo(omegaLayer);
                     OMEGA_WAYPOINTS[i].layer = layer;
+                    OMEGA_WAYPOINTS[i].passengers = routeData.passengers || "N/D"; // Asegurar que pase al sidebar
                 });
 
                 OMEGA_WAYPOINTS[i].color = omegaColor;
@@ -1581,11 +1583,12 @@ async function cargarRutasOmegaInteligentes() {
                     
                     // Guardar en BD la primera vez
                     const newId = await saveElement(routeData.name, 'route', polyCoords, omegaColor);
-                    const layer = renderRoute(polyCoords, routeData.name, newId, null, true, omegaColor);
+                    const layer = renderRoute(polyCoords, routeData.name, newId, null, true, omegaColor, routeData.passengers);
                     // layer.addTo(omegaLayer);
 
                     // Guardar el color en el objeto route para usar en la barra lateral
                     OMEGA_WAYPOINTS[i].color = omegaColor;
+                    OMEGA_WAYPOINTS[i].passengers = routeData.passengers || "N/D"; // Asegurar que pase al sidebar
                     
                     const item = document.createElement("div");
                     item.className = "omega-item";
@@ -1605,7 +1608,7 @@ async function cargarRutasOmegaInteligentes() {
 // ==========================================
 // 4. RENDERIZADO Y PERSISTENCIA (PHP)
 // ==========================================
-function renderRoute(latlngs, name, id, dur = null, isOmega = false, savedColor = null) {
+function renderRoute(latlngs, name, id, dur = null, isOmega = false, savedColor = null, passengers = null) {
     if (!latlngs || latlngs.length < 2) return;
     
     // Asignar color: usar color guardado, o color único para cada ruta nueva
@@ -1625,6 +1628,7 @@ function renderRoute(latlngs, name, id, dur = null, isOmega = false, savedColor 
     group.routeLine = poly; 
     group.routeColor = routeColor; // Guardar el color
     group.isDirty = false;
+    group.passengers = passengers || "N/D"; // <--- NUEVO CAMPO: PERSONAS POR RUTA
 
     group.routeName = name; // Guardar el nombre para la leyenda
     group.refreshStats = function () {
