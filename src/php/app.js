@@ -11,20 +11,40 @@ const ROUTE_COLORS = [
     "#f39c12", // Naranja
     "#9b59b6", // Púrpura
     "#1abc9c", // Turquesa
-    "#e67e22", // Naranja oscuro
+    "#ff1493", // Rosa Profundo
     "#34495e", // Gris oscuro
     "#16a085", // Verde azulado
-    "#27ae60", // Verde esmeralda
-    "#2980b9", // Azul oscuro
-    "#8e44ad", // Púrpura oscuro
-    "#c0392b", // Rojo oscuro
-    "#d35400", // Naranja quemado
     "#f1c40f", // Amarillo
-    "#e91e63", // Rosa
+    "#2980b9", // Azul oscuro
+    "#e67e22", // Naranja oscuro
+    "#8e44ad", // Púrpura oscuro
+    "#27ae60", // Verde esmeralda
+    "#c0392b", // Rojo oscuro
     "#00bcd4", // Cian
+    "#d35400", // Naranja quemado
     "#4caf50", // Verde claro
-    "#ff9800", // Naranja brillante
+    "#e91e63", // Rosa
     "#795548", // Marrón
+    "#00bfff", // Azul Cielo Profundo
+    "#7fff00", // Cartujo (Verde Lima)
+    "#ff6347", // Tomate
+    "#6a5acd", // Azul Pizarra
+    "#32cd32", // Verde Lima
+    "#ffd700", // Oro
+    "#da70d6", // Orquídea
+    "#1e90ff", // Azul Esquivador
+    "#228b22", // Verde Bosque
+    "#daa520", // Vara de Oro
+    "#cd5c5c", // Rojo Indio
+    "#4682b4", // Azul Acero
+    "#556b2f", // Verde Oliva Oscuro
+    "#ff7f50", // Coral
+    "#9370db", // Púrpura Medio
+    "#3cb371", // Verde Mar Medio
+    "#4169e1", // Azul Real
+    "#9932cc", // Orquídea Oscura
+    "#008b8b", // Cian Oscuro
+    "#ff9800"  // Naranja Brillante
 ];
 
 let colorIndex = 0;
@@ -1130,23 +1150,28 @@ init();
 async function cargarRutasOmegaInteligentes() {
     const list = document.getElementById("omega-route-list");
     list.innerHTML = "";
+    
+    // Reiniciar colores para una nueva asignación limpia
+    usedColors = [];
+    colorIndex = 0;
 
     // Primero cargar rutas guardadas desde la BD
     const res = await fetch('api.php');
     const savedData = await res.json();
-    const savedOmegaRoutes = savedData.filter(el => el.type === 'route' && el.name && el.name.includes('(Admin)') || el.name.includes('(Rot)'));
     
     // Crear un mapa de rutas guardadas por nombre
     const savedRoutesMap = {};
-    savedOmegaRoutes.forEach(route => {
-        savedRoutesMap[route.name] = route;
+    savedData.forEach(route => {
+        if (route.type === 'route' && checkIsOmega(route.name)) {
+            savedRoutesMap[route.name.trim()] = route;
+        }
     });
 
     for (let i = 0; i < OMEGA_WAYPOINTS.length; i++) {
         const routeData = OMEGA_WAYPOINTS[i];
         
         // Verificar si existe una versión guardada
-        const savedRoute = savedRoutesMap[routeData.name];
+        const savedRoute = savedRoutesMap[routeData.name.trim()];
         
         if (savedRoute) {
             // Usar la versión guardada (editada)
@@ -1157,6 +1182,7 @@ async function cargarRutasOmegaInteligentes() {
                 usedColors.push(omegaColor);
             }
             const layer = renderRoute(savedRoute.geometry, routeData.name, savedRoute.id, null, true, omegaColor);
+            // layer.addTo(omegaLayer); // Ya se agrega dentro de renderRoute si isOmega=true
             
             // Guardar el color en el objeto route para usar en la barra lateral
             OMEGA_WAYPOINTS[i].color = omegaColor;
@@ -1179,6 +1205,7 @@ async function cargarRutasOmegaInteligentes() {
                 // Guardar en BD la primera vez para consistencia
                 saveElement(routeData.name, 'route', polyCoords, omegaColor).then(newId => {
                     const layer = renderRoute(polyCoords, routeData.name, newId, null, true, omegaColor);
+                    // layer.addTo(omegaLayer);
                     OMEGA_WAYPOINTS[i].layer = layer;
                 });
 
@@ -1207,6 +1234,7 @@ async function cargarRutasOmegaInteligentes() {
                     // Guardar en BD la primera vez
                     const newId = await saveElement(routeData.name, 'route', polyCoords, omegaColor);
                     const layer = renderRoute(polyCoords, routeData.name, newId, null, true, omegaColor);
+                    // layer.addTo(omegaLayer);
 
                     // Guardar el color en el objeto route para usar en la barra lateral
                     OMEGA_WAYPOINTS[i].color = omegaColor;
@@ -1232,8 +1260,8 @@ async function cargarRutasOmegaInteligentes() {
 function renderRoute(latlngs, name, id, dur = null, isOmega = false, savedColor = null) {
     if (!latlngs || latlngs.length < 2) return;
     
-    // Asignar color: usar color guardado, naranja para OMEGA, o color único para cada ruta nueva
-    const routeColor = savedColor || (isOmega ? "#e67e22" : getNextRouteColor());
+    // Asignar color: usar color guardado, o color único para cada ruta nueva
+    const routeColor = savedColor || getNextRouteColor();
     
     const poly = L.polyline(latlngs, { color: routeColor, weight: 5, smoothFactor: 1.5 });
 
@@ -1342,8 +1370,49 @@ window.exportMapToPDF = function () {
 // ==========================================
 // 6. UTILIDADES Y HERRAMIENTAS
 // ==========================================
-// toggleOmegaLayer y toggleAllOmega definidos mas abajo (con soporte de updateLegend)
-window.focusRoute = (i) => map.fitBounds(OMEGA_WAYPOINTS[i].layer.getLayers().find(l => l instanceof L.Polyline).getBounds(), { padding: [50, 50] });
+window.toggleOmegaLayer = (i, show) => {
+    const route = OMEGA_WAYPOINTS[i];
+    if (route && route.layer) {
+        if (show) {
+            if (!omegaLayer.hasLayer(route.layer)) omegaLayer.addLayer(route.layer);
+        } else {
+            omegaLayer.removeLayer(route.layer);
+        }
+        updateLegend();
+    }
+};
+
+window.toggleAllOmega = (show) => {
+    // 1. Sincronizar checkboxes de la lista predefinida
+    OMEGA_WAYPOINTS.forEach((route, i) => {
+        const chk = document.getElementById(`chk-omega-${i}`);
+        if (chk) chk.checked = show;
+    });
+    
+    // 2. Operar sobre el grupo omegaLayer completo
+    if (show) {
+        // Asegurar que todas las capas predefinidas estén en el grupo
+        OMEGA_WAYPOINTS.forEach(route => {
+            if (route.layer && !omegaLayer.hasLayer(route.layer)) {
+                omegaLayer.addLayer(route.layer);
+            }
+        });
+    } else {
+        // Limpiar el grupo por completo para ocultar TODO lo automático
+        omegaLayer.clearLayers();
+    }
+    updateLegend();
+};
+
+window.focusRoute = (i) => {
+    const route = OMEGA_WAYPOINTS[i];
+    if (route && route.layer) {
+        const polyline = route.layer.getLayers().find(l => l instanceof L.Polyline);
+        if (polyline) {
+            map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+        }
+    }
+};
 
 map.on("click", (e) => {
     if (currentMode === "marker") {
@@ -1398,15 +1467,31 @@ async function saveLayer(l) {
     l.isDirty = false;
 }
 
+// Helper para identificar si una ruta es de tipo Omega (automática)
+function checkIsOmega(name) {
+    if (!name) return false;
+    const n = name.trim();
+    // 1. Verificar contra la lista de nombres predefinidos
+    const isPredefined = OMEGA_WAYPOINTS.some(w => w.name.trim() === n);
+    if (isPredefined) return true;
+    
+    // 2. Verificar por patrones comunes (Admin o Rot)
+    const upperN = n.toUpperCase();
+    return upperN.includes('ADMIN') || upperN.includes('ROT');
+}
+
 async function loadData() {
     const res = await fetch('api.php');
     const data = await res.json();
+    
     // Solo cargar rutas que NO sean Omega (las Omega se cargan en cargarRutasOmegaInteligentes)
     data.forEach(el => {
-        const isOmegaRoute = el.type === 'route' && el.name && (el.name.includes('(Admin)') || el.name.includes('(Rot)'));
-        if (!isOmegaRoute) {
-            if (el.type === 'route') renderRoute(el.geometry, el.name, el.id, null, false, el.color);
-            else renderMarker(el.geometry, el.name, el.id);
+        if (el.type === 'route') {
+            if (!checkIsOmega(el.name)) {
+                renderRoute(el.geometry, el.name, el.id, null, false, el.color);
+            }
+        } else {
+            renderMarker(el.geometry, el.name, el.id);
         }
     });
 }
@@ -1573,8 +1658,12 @@ map.on(L.Draw.Event.CREATED, e => {
     if (n) {
         const color = getNextRouteColor();
         const latlngs = e.layer.getLatLngs();
+        
+        // Determinar si el nombre coincide con una ruta Omega
+        const isOmegaName = checkIsOmega(n);
+        
         saveElement(n, 'route', latlngs, color).then(id => {
-            renderRoute(latlngs, n, id, null, false, color);
+            renderRoute(latlngs, n, id, null, isOmegaName, color);
             resetModes();
             updateRoutesList();
             setStatus("Ruta creada: " + n);
@@ -1593,7 +1682,8 @@ async function fetchOSRMDirect(points) {
         if (name) {
             const color = getNextRouteColor();
             const id = await saveElement(name, 'route', full, color);
-            renderRoute(full, name, id, null, false, color);
+            const isOmega = checkIsOmega(name);
+            renderRoute(full, name, id, null, isOmega, color);
         }
     }
     resetModes();
@@ -1609,7 +1699,8 @@ async function finalizeSmart() {
         if (n) {
             const color = getNextRouteColor();
             const id = await saveElement(n, 'route', pts, color);
-            renderRoute(pts, n, id, null, false, color);
+            const isOmega = checkIsOmega(n);
+            renderRoute(pts, n, id, null, isOmega, color);
         }
     }
     resetModes();
