@@ -9,18 +9,23 @@ Se ha modificado la versión PHP para que las rutas Omega sean completamente edi
 ### 1. Persistencia de Ediciones
 - Las rutas Omega ahora se guardan en la base de datos cuando se editan
 - Los cambios se mantienen después de recargar la página
-- Se preserva el color asignado a cada ruta
+- Se preserva el color asignado a cada ruta (Paleta ampliada a 40 colores)
 
-### 2. Carga Inteligente
+### 2. Carga Inteligente y Control de Visibilidad
 Al cargar la aplicación:
-- **Primera vez**: Se generan las rutas desde las coordenadas originales usando OSRM y se guardan en BD
-- **Siguientes cargas**: Se cargan las versiones editadas desde la base de datos
-- Ya no se regeneran desde coordenadas en bruto si existe una versión guardada
+- **Aislamiento de Capas**: Las rutas Omega se cargan exclusivamente en `omegaLayer`, separándolas de las rutas manuales (`drawnItems`).
+- **Eliminación de "Rutas Fantasmas"**: Se corrigió el error donde rutas automáticas permanecían visibles tras ocultarlas.
+- **Primera vez**: Se generan las rutas desde las coordenadas originales usando OSRM y se guardan en BD.
+- **Siguientes cargas**: Se cargan las versiones editadas desde la base de datos.
+- Ya no se regeneran desde coordenadas en bruto si existe una versión guardada.
 
 ### 3. Guardado de Cambios
-- El botón "💾 Guardar Cambios" ahora guarda tanto rutas normales como rutas Omega
-- El borrador también guarda automáticamente los cambios en rutas Omega
-- Se puede editar cualquier ruta Omega con la herramienta "✏️ Editar Ruta"
+- El botón "💾 Guardar Cambios" ahora guarda tanto rutas normales como rutas Omega.
+- El borrador también guarda automáticamente los cambios en rutas Omega.
+- Se puede editar cualquier ruta Omega con la herramienta "✏️ Editar Ruta".
+
+### 4. Clasificación Automática
+- Si el usuario crea una ruta manualmente y le asigna un nombre que contenga "(Admin)" o "(Rot)", el sistema la clasificará automáticamente como ruta Omega, asignándola al grupo de visibilidad correspondiente.
 
 ## Flujo de Trabajo
 
