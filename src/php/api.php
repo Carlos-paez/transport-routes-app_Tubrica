@@ -16,8 +16,16 @@ try {
         type TEXT,
         geometry TEXT,
         color TEXT,
+        passengers INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )");
+
+    // Intentar añadir la columna passengers si no existe (para DBs existentes)
+    try {
+        $pdo->exec("ALTER TABLE elements ADD COLUMN passengers INTEGER DEFAULT 0");
+    } catch (PDOException $e) {
+        // La columna probablemente ya existe
+    }
 
     $method = $_SERVER['REQUEST_METHOD'];
 
@@ -33,9 +41,15 @@ try {
 
         case 'POST':
             $input = json_decode(file_get_contents('php://input'), true);
+            if (!$input || !isset($input['name']) || !isset($input['type']) || !isset($input['geometry'])) {
+                http_response_code(400);
+                echo json_encode(["error" => "Datos incompletos"]);
+                break;
+            }
             $color = $input['color'] ?? null;
-            $stmt = $pdo->prepare("INSERT INTO elements (name, type, geometry, color) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$input['name'], $input['type'], json_encode($input['geometry']), $color]);
+            $passengers = $input['passengers'] ?? 0;
+            $stmt = $pdo->prepare("INSERT INTO elements (name, type, geometry, color, passengers) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$input['name'], $input['type'], json_encode($input['geometry']), $color, $passengers]);
             echo json_encode(["id" => $pdo->lastInsertId()]);
             break;
 
@@ -44,13 +58,25 @@ try {
             $input = json_decode(file_get_contents('php://input'), true);
             if ($id && isset($input['geometry'])) {
                 $color = $input['color'] ?? null;
-                if ($color) {
-                    $stmt = $pdo->prepare("UPDATE elements SET geometry = ?, color = ? WHERE id = ?");
-                    $stmt->execute([json_encode($input['geometry']), $color, $id]);
-                } else {
-                    $stmt = $pdo->prepare("UPDATE elements SET geometry = ? WHERE id = ?");
-                    $stmt->execute([json_encode($input['geometry']), $id]);
+                $passengers = $input['passengers'] ?? null;
+                
+                $sql = "UPDATE elements SET geometry = ?";
+                $params = [json_encode($input['geometry'])];
+                
+                if ($color !== null) {
+                    $sql .= ", color = ?";
+                    $params[] = $color;
                 }
+                if ($passengers !== null) {
+                    $sql .= ", passengers = ?";
+                    $params[] = $passengers;
+                }
+                
+                $sql .= " WHERE id = ?";
+                $params[] = $id;
+                
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($params);
                 echo json_encode(["status" => "ok"]);
             }
             break;
