@@ -28,12 +28,52 @@ const ROUTE_COLORS = [
 ];
 
 let colorIndex = 0;
+let usedColors = []; // Colores ya usados por rutas OMEGA
 
-// Función para obtener el siguiente color
+// Función para obtener el siguiente color único para rutas OMEGA
 function getNextRouteColor() {
+  // Buscar un color que no haya sido usado
+  for (let i = 0; i < ROUTE_COLORS.length; i++) {
+    const color = ROUTE_COLORS[(colorIndex + i) % ROUTE_COLORS.length];
+    if (!usedColors.includes(color)) {
+      usedColors.push(color);
+      colorIndex = (colorIndex + i + 1) % ROUTE_COLORS.length;
+      return color;
+    }
+  }
+  // Si todos los colores están usados, reiniciar y usar el siguiente
   const color = ROUTE_COLORS[colorIndex % ROUTE_COLORS.length];
   colorIndex++;
   return color;
+}
+
+// Función para reiniciar los colores usados (para rutas no-OMEGA)
+function resetUsedColors() {
+  usedColors = [];
+}
+
+// Helper para identificar rutas Omega por su nombre
+function checkIsOmega(name) {
+  if (!name) return false;
+  const n = name
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  // 1. Verificar contra la lista de nombres predefinidos
+  const isPredefined = OMEGA_WAYPOINTS.some((w) => {
+    const wn = w.name
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    return wn === n;
+  });
+  if (isPredefined) return true;
+
+  // 2. Verificar por patrones comunes (Admin o Rot)
+  return n.includes("admin") || n.includes("rot");
 }
 
 // Función para obtener un color aleatorio
@@ -1766,6 +1806,159 @@ const OMEGA_WAYPOINTS = [
     desc: "C.C. Quatro's C.A. - TUBRICA",
   },
   {
+    name: "Fe y Alegría (Admin)",
+    passengers: 29,
+    points: [
+      [10.078558, -69.326049],
+      [10.078577, -69.325806],
+      [10.078609, -69.325385],
+      [10.080383, -69.32555],
+      [10.080717, -69.325581],
+      [10.081272, -69.325617],
+      [10.08139, -69.325622],
+      [10.08153, -69.325632],
+      [10.082029, -69.325689],
+      [10.082133, -69.325706],
+      [10.082251, -69.325798],
+      [10.082069, -69.326716],
+      [10.081861, -69.327644],
+      [10.081676, -69.328518],
+      [10.081667, -69.328562],
+      [10.081655, -69.328617],
+      [10.081448, -69.329536],
+      [10.081409, -69.329727],
+      [10.081253, -69.33048],
+      [10.081225, -69.330613],
+      [10.081143, -69.331002],
+      [10.081056, -69.331417],
+      [10.080979, -69.331767],
+      [10.080906, -69.332101],
+      [10.08085, -69.332353],
+      [10.080831, -69.332428],
+      [10.080787, -69.332638],
+      [10.08071, -69.332936],
+      [10.08061, -69.33327],
+      [10.08059, -69.333328],
+      [10.080502, -69.333586],
+      [10.080388, -69.333882],
+      [10.080383, -69.333979],
+      [10.080391, -69.334035],
+      [10.08042, -69.334096],
+      [10.080461, -69.334154],
+      [10.080528, -69.33416],
+      [10.082331, -69.334318],
+      [10.084345, -69.334491],
+      [10.084391, -69.334495],
+      [10.084411, -69.334398],
+      [10.084491, -69.334416],
+      [10.085069, -69.334504],
+      [10.085591, -69.334603],
+      [10.086138, -69.334723],
+      [10.086683, -69.334832],
+      [10.087254, -69.334901],
+      [10.087801, -69.335055],
+      [10.088082, -69.335117],
+      [10.088394, -69.335191],
+      [10.088459, -69.33521],
+      [10.088861, -69.3353],
+      [10.089431, -69.335425],
+      [10.089947, -69.335529],
+      [10.089854, -69.336057],
+      [10.08978, -69.336472],
+      [10.089673, -69.337121],
+      [10.089601, -69.337438],
+      [10.089503, -69.337957],
+      [10.089403, -69.3385],
+      [10.089208, -69.339532],
+      [10.089159, -69.339801],
+      [10.089124, -69.339992],
+      [10.089095, -69.34012],
+      [10.089038, -69.340466],
+      [10.088857, -69.341472],
+      [10.08867, -69.342471],
+      [10.088553, -69.343116],
+      [10.088369, -69.344199],
+      [10.088287, -69.344657],
+      [10.088203, -69.345111],
+      [10.088121, -69.345566],
+      [10.087675, -69.345485],
+      [10.087045, -69.345381],
+      [10.086965, -69.34582],
+      [10.087023, -69.34583],
+      [10.087074, -69.345838],
+      [10.087602, -69.345923],
+      [10.088039, -69.346017],
+      [10.088121, -69.345566],
+      [10.088203, -69.345111],
+      [10.088287, -69.344657],
+      [10.088369, -69.344199],
+      [10.088553, -69.343116],
+      [10.08867, -69.342471],
+      [10.088857, -69.341472],
+      [10.089288, -69.341559],
+      [10.089421, -69.341582],
+      [10.089705, -69.341636],
+      [10.089968, -69.341695],
+      [10.090157, -69.341715],
+      [10.090512, -69.341784],
+      [10.090617, -69.34181],
+      [10.09108, -69.341901],
+      [10.091721, -69.342034],
+      [10.092052, -69.342111],
+      [10.092457, -69.342189],
+      [10.09289, -69.342244],
+      [10.093397, -69.342361],
+      [10.09326, -69.342715],
+      [10.093577, -69.342867],
+      [10.093783, -69.342982],
+      [10.093928, -69.343067],
+      [10.094424, -69.343353],
+      [10.094438, -69.34337],
+      [10.09444, -69.34339],
+      [10.094375, -69.343719],
+      [10.094316, -69.344014],
+      [10.094181, -69.34469],
+      [10.094058, -69.345389],
+      [10.093995, -69.345969],
+      [10.093799, -69.346739],
+      [10.093752, -69.346977],
+      [10.093695, -69.347201],
+      [10.093605, -69.347501],
+      [10.093527, -69.347742],
+      [10.09346, -69.348016],
+      [10.093477, -69.348215],
+      [10.093532, -69.348511],
+      [10.093608, -69.348867],
+      [10.093689, -69.349136],
+      [10.093697, -69.349335],
+      [10.093618, -69.349759],
+      [10.093602, -69.349846],
+      [10.093554, -69.350323],
+      [10.093591, -69.351061],
+      [10.093573, -69.351432],
+      [10.093648, -69.351717],
+      [10.093696, -69.351802],
+      [10.09377, -69.351936],
+      [10.093715, -69.352045],
+      [10.093113, -69.353301],
+      [10.092965, -69.353612],
+      [10.092749, -69.354061],
+      [10.092634, -69.354301],
+      [10.092241, -69.355166],
+      [10.091782, -69.356176],
+      [10.092496, -69.356524],
+      [10.092644, -69.356596],
+      [10.093818, -69.357168],
+      [10.094084, -69.357298],
+      [10.094396, -69.357446],
+      [10.096595, -69.358493],
+      [10.09664, -69.358399],
+      [10.096674, -69.358342],
+      [10.096758, -69.358354],
+    ],
+    desc: "eti lara - fe y alegria - TUBRICA",
+  },
+  {
     name: "CABUDARE A (Admin)",
     passengers: 10,
     points: [
@@ -2386,10 +2579,120 @@ const OMEGA_WAYPOINTS = [
     name: "ESTE 2 (Admin)",
     passengers: 6,
     points: [
-      [10.005, -69.242],
-      [10.015, -69.265],
-      [10.035, -69.295],
-      [10.0967, -69.3584],
+      [10.081773, -69.32566],
+      [10.082029, -69.325689],
+      [10.082133, -69.325706],
+      [10.082251, -69.325798],
+      [10.082244, -69.325835],
+      [10.082069, -69.326716],
+      [10.081861, -69.327644],
+      [10.081676, -69.328518],
+      [10.081667, -69.328562],
+      [10.081655, -69.328617],
+      [10.081448, -69.329536],
+      [10.081409, -69.329727],
+      [10.081253, -69.33048],
+      [10.081225, -69.330613],
+      [10.081143, -69.331002],
+      [10.081056, -69.331417],
+      [10.080979, -69.331767],
+      [10.080906, -69.332101],
+      [10.08085, -69.332353],
+      [10.080831, -69.332428],
+      [10.080787, -69.332638],
+      [10.08071, -69.332936],
+      [10.08061, -69.33327],
+      [10.08059, -69.333328],
+      [10.080502, -69.333586],
+      [10.080388, -69.333882],
+      [10.080281, -69.334138],
+      [10.080257, -69.334192],
+      [10.080248, -69.334213],
+      [10.080162, -69.334204],
+      [10.080069, -69.334197],
+      [10.079754, -69.334169],
+      [10.079075, -69.334108],
+      [10.078636, -69.334069],
+      [10.07819, -69.334029],
+      [10.077063, -69.333931],
+      [10.075931, -69.333813],
+      [10.075927, -69.33387],
+      [10.075859, -69.334777],
+      [10.075785, -69.335669],
+      [10.075751, -69.336558],
+      [10.075652, -69.337892],
+      [10.075601, -69.338654],
+      [10.075527, -69.339711],
+      [10.07549, -69.340474],
+      [10.07537, -69.341529],
+      [10.075365, -69.341577],
+      [10.074416, -69.341544],
+      [10.073417, -69.34147],
+      [10.073263, -69.341459],
+      [10.072111, -69.34138],
+      [10.071089, -69.34131],
+      [10.071083, -69.341383],
+      [10.071009, -69.342284],
+      [10.070977, -69.342871],
+      [10.070948, -69.343376],
+      [10.070946, -69.343412],
+      [10.070888, -69.343407],
+      [10.069869, -69.343327],
+      [10.068656, -69.343262],
+      [10.068079, -69.343203],
+      [10.068072, -69.343344],
+      [10.068055, -69.343678],
+      [10.068055, -69.343824],
+      [10.068045, -69.344265],
+      [10.068037, -69.344606],
+      [10.068024, -69.345191],
+      [10.067993, -69.345851],
+      [10.067969, -69.346358],
+      [10.067941, -69.346953],
+      [10.067888, -69.34808],
+      [10.067845, -69.348734],
+      [10.067327, -69.348687],
+      [10.066982, -69.34866],
+      [10.066692, -69.348638],
+      [10.066031, -69.348573],
+      [10.065497, -69.348528],
+      [10.064576, -69.348447],
+      [10.064551, -69.348445],
+      [10.064533, -69.34863],
+      [10.064494, -69.349278],
+      [10.064491, -69.349354],
+      [10.064515, -69.349856],
+      [10.064543, -69.350161],
+      [10.0646, -69.350475],
+      [10.064804, -69.351214],
+      [10.065424, -69.353128],
+      [10.065489, -69.353319],
+      [10.065646, -69.353778],
+      [10.065779, -69.354158],
+      [10.066124, -69.355144],
+      [10.066263, -69.355573],
+      [10.06635, -69.35584],
+      [10.06676, -69.355781],
+      [10.06683, -69.355787],
+      [10.067088, -69.35585],
+      [10.067323, -69.355976],
+      [10.067521, -69.356156],
+      [10.06767, -69.356379],
+      [10.067742, -69.356559],
+      [10.067781, -69.35675],
+      [10.067786, -69.356944],
+      [10.067758, -69.357136],
+      [10.067697, -69.35732],
+      [10.067605, -69.35749],
+      [10.067485, -69.357641],
+      [10.067368, -69.357747],
+      [10.067238, -69.357835],
+      [10.067097, -69.357903],
+      [10.067007, -69.357934],
+      [10.06667, -69.356945],
+      [10.066423, -69.356249],
+      [10.066273, -69.355871],
+      [10.066184, -69.355623],
     ],
     desc: "El Recreo - Piedad Norte - La Mora - TUBRICA",
   },
@@ -2509,63 +2812,102 @@ async function cargarRutasOmega() {
   const list = document.getElementById("omega-route-list");
   list.innerHTML = "";
 
+  // Reiniciar colores para una nueva asignación limpia
+  usedColors = [];
+  colorIndex = 0;
+
+  // Primero cargar rutas guardadas desde la BD
+  const res = await fetch("/api/elements");
+  const savedData = await res.json();
+
+  // Crear un mapa de rutas guardadas por nombre (normalizado para evitar fallos por acentos/espacios)
+  const savedRoutesMap = {};
+  savedData.forEach((route) => {
+    if (route.type === "route" && checkIsOmega(route.name)) {
+      const normalizedName = route.name
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      savedRoutesMap[normalizedName] = route;
+    }
+  });
+
   for (let i = 0; i < OMEGA_WAYPOINTS.length; i++) {
     const routeData = OMEGA_WAYPOINTS[i];
+    const normalizedOmegaName = routeData.name
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
 
-    // Si la ruta ya tiene muchos puntos (>50), la usamos directamente
-    // para evitar URLs de OSRM demasiado largas y problemas de límite de puntos
-    if (routeData.points && routeData.points.length > 50) {
-      const polyCoords = routeData.points;
-      const omegaColor = getNextRouteColor();
+    // Verificar si existe una versión guardada
+    const savedRoute = savedRoutesMap[normalizedOmegaName];
+
+    if (savedRoute) {
+      // Usar la versión guardada (editada)
+      let omegaColor = savedRoute.color;
+      if (!omegaColor) {
+        omegaColor = getNextRouteColor();
+      } else if (!usedColors.includes(omegaColor)) {
+        usedColors.push(omegaColor);
+      }
+
+      // Priorizar pasajeros de la DB si existen, si no usar el valor predefinido
+      const finalPassengers =
+        savedRoute.passengers || routeData.passengers || "N/D";
+
       const layer = renderRoute(
-        polyCoords,
+        savedRoute.geometry,
         routeData.name,
-        `omega-${i}`,
+        savedRoute.id,
         null,
-        true, // Es ruta Omega
+        true,
         omegaColor,
-        routeData.passengers,
+        finalPassengers,
       );
 
+      // Guardar el color en el objeto route para usar en la barra lateral
       OMEGA_WAYPOINTS[i].color = omegaColor;
-      OMEGA_WAYPOINTS[i].passengers = routeData.passengers || "N/D"; // Asegurar que pase al sidebar
+      OMEGA_WAYPOINTS[i].passengers = finalPassengers;
+
       const item = document.createElement("div");
       item.className = "omega-item";
       item.innerHTML = `
-        <input type="checkbox" checked id="chk-omega-${i}" onchange="window.toggleOmegaLayer(${i}, this.checked)">
-        <span onclick="window.focusRoute(${i})">${routeData.name}</span>
-      `;
+          <input type="checkbox" checked id="chk-omega-${i}" onchange="window.toggleOmegaLayer(${i}, this.checked)">
+          <span onclick="window.focusRoute(${i})">${routeData.name}</span>
+        `;
       list.appendChild(item);
       OMEGA_WAYPOINTS[i].layer = layer;
-      continue;
-    }
-
-    // Para rutas con pocos puntos, usamos OSRM para trazar el camino por carretera
-    const coordsStr = routeData.points.map((p) => `${p[1]},${p[0]}`).join(";");
-    const url = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
-
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.routes && data.routes.length > 0) {
-        const polyCoords = data.routes[0].geometry.coordinates.map((c) => [
-          c[1],
-          c[0],
-        ]);
+    } else {
+      // Si la ruta ya tiene muchos puntos (>50), la usamos directamente
+      // para evitar URLs de OSRM demasiado largas y problemas de límite de puntos
+      if (routeData.points && routeData.points.length > 50) {
+        const polyCoords = routeData.points;
         const omegaColor = getNextRouteColor();
-        const layer = renderRoute(
-          polyCoords,
+
+        // Guardar en BD la primera vez para consistencia
+        saveElement(
           routeData.name,
-          `omega-${i}`,
-          null,
-          true, // Es ruta Omega
+          "route",
+          polyCoords,
           omegaColor,
           routeData.passengers,
-        );
+        ).then((newId) => {
+          const layer = renderRoute(
+            polyCoords,
+            routeData.name,
+            newId,
+            null,
+            true,
+            omegaColor,
+            routeData.passengers,
+          );
+          OMEGA_WAYPOINTS[i].layer = layer;
+          OMEGA_WAYPOINTS[i].passengers = routeData.passengers || "N/D";
+        });
 
         OMEGA_WAYPOINTS[i].color = omegaColor;
-        OMEGA_WAYPOINTS[i].passengers = routeData.passengers || "N/D"; // Asegurar que pase al sidebar
-
         const item = document.createElement("div");
         item.className = "omega-item";
         item.innerHTML = `
@@ -2573,11 +2915,60 @@ async function cargarRutasOmega() {
           <span onclick="window.focusRoute(${i})">${routeData.name}</span>
         `;
         list.appendChild(item);
-        OMEGA_WAYPOINTS[i].layer = layer;
+        continue;
       }
-      await new Promise((r) => setTimeout(r, 100));
-    } catch (e) {
-      console.error("Error cargando ruta:", routeData.name);
+
+      // Generar desde coordenadas originales y guardar
+      const coordsStr = routeData.points
+        .map((p) => `${p[1]},${p[0]}`)
+        .join(";");
+      const url = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
+
+      try {
+        const fetchRes = await fetch(url);
+        const data = await fetchRes.json();
+        if (data.routes && data.routes.length > 0) {
+          const polyCoords = data.routes[0].geometry.coordinates.map((c) => [
+            c[1],
+            c[0],
+          ]);
+          const omegaColor = getNextRouteColor();
+
+          // Guardar en BD la primera vez
+          const newId = await saveElement(
+            routeData.name,
+            "route",
+            polyCoords,
+            omegaColor,
+            routeData.passengers,
+          );
+          const layer = renderRoute(
+            polyCoords,
+            routeData.name,
+            newId,
+            null,
+            true,
+            omegaColor,
+            routeData.passengers,
+          );
+
+          // Guardar el color en el objeto route para usar en la barra lateral
+          OMEGA_WAYPOINTS[i].color = omegaColor;
+          OMEGA_WAYPOINTS[i].passengers = routeData.passengers || "N/D";
+
+          const item = document.createElement("div");
+          item.className = "omega-item";
+          item.innerHTML = `
+          <input type="checkbox" checked id="chk-omega-${i}" onchange="window.toggleOmegaLayer(${i}, this.checked)">
+          <span onclick="window.focusRoute(${i})">${routeData.name}</span>
+        `;
+          list.appendChild(item);
+          OMEGA_WAYPOINTS[i].layer = layer;
+        }
+        await new Promise((r) => setTimeout(r, 100));
+      } catch (e) {
+        console.error("Error cargando ruta:", routeData.name);
+      }
     }
   }
 }
@@ -2627,8 +3018,8 @@ function renderRoute(
 ) {
   if (!latlngs || latlngs.length < 2) return;
 
-  // Asignar color: usar color guardado, naranja para OMEGA, o color único para cada ruta nueva
-  const routeColor = savedColor || (isOmega ? "#e67e22" : getNextRouteColor());
+  // Asignar color: usar color guardado, o color único para cada ruta nueva
+  const routeColor = savedColor || getNextRouteColor();
 
   const poly = L.polyline(latlngs, {
     color: routeColor,
@@ -2763,33 +3154,43 @@ map.on("mousemove", (e) => {
 
 map.on("mouseup", async () => {
   if (currentMode === "eraser") {
-    drawnItems.eachLayer(async (g) => {
-      if (g.isDirty && g.dbId) await saveLayer(g);
-    });
+    // Revisar ambas capas para guardar cambios del borrador
+    for (const lg of [drawnItems, omegaLayer]) {
+      for (const g of lg.getLayers()) {
+        if (g.isDirty && g.dbId) await saveLayer(g);
+      }
+    }
   }
 });
 
 // ==========================================
 // 6. UTILIDADES Y PERSISTENCIA
 // ==========================================
-async function saveElement(n, t, g, color = null) {
+async function saveElement(n, t, g, color = null, passengers = 0) {
   const res = await fetch("/api/elements", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name: n, type: t, geometry: g, color: color }),
+    body: JSON.stringify({
+      name: n,
+      type: t,
+      geometry: g,
+      color: color,
+      passengers: passengers,
+    }),
   });
   const d = await res.json();
   return d.id;
 }
 
 async function saveLayer(l) {
-  if (!l.dbId || String(l.dbId).startsWith("omega")) return;
+  if (!l.dbId) return;
   await fetch(`/api/elements/${l.dbId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       geometry: l.routeLine.getLatLngs(),
       color: l.routeColor,
+      passengers: l.passengers,
     }),
   });
   l.isDirty = false;
@@ -2799,11 +3200,20 @@ async function loadData() {
   const res = await fetch("/api/elements");
   const data = await res.json();
   data.forEach((el) => {
-    let geo =
-      typeof el.geometry === "string" ? JSON.parse(el.geometry) : el.geometry;
+    // Si es una ruta Omega, la ignoramos aquí porque cargarRutasOmega() se encarga
+    if (el.type === "route" && checkIsOmega(el.name)) return;
+
     if (el.type === "route")
-      renderRoute(geo, el.name, el.id, null, false, el.color);
-    else renderMarker(geo, el.name, el.id);
+      renderRoute(
+        el.geometry,
+        el.name,
+        el.id,
+        null,
+        false,
+        el.color,
+        el.passengers,
+      );
+    else renderMarker(el.geometry, el.name, el.id);
   });
 }
 
@@ -2819,11 +3229,11 @@ function renderMarker(latlng, name, id) {
 
 async function handleDelete(l) {
   if (confirm("¿Borrar elemento?")) {
-    if (l.dbId && !String(l.dbId).startsWith("omega"))
-      await fetch(`/api/elements/${l.dbId}`, { method: "DELETE" });
+    if (l.dbId) await fetch(`/api/elements/${l.dbId}`, { method: "DELETE" });
     drawnItems.removeLayer(l);
     omegaLayer.removeLayer(l);
-    markersLayer.removeLayer(l); // Asegurar que lo removemos si era un marcador
+    markersLayer.removeLayer(l);
+    updateRoutesList();
   }
 }
 
@@ -2889,14 +3299,13 @@ function setStatus(msg) {
 
 window.saveAllChanges = async function () {
   let count = 0;
-  for (const layer of drawnItems.getLayers()) {
-    if (
-      layer.isDirty &&
-      layer.dbId &&
-      !String(layer.dbId).startsWith("omega")
-    ) {
-      await saveLayer(layer);
-      count++;
+  // Revisar ambas capas: rutas manuales y rutas Omega (editadas)
+  for (const lg of [drawnItems, omegaLayer]) {
+    for (const layer of lg.getLayers()) {
+      if (layer.isDirty && layer.dbId) {
+        await saveLayer(layer);
+        count++;
+      }
     }
   }
   alert(
@@ -3064,18 +3473,81 @@ window.toggleEraser = () => {
   }).addTo(map);
 };
 
-map.on(L.Draw.Event.CREATED, (e) => {
+map.on(L.Draw.Event.CREATED, async (e) => {
   if (currentMode === "manual") {
     const n = prompt("Nombre de la ruta:");
     if (n) {
       const latlngs = e.layer.getLatLngs();
-      const color = e.layer.options.color || getNextRouteColor();
-      saveElement(n, "route", latlngs, color).then((id) => {
+      let color = e.layer.options.color || getNextRouteColor();
+      let passengers = 0;
+
+      // Buscar si ya existe una ruta con ese nombre (incluyendo Omega)
+      const res = await fetch("/api/elements");
+      const savedData = await res.json();
+      const existing = savedData.find(
+        (r) => r.name.trim().toLowerCase() === n.trim().toLowerCase(),
+      );
+
+      if (existing) {
+        if (
+          confirm(
+            `Ya existe una ruta llamada "${n}". ¿Desea sobrescribirla con este nuevo trazado?`,
+          )
+        ) {
+          // Actualizar existente
+          color = existing.color || color;
+          passengers = existing.passengers || 0;
+          await fetch(`/api/elements/${existing.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              geometry: latlngs,
+              color: color,
+              passengers: passengers,
+            }),
+          });
+
+          // Si era Omega, actualizar la capa en omegaLayer
+          if (checkIsOmega(n)) {
+            // Eliminar la capa antigua si existe
+            const oldIdx = OMEGA_WAYPOINTS.findIndex(
+              (w) => w.name.trim().toLowerCase() === n.trim().toLowerCase(),
+            );
+            if (oldIdx !== -1 && OMEGA_WAYPOINTS[oldIdx].layer) {
+              omegaLayer.removeLayer(OMEGA_WAYPOINTS[oldIdx].layer);
+            }
+            const layer = renderRoute(
+              latlngs,
+              n,
+              existing.id,
+              null,
+              true,
+              color,
+              passengers,
+            );
+            if (oldIdx !== -1) OMEGA_WAYPOINTS[oldIdx].layer = layer;
+          } else {
+            // Si era manual, renderizar normalmente en drawnItems
+            renderRoute(
+              latlngs,
+              n,
+              existing.id,
+              null,
+              false,
+              color,
+              passengers,
+            );
+          }
+          setStatus("Ruta actualizada: " + n);
+        }
+      } else {
+        // Crear nueva
+        const id = await saveElement(n, "route", latlngs, color);
         renderRoute(latlngs, n, id, null, false, color);
-        resetModes();
-        updateRoutesList();
         setStatus("Ruta creada: " + n);
-      });
+      }
+      resetModes();
+      updateRoutesList();
     } else {
       resetModes();
     }

@@ -23,44 +23,73 @@ db.serialize(() => {
     type TEXT,
     geometry TEXT,
     color TEXT,
+    passengers INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+
+  // Asegurar que la columna 'passengers' exista en DBs antiguas
+  db.run("ALTER TABLE elements ADD COLUMN passengers INTEGER DEFAULT 0", (err) => {
+    if (!err) console.log("✅ Columna 'passengers' añadida.");
+    // No lanzamos error si ya existe (err.message suele contener 'duplicate column name')
+  });
 });
 
 // Obtener elementos
 app.get("/api/elements", (req, res) => {
   db.all("SELECT * FROM elements", (err, rows) => {
     if (err) return res.status(500).json(err);
-    res.json(rows);
+    // Parsear geometría para el frontend
+    const parsedRows = rows.map(row => ({
+      ...row,
+      geometry: typeof row.geometry === "string" ? JSON.parse(row.geometry) : row.geometry
+    }));
+    res.json(parsedRows);
   });
 });
 
 // Guardar nuevo
 app.post("/api/elements", (req, res) => {
-  const { name, type, geometry, color } = req.body;
+  const { name, type, geometry, color, passengers } = req.body;
   db.run(
-    "INSERT INTO elements (name, type, geometry, color) VALUES (?, ?, ?, ?)",
-    [name, type, JSON.stringify(geometry), color || null],
+    "INSERT INTO elements (name, type, geometry, color, passengers) VALUES (?, ?, ?, ?, ?)",
+    [name, type, JSON.stringify(geometry), color || null, passengers || 0],
     function (err) {
+      if (err) return res.status(500).json(err);
       res.json({ id: this.lastID });
     },
   );
 });
 
-// Actualizar (Borrador)
+// Actualizar (Borrador / Edición)
 app.put("/api/elements/:id", (req, res) => {
-  const { geometry, color } = req.body;
-  if (color) {
+  const { geometry, color, passengers } = req.body;
+  
+  if (color !== undefined && passengers !== undefined) {
+    db.run(
+      "UPDATE elements SET geometry = ?, color = ?, passengers = ? WHERE id = ?",
+      [JSON.stringify(geometry), color, passengers, req.params.id],
+      (err) => {
+        if (err) return res.status(500).json(err);
+        res.json({ status: "ok" });
+      }
+    );
+  } else if (color !== undefined) {
     db.run(
       "UPDATE elements SET geometry = ?, color = ? WHERE id = ?",
       [JSON.stringify(geometry), color, req.params.id],
-      () => res.json({ status: "ok" }),
+      (err) => {
+        if (err) return res.status(500).json(err);
+        res.json({ status: "ok" });
+      }
     );
   } else {
     db.run(
       "UPDATE elements SET geometry = ? WHERE id = ?",
       [JSON.stringify(geometry), req.params.id],
-      () => res.json({ status: "ok" }),
+      (err) => {
+        if (err) return res.status(500).json(err);
+        res.json({ status: "ok" });
+      }
     );
   }
 });
