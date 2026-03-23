@@ -3,7 +3,7 @@ const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 
 const app = express();
-const PORT = 3000;
+const PORT = 3006;
 
 app.use(express.json({ limit: "2mb" }));
 app.use(express.static(path.join(__dirname)));
@@ -28,10 +28,13 @@ db.serialize(() => {
   )`);
 
   // Asegurar que la columna 'passengers' exista en DBs antiguas
-  db.run("ALTER TABLE elements ADD COLUMN passengers INTEGER DEFAULT 0", (err) => {
-    if (!err) console.log("✅ Columna 'passengers' añadida.");
-    // No lanzamos error si ya existe (err.message suele contener 'duplicate column name')
-  });
+  db.run(
+    "ALTER TABLE elements ADD COLUMN passengers INTEGER DEFAULT 0",
+    (err) => {
+      if (!err) console.log("✅ Columna 'passengers' añadida.");
+      // No lanzamos error si ya existe (err.message suele contener 'duplicate column name')
+    },
+  );
 });
 
 // Obtener elementos
@@ -39,9 +42,12 @@ app.get("/api/elements", (req, res) => {
   db.all("SELECT * FROM elements", (err, rows) => {
     if (err) return res.status(500).json(err);
     // Parsear geometría para el frontend
-    const parsedRows = rows.map(row => ({
+    const parsedRows = rows.map((row) => ({
       ...row,
-      geometry: typeof row.geometry === "string" ? JSON.parse(row.geometry) : row.geometry
+      geometry:
+        typeof row.geometry === "string"
+          ? JSON.parse(row.geometry)
+          : row.geometry,
     }));
     res.json(parsedRows);
   });
@@ -63,7 +69,7 @@ app.post("/api/elements", (req, res) => {
 // Actualizar (Borrador / Edición)
 app.put("/api/elements/:id", (req, res) => {
   const { geometry, color, passengers } = req.body;
-  
+
   if (color !== undefined && passengers !== undefined) {
     db.run(
       "UPDATE elements SET geometry = ?, color = ?, passengers = ? WHERE id = ?",
@@ -71,7 +77,7 @@ app.put("/api/elements/:id", (req, res) => {
       (err) => {
         if (err) return res.status(500).json(err);
         res.json({ status: "ok" });
-      }
+      },
     );
   } else if (color !== undefined) {
     db.run(
@@ -80,7 +86,7 @@ app.put("/api/elements/:id", (req, res) => {
       (err) => {
         if (err) return res.status(500).json(err);
         res.json({ status: "ok" });
-      }
+      },
     );
   } else {
     db.run(
@@ -89,7 +95,7 @@ app.put("/api/elements/:id", (req, res) => {
       (err) => {
         if (err) return res.status(500).json(err);
         res.json({ status: "ok" });
-      }
+      },
     );
   }
 });
