@@ -1,18 +1,64 @@
 const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
+const fs = require("fs");
 
 const app = express();
 const PORT = 3006;
 
-app.use(express.json({ limit: "2mb" }));
+// ==================== CACHE BUSTING AUTOMÁTICO ====================
+// Genera un hash basado en la fecha de modificación del archivo
+const getFileVersion = (filename) => {
+  try {
+    const filePath = path.join(__dirname, filename);
+    const stats = fs.statSync(filePath);
+    // Usamos los milisegundos del último cambio como versión
+    return stats.mtime.getTime().toString(36); // versión corta y única
+  } catch (err) {
+    return Date.now().toString(36); // fallback
+  }
+};
+
+// Middleware para desactivar caché en desarrollo + inyectar versión
+app.use((req, res, next) => {
+  if (req.url === "/" || req.url.endsWith(".html")) {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+  }
+  next();
+});
+
+// Servir archivos estáticos
 app.use(express.static(path.join(__dirname)));
 
+// ==================== RUTA ESPECIAL PARA HTML CON CACHE BUSTING ====================
+app.get("/", (req, res) => {
+  let html = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
+
+  const cssVersion = getFileVersion("styles.css");
+  const jsVersion = getFileVersion("app.js");
+
+  // Reemplaza las referencias con versión automática
+  html = html.replace(
+    /<link rel="stylesheet" href="styles\.css"(\s*[^>]*)>/i,
+    `<link rel="stylesheet" href="styles.css?v=${cssVersion}"$1>`,
+  );
+
+  html = html.replace(
+    /<script src="app\.js"(\s*[^>]*)><\/script>/i,
+    `<script src="app.js?v=${jsVersion}"></script>`,
+  );
+
+  res.send(html);
+});
+
+// ==================== BASE DE DATOS (sin cambios) ====================
 const db = new sqlite3.Database("routes.db", (err) => {
   if (err) console.error("Error DB:", err);
   else {
     console.log("✅ SQLite Conectado");
-    db.run("PRAGMA journal_mode = WAL"); // Optimización de velocidad
+    db.run("PRAGMA journal_mode = WAL");
   }
 });
 
@@ -27,21 +73,18 @@ db.serialize(() => {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
-  // Asegurar que la columna 'passengers' exista en DBs antiguas
   db.run(
     "ALTER TABLE elements ADD COLUMN passengers INTEGER DEFAULT 0",
     (err) => {
-      if (!err) console.log("✅ Columna 'passengers' añadida.");
-      // No lanzamos error si ya existe (err.message suele contener 'duplicate column name')
+      if (!err) console.log("✅ Columna 'passengers' añadida (o ya existía)");
     },
   );
 });
 
-// Obtener elementos
+// ==================== RUTAS API (sin cambios) ====================
 app.get("/api/elements", (req, res) => {
   db.all("SELECT * FROM elements", (err, rows) => {
     if (err) return res.status(500).json(err);
-    // Parsear geometría para el frontend
     const parsedRows = rows.map((row) => ({
       ...row,
       geometry:
@@ -53,7 +96,6 @@ app.get("/api/elements", (req, res) => {
   });
 });
 
-// Guardar nuevo
 app.post("/api/elements", (req, res) => {
   const { name, type, geometry, color, passengers } = req.body;
   db.run(
@@ -66,45 +108,37 @@ app.post("/api/elements", (req, res) => {
   );
 });
 
-// Actualizar (Borrador / Edición)
 app.put("/api/elements/:id", (req, res) => {
   const { geometry, color, passengers } = req.body;
+  let query = "UPDATE elements SET geometry = ?";
+  const params = [JSON.stringify(geometry)];
 
-  if (color !== undefined && passengers !== undefined) {
-    db.run(
-      "UPDATE elements SET geometry = ?, color = ?, passengers = ? WHERE id = ?",
-      [JSON.stringify(geometry), color, passengers, req.params.id],
-      (err) => {
-        if (err) return res.status(500).json(err);
-        res.json({ status: "ok" });
-      },
-    );
-  } else if (color !== undefined) {
-    db.run(
-      "UPDATE elements SET geometry = ?, color = ? WHERE id = ?",
-      [JSON.stringify(geometry), color, req.params.id],
-      (err) => {
-        if (err) return res.status(500).json(err);
-        res.json({ status: "ok" });
-      },
-    );
-  } else {
-    db.run(
-      "UPDATE elements SET geometry = ? WHERE id = ?",
-      [JSON.stringify(geometry), req.params.id],
-      (err) => {
-        if (err) return res.status(500).json(err);
-        res.json({ status: "ok" });
-      },
-    );
+  if (color !== undefined) {
+    query += ", color = ?";
+    params.push(color);
   }
+  if (passengers !== undefined) {
+    query += ", passengers = ?";
+    params.push(passengers);
+  }
+
+  query += " WHERE id = ?";
+  params.push(req.params.id);
+
+  db.run(query, params, (err) => {
+    if (err) return res.status(500).json(err);
+    res.json({ status: "ok" });
+  });
 });
 
-// Eliminar
 app.delete("/api/elements/:id", (req, res) => {
   db.run("DELETE FROM elements WHERE id = ?", req.params.id, () =>
     res.json({ status: "ok" }),
   );
 });
 
-app.listen(PORT, () => console.log(`🚀 Servidor en http://localhost:${PORT}`));
+// Iniciar servidor
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`🔄 Cache-busting automático activado para styles.css y app.js`);
+});
