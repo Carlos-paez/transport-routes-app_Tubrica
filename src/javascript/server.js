@@ -4,7 +4,7 @@ const path = require("path");
 const fs = require("fs");
 
 const app = express();
-const PORT = 3006;
+const PORT = 3000;
 
 // ==================== CACHE BUSTING AUTOMÁTICO ====================
 // Genera un hash basado en la fecha de modificación del archivo
