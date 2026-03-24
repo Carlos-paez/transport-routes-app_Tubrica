@@ -1,3 +1,16 @@
+<?php
+// ================================================
+// CACHE BUSTING AUTOMÁTICO + NO-CACHE HEADERS
+// ================================================
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: 0");
+
+// Versión automática basada en la fecha de modificación del archivo
+$cssVersion = file_exists('styles.css') ? filemtime('styles.css') : time();
+$jsVersion  = file_exists('app.js')     ? filemtime('app.js')     : time();
+?>
+
 <!doctype html>
 <html lang="es">
 <head>
@@ -6,7 +19,8 @@
     <title>Gestión Logística - TUBRICA</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
-    <link rel="stylesheet" href="styles.css" />
+    <!-- CACHE BUSTING AUTOMÁTICO -->
+    <link rel="stylesheet" href="styles.css?v=<?php echo $cssVersion; ?>" />
 </head>
 <body>
 <div id="toolbar">
@@ -43,12 +57,20 @@
         <div id="status">Modo: Inactivo</div>
     </div>
     <div id="map"></div>
+
+    <!-- Barra lateral derecha -->
+    <div id="routes-sidebar">
+        <button id="routes-toggle-btn" onclick="toggleRoutesSidebar()">◀</button>
+        <h3>📋 Rutas</h3>
+        <div id="routes-list"></div>
+    </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="app.js"></script>
+<!-- CACHE BUSTING AUTOMÁTICO -->
+<script src="app.js?v=<?php echo $jsVersion; ?>"></script>
 </body>
 </html>

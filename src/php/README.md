@@ -9,7 +9,7 @@
 ### Opción 1: Servidor PHP Integrado (Desarrollo)
 
 ```bash
-# Desde la carpeta "src/php"
+# Desde la carpeta "php version"
 php -S localhost:8000
 ```
 
@@ -18,9 +18,9 @@ El servidor se iniciará en: **http://localhost:8000**
 ### Opción 2: Apache/Nginx (Producción)
 
 #### Apache
-1. Copia la carpeta `src/php` a tu directorio web (ej: `htdocs`, `www`)
+1. Copia la carpeta `php version` a tu directorio web (ej: `htdocs`, `www`)
 2. Asegúrate de que `.htaccess` esté presente
-3. Accede a: `http://localhost/php/`
+3. Accede a: `http://localhost/php version/`
 
 #### Nginx
 Configuración básica:
@@ -28,7 +28,7 @@ Configuración básica:
 server {
     listen 80;
     server_name localhost;
-    root /path/to/src/php;
+    root /path/to/php version;
     index index.php;
 
     location / {

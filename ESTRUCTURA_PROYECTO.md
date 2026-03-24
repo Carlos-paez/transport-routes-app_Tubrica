@@ -40,8 +40,8 @@ transport-routes-app/
 │   ├── 📕 DIFERENCIAS_VERSIONES.md # Comparación técnica
 │   ├── 📔 RESUMEN_REPARACION.md    # Últimos cambios
 │   ├── 📓 HISTORIAL_DESARROLLO.md  # Historia del proyecto
-│   ├── 📄 ARQUITECTURA_DOCKER.md   # Arquitectura Docker (en proceso de integración)
-│   ├── 📄 COMANDOS_DOCKER.md       # Comandos Docker (en proceso de integración)
+│   ├── 📄 ARQUITECTURA_DOCKER.md   # Arquitectura Docker
+│   ├── 📄 COMANDOS_DOCKER.md       # Comandos Docker
 │   │
 │   └── 📂 legacy/                  # Documentación histórica
 │       ├── 📄 ACTUALIZACION_COLORES_PERSISTENTES.md
@@ -139,7 +139,6 @@ Mapa completo de la organización del proyecto.
 ### .gitignore
 Exclusiones de Git para:
 - node_modules/
-- vendor/
 - Bases de datos (*.db)
 - Archivos temporales
 - IDEs
@@ -273,7 +272,6 @@ SECRET_KEY=tu_secret_key
 ```bash
 # Eliminar archivos temporales
 rm -rf src/*/node_modules
-rm -rf src/*/vendor
 rm -f src/*/*.db-shm src/*/*.db-wal
 
 # Limpiar Docker

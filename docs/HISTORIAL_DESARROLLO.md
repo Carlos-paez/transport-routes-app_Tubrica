@@ -54,15 +54,16 @@ Este documento consolida todo el historial de desarrollo, cambios y mejoras real
 - ✅ Exportación PDF mejorada
 - ✅ Documentación consolidada
 
+### Fase 6: Optimización y Corrección de Visibilidad (Actual)
+- ✅ Ampliación de paleta a 40 colores vibrantes
+- ✅ Corrección de "Rutas Fantasmas" en PHP
+- ✅ Aislamiento estricto de capas (`omegaLayer` vs `drawnItems`)
+- ✅ Clasificación inteligente automática por nombre (Admin/Rot)
+- ✅ Limpieza total de capas con `clearLayers()` en controles de visibilidad
+
 **Archivos relacionados:**
 - `RESUMEN_REPARACION.md`
-- `DIFERENCIAS_VERSIONES.md`
-- `VERIFICACION.txt`
-
-### Fase 6: Optimización de Renderizado (PHP)
-- ✅ Corrección del renderizado corrupto de la ruta "OESTE (Admin)".
-- ✅ Se implementó la generación directa de rutas complejas desde puntos hardcodeados reales (ej. > 90 puntos) en PHP para evitar la carga de geometrías corruptas de SQLite.
-- ✅ Paridad absoluta en el comportamiento de dibujo entre las versiones JS y PHP garantizada.
+- `RUTAS_OMEGA_PERSISTENTES.md`
 
 ## 🎨 Sistema de Colores - Evolución
 
@@ -70,7 +71,7 @@ Este documento consolida todo el historial de desarrollo, cambios y mejoras real
 Las rutas no tenían colores diferenciados, dificultando su identificación.
 
 ### Solución Implementada
-1. Paleta de 20 colores vibrantes predefinidos
+1. Paleta de 40 colores vibrantes predefinidos (antes 20)
 2. Asignación secuencial automática
 3. Persistencia en base de datos
 4. Campo `color` en tabla `elements`
@@ -81,7 +82,11 @@ const ROUTE_COLORS = [
   "#e74c3c", "#3498db", "#2ecc71", "#f39c12", "#9b59b6",
   "#1abc9c", "#e67e22", "#34495e", "#16a085", "#27ae60",
   "#2980b9", "#8e44ad", "#c0392b", "#d35400", "#f1c40f",
-  "#e91e63", "#00bcd4", "#4caf50", "#ff9800", "#795548"
+  "#e91e63", "#00bcd4", "#4caf50", "#ff9800", "#795548",
+  "#5d4037", "#455a64", "#c2185b", "#7b1fa2", "#512da8",
+  "#303f9f", "#1976d2", "#0288d1", "#0097a7", "#00796b",
+  "#388e3c", "#689f38", "#afb42b", "#fbc02d", "#ffa000",
+  "#f57c00", "#e64a19", "#5d4037", "#616161", "#455a64"
 ];
 ```
 
@@ -111,6 +116,11 @@ const ROUTE_COLORS = [
 **Problema**: PDFs generados con imágenes distorsionadas  
 **Solución**: Cálculo correcto de proporciones y alta definición  
 **Archivos**: Código en `app.js`
+
+### 6. Rutas Fantasmas (Visibilidad)
+**Problema**: Rutas Omega permanecían visibles tras ocultarlas en PHP  
+**Solución**: Implementación de `checkIsOmega()` y aislamiento de `omegaLayer`  
+**Archivos**: `RESUMEN_REPARACION.md`
 
 ## 📊 Métricas del Proyecto
 
@@ -228,14 +238,14 @@ Los siguientes archivos han sido consolidados en esta documentación:
 - ✅ `RUTAS_OMEGA_COLORES.txt`
 - ✅ `SOLUCION_PHP.txt`
 - ✅ `VERIFICACION.txt`
-- ✅ `RESUMEN_REPARACION.md`
-- ✅ `REORGANIZACION_COMPLETA.md`
+- ✅ `INDICE_DOCUMENTACION.txt`
+- ✅ `INICIO_RAPIDO.txt`
 
 ## 🎉 Estado Actual
 
-**Versión**: 2.1  
+**Versión**: 2.0  
 **Estado**: ✅ Producción  
-**Cobertura**: 100% funcional en ambas versiones, con renderizado robusto anti-corrupción de DB.  
+**Cobertura**: 100% funcional en ambas versiones  
 **Documentación**: Completa y actualizada  
 **Testing**: Manual (pendiente automatización)
 

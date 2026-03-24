@@ -40,6 +40,14 @@ Reparar la versión PHP para que funcione **exactamente igual** que la versión 
 - "¿Borrar elemento?" (antes: "¿Borrar?")
 - "Nombre ruta a Sede:" (antes: "Nombre de ruta a TUBRICA:")
 
+### 6. Visibilidad de Rutas Omega ("Rutas Fantasmas")
+❌ **Problema**: Al ocultar rutas Omega, algunas permanecían visibles porque se cargaban por duplicado en el grupo de rutas manuales (`drawnItems`).
+✅ **Solución**: 
+- Implementación de `checkIsOmega(name)` para identificar rutas automáticas por nombre o dataset.
+- Modificación de `loadData()` para excluir rutas Omega de la capa manual.
+- Uso de `omegaLayer.clearLayers()` en `toggleAllOmega(false)` para garantizar limpieza total.
+- Clasificación automática: Cualquier ruta nueva nombrada con "Admin" o "Rot" se asigna ahora al grupo Omega.
+
 ## 📊 Comparación Final
 
 | Característica | JavaScript | PHP | Estado |
