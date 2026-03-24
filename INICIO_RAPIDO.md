@@ -44,11 +44,12 @@ Abre: http://localhost:8000
 
 ### 3️⃣ Usa la Aplicación
 
-1. **Ver Rutas OMEGA**: Ya están cargadas y visibles
-2. **Crear Nueva Ruta**: Click en "🛣 Ruta Inteligente" → Click en el mapa
-3. **Editar Ruta**: Click en "✏️ Editar Ruta" → Click en una ruta → Arrastra puntos
-4. **Guardar**: Click en "💾 Guardar Cambios"
-5. **Exportar**: Click en "📄 Exportar PDF"
+1. **Ver Rutas OMEGA**: Ya están cargadas y visibles.
+2. **Información Detallada**: Abre el panel lateral derecho (◀) para ver distancia, tiempo y pasajeros.
+3. **Crear Nueva Ruta**: Click en "🛣 Ruta Inteligente" → Click en el mapa.
+4. **Editar Ruta**: Click en "✏️ Editar Ruta" → Click en una ruta → Arrastra puntos.
+5. **Guardar**: Click en "💾 Guardar Cambios".
+6. **Exportar**: Click en "📄 Exportar PDF".
 
 ## 🎯 Herramientas Disponibles
 
@@ -79,7 +80,7 @@ Cambia entre capas usando el control superior derecho:
 ### Colores
 - ✅ Cada ruta nueva recibe un color único automáticamente
 - ✅ Los colores se guardan en la base de datos
-- ✅ 20 colores vibrantes disponibles en ciclo
+- ✅ 40+ colores vibrantes disponibles en ciclo
 
 ### Edición
 - ✅ Arrastra puntos para modificar rutas

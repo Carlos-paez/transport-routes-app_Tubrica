@@ -73,6 +73,16 @@ Reparar la versión PHP para que funcione **exactamente igual** que la versión 
 - ✅ Agregado `setStatus()` a todas las herramientas
 - ✅ Agregado reset de cursor en `resetModes()`
 - ✅ Completada función `exportMapToPDF()`
+### 🚀 Paridad Total y Rediseño de Leyenda (Marzo 2026)
+- **Sincronización de Código**: Ambas versiones (JS y PHP) ahora comparten el mismo `app.js` unificado.
+- **Leyenda en Sidebar**: La leyenda de rutas se movió de la parte inferior a un panel lateral derecho colapsable.
+- **Datos de Pasajeros**: Se sincronizó el conteo de pasajeros para todas las rutas OMEGA en ambas versiones.
+- **Métricas de Ruta**: Implementación de cálculo automático de distancia y tiempo en la leyenda.
+- **Cache-Busting**: Implementado sistema de versiones para CSS/JS para evitar problemas de caché en actualizaciones.
+
+---
+
+*Última actualización: 24 de Marzo de 2026*
 - ✅ Unificados mensajes de usuario
 
 ### javascript version/app.js

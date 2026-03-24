@@ -37,16 +37,17 @@ php -S localhost:8000
 ## ✨ Características Principales
 
 - 🗺️ **Mapas Interactivos**: Visualización con Leaflet.js
-- 🎨 **Colores Únicos**: 20 colores vibrantes para rutas
-- 🚌 **Rutas OMEGA**: 17 rutas predefinidas
+- 🎨 **Colores Únicos**: Paleta ampliada de 40+ colores vibrantes
+- 🚌 **Rutas OMEGA**: 17 rutas predefinidas con conteo de pasajeros
+- 📋 **Leyenda Dinámica**: Nuevo panel lateral derecho con info detallada (Distancia, Tiempo, Pasajeros)
 - ✏️ **Trazado Manual**: Dibuja rutas personalizadas
 - 🛣️ **Rutas Inteligentes**: Enrutamiento automático con OSRM
-- 📍 **Marcadores**: Puntos de interés personalizados
+- 📍 **Marcadores**: Puntos de interés personalizados con capa independiente
 - 🧹 **Borrador Dinámico**: Edición precisa de rutas
-- 💾 **Persistencia**: Base de datos SQLite
-- 📄 **Exportación PDF**: Reportes de alta calidad
+- 💾 **Persistencia**: Base de datos SQLite sincronizada
+- 📄 **Exportación PDF**: Reportes de alta definición (escala 3x)
 
-## � Estructura del Proyecto
+##  Estructura del Proyecto
 
 ```
 transport-routes-app/
