@@ -3630,8 +3630,9 @@ const OMEGA_WAYPOINTS = [
     ],
     desc: "Ruezga Sect 4 y 7 - Santos Luzardo - B. Union - La Peña - TUBRICA",
   },
-  /*{
-    name: "ESTE-CENTRO (Rot)", passengers: 18,
+  {
+    name: "ESTE-CENTRO (Rot 1)",
+    passengers: 18,
     points: [
       [10.078, -69.295],
       [10.072, -69.305],
@@ -3640,7 +3641,7 @@ const OMEGA_WAYPOINTS = [
       [10.0967, -69.3584],
     ],
     desc: "Rio Lama - Vargas - Libertador - Metropolis - Seguro - TUBRICA",
-  },*/
+  },
   {
     name: "NORTE (Rot)",
     passengers: 4,
