@@ -7,9 +7,9 @@ transport-routes-app/
 │
 ├── 📂 src/                          # Código fuente
 │   ├── 📂 javascript/               # Versión Node.js
-│   │   ├── 📄 app.js               # Lógica frontend (1,035 líneas)
+│   │   ├── 📄 app.js               # Lógica frontend (~5,500 líneas)
 │   │   ├── 📄 server.js            # Servidor Express
-│   │   ├── 📄 index.html           # Interfaz HTML
+│   │   ├── 📄 index.html           # Interfaz HTML (con doble barra lateral)
 │   │   ├── 📄 styles.css           # Estilos CSS
 │   │   ├── 📄 package.json         # Dependencias npm
 │   │   ├── 📄 package-lock.json    # Lock de dependencias
@@ -20,10 +20,10 @@ transport-routes-app/
 │   │   └── 📖 README.md            # Guía específica Node.js
 │   │
 │   └── 📂 php/                      # Versión PHP
-│       ├── 📄 app.js               # Lógica frontend (822 líneas)
+│       ├── 📄 app.js               # Lógica frontend (~5,500 líneas)
 │       ├── 📄 api.php              # API REST PHP
-│       ├── 📄 index.php            # Interfaz HTML
-│       ├── 📄 styles.css           # Estilos CSS
+│       ├── 📄 index.php            # Interfaz HTML (con doble barra lateral)
+│       ├── 📄 styles.css           # Estilos CSS (v2026)
 │       ├── 📄 .htaccess            # Configuración Apache
 │       ├── 📄 health.php           # Health check endpoint
 │       ├── 🐳 Dockerfile           # Imagen Docker
@@ -76,11 +76,11 @@ transport-routes-app/
 ## 📊 Estadísticas del Proyecto
 
 ### Código Fuente
-- **JavaScript**: 1,035 líneas
-- **PHP**: 822 líneas
+- **JavaScript**: ~5,400 líneas (Frontend unificado)
+- **PHP**: ~5,500 líneas (Frontend unificado)
 - **HTML**: ~100 líneas (ambas versiones)
-- **CSS**: ~200 líneas (idéntico)
-- **Total**: ~2,157 líneas de código
+- **CSS**: ~300 líneas (estilos para sidebars)
+- **Total**: ~11,300 líneas de código
 
 ### Documentación
 - **Guías principales**: 7 archivos

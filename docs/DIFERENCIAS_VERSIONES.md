@@ -20,12 +20,13 @@ Ambas versiones ahora funcionan **exactamente igual** con todas las funcionalida
 - **Inicio**: `php -S localhost:8000` (desde la carpeta php version)
 
 ### Frontend
-Ambas versiones usan el **mismo código frontend**:
-- `app.js` - Lógica de la aplicación
-- `index.html/index.php` - Estructura HTML (idénticas)
-- `styles.css` - Estilos (idénticos)
+Ambas versiones usan el **mismo código frontend unificado**:
+- `app.js` - Lógica de la aplicación (~5,500 líneas, incluye sidebar y leyendas)
+- `index.html/index.php` - Estructura HTML con **doble barra lateral** (Herramientas a la izquierda, Leyenda a la derecha)
+- `styles.css` - Estilos unificados con soporte para temas y sidebars colapsables
 
 ### API Endpoints
+Ambos backends han sido sincronizados para soportar campos adicionales como `passengers`.
 
 #### JavaScript (Node.js)
 ```javascript

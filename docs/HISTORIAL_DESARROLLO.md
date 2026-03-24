@@ -54,12 +54,18 @@ Este documento consolida todo el historial de desarrollo, cambios y mejoras real
 - ✅ Exportación PDF mejorada
 - ✅ Documentación consolidada
 
-### Fase 6: Optimización y Corrección de Visibilidad (Actual)
+### Fase 6: Optimización y Corrección de Visibilidad
 - ✅ Ampliación de paleta a 40 colores vibrantes
 - ✅ Corrección de "Rutas Fantasmas" en PHP
 - ✅ Aislamiento estricto de capas (`omegaLayer` vs `drawnItems`)
 - ✅ Clasificación inteligente automática por nombre (Admin/Rot)
-- ✅ Limpieza total de capas con `clearLayers()` en controles de visibilidad
+
+### Fase 7: Paridad Total y Rediseño de Leyenda (Actual)
+- ✅ Sincronización 1:1 de `app.js` entre las versiones JavaScript y PHP
+- ✅ Implementación de barra lateral derecha colapsable para información de rutas
+- ✅ Inclusión de metadatos adicionales en rutas OMEGA: Conteo de Pasajeros
+- ✅ Cálculo en tiempo real de Distancia (km) y Tiempo Estimado (min)
+- ✅ Leyenda dinámica que se actualiza automáticamente al mostrar/ocultar rutas
 
 **Archivos relacionados:**
 - `RESUMEN_REPARACION.md`

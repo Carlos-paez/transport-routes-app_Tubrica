@@ -165,6 +165,7 @@ DELETE /api.php?id=2
 | type | TEXT | Tipo: "route" o "marker" | Sí |
 | geometry | TEXT | Coordenadas en JSON | Sí |
 | color | TEXT | Color hexadecimal | No |
+| passengers | INTEGER | Conteo de pasajeros (para rutas) | No |
 | created_at | DATETIME | Fecha de creación | Auto |
 
 ### Tipos de Geometría
