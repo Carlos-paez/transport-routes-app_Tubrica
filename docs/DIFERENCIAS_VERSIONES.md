@@ -48,7 +48,7 @@ DELETE api.php?id=X
 
 ### Versión JavaScript
 ```bash
-cd "javascript version"
+cd src/javascript
 npm install
 node server.js
 # Abrir: http://localhost:3000
@@ -56,12 +56,12 @@ node server.js
 
 ### Versión PHP
 ```bash
-cd "php version"
+cd src/php
 php -S localhost:8000
 # Abrir: http://localhost:8000
 ```
 
-O usar Apache/Nginx apuntando a la carpeta `php version`.
+O usar Apache/Nginx apuntando a la carpeta `src/php`.
 
 ## ✨ Funcionalidades Implementadas (Ambas Versiones)
 
@@ -102,7 +102,7 @@ O usar Apache/Nginx apuntando a la carpeta `php version`.
 - ✅ Límites municipales
 
 ## 🎨 Colores de Rutas
-Ambas versiones usan la misma paleta de 20 colores vibrantes que se asignan secuencialmente a cada nueva ruta, garantizando que cada ruta tenga un color único y distintivo.
+Ambas versiones usan la misma paleta de 48 colores vibrantes (v2026) que se asignan secuencialmente a cada nueva ruta, garantizando que cada ruta tenga un color único y distintivo.
 
 ## 💾 Base de Datos
 Estructura idéntica en ambas versiones:
@@ -113,6 +113,7 @@ CREATE TABLE elements (
     type TEXT,
     geometry TEXT,
     color TEXT,
+    passengers INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 )
 ```

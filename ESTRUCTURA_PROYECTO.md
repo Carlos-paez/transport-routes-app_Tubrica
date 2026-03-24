@@ -38,8 +38,7 @@ transport-routes-app/
 │   ├── 📗 API.md                   # Documentación API REST
 │   ├── 📙 DOCKER.md                # Guía Docker completa
 │   ├── 📕 DIFERENCIAS_VERSIONES.md # Comparación técnica
-│   ├── 📔 RESUMEN_REPARACION.md    # Últimos cambios
-│   ├── 📓 HISTORIAL_DESARROLLO.md  # Historia del proyecto
+│   ├── 📓 HISTORIAL_DESARROLLO.md  # Historia del proyecto (Fases 1-8)
 │   ├── 📄 ARQUITECTURA_DOCKER.md   # Arquitectura Docker
 │   ├── 📄 COMANDOS_DOCKER.md       # Comandos Docker
 │   │

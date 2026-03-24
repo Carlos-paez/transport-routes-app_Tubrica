@@ -3612,8 +3612,9 @@ const OMEGA_WAYPOINTS = [
     ],
     desc: "El Recreo - La Campiña - La Mora - El Palmar - TUBRICA",
   },
-  /*{
-    name: "RUEZGA / UNION (Rot)", passengers: 37,
+  {
+    name: "RUEZGA / UNION (Rot)",
+    passengers: 37,
     points: [
       [10.108, -69.315],
       [10.102, -69.325],
@@ -3623,7 +3624,7 @@ const OMEGA_WAYPOINTS = [
     ],
     desc: "Ruezga Sect 4 y 7 - Santos Luzardo - B. Union - La Peña - TUBRICA",
   },
-  {
+  /*{
     name: "ESTE-CENTRO (Rot)", passengers: 18,
     points: [
       [10.078, -69.295],

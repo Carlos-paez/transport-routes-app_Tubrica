@@ -80,7 +80,7 @@ Cambia entre capas usando el control superior derecho:
 ### Colores
 - ✅ Cada ruta nueva recibe un color único automáticamente
 - ✅ Los colores se guardan en la base de datos
-- ✅ 40+ colores vibrantes disponibles en ciclo
+- ✅ 48 colores vibrantes disponibles en ciclo (v2026)
 
 ### Edición
 - ✅ Arrastra puntos para modificar rutas

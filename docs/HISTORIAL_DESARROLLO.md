@@ -60,16 +60,23 @@ Este documento consolida todo el historial de desarrollo, cambios y mejoras real
 - ✅ Aislamiento estricto de capas (`omegaLayer` vs `drawnItems`)
 - ✅ Clasificación inteligente automática por nombre (Admin/Rot)
 
-### Fase 7: Paridad Total y Rediseño de Leyenda (Actual)
-- ✅ Sincronización 1:1 de `app.js` entre las versiones JavaScript y PHP
-- ✅ Implementación de barra lateral derecha colapsable para información de rutas
-- ✅ Inclusión de metadatos adicionales en rutas OMEGA: Conteo de Pasajeros
-- ✅ Cálculo en tiempo real de Distancia (km) y Tiempo Estimado (min)
-- ✅ Leyenda dinámica que se actualiza automáticamente al mostrar/ocultar rutas
+### Fase 7: Parity Total y Rediseño de Leyenda (Marzo 2026)
+- ✅ Sincronización 1:1 de `app.js` entre las versiones JavaScript y PHP.
+- ✅ Implementación de barra lateral derecha colapsable para información de rutas.
+- ✅ Inclusión de metadatos adicionales en rutas OMEGA: Conteo de Pasajeros.
+- ✅ Cálculo en tiempo real de Distancia (km) y Tiempo Estimado (min).
+- ✅ Leyenda dinámica que se actualiza automáticamente al mostrar/ocultar rutas.
+- ✅ Nueva capa de marcadores (`markersLayer`) integrada en el control de capas nativo.
+
+### Fase 8: Reorganización y Optimización de Documentación (Actual)
+- ✅ Reorganización profesional de la estructura de carpetas (`src/`, `docs/`, `scripts/`, `backups/`).
+- ✅ Consolidación de documentación fragmentada en guías temáticas legibles.
+- ✅ Limpieza de archivos temporales y duplicados en ambas versiones.
 
 **Archivos relacionados:**
-- `RESUMEN_REPARACION.md`
-- `RUTAS_OMEGA_PERSISTENTES.md`
+- `REORGANIZACION_COMPLETA.md` (Consolidado)
+- `RESUMEN_REPARACION.md` (Consolidado)
+- `ESTRUCTURA_PROYECTO.md`
 
 ## 🎨 Sistema de Colores - Evolución
 
@@ -77,139 +84,65 @@ Este documento consolida todo el historial de desarrollo, cambios y mejoras real
 Las rutas no tenían colores diferenciados, dificultando su identificación.
 
 ### Solución Implementada
-1. Paleta de 40 colores vibrantes predefinidos (antes 20)
-2. Asignación secuencial automática
-3. Persistencia en base de datos
-4. Campo `color` en tabla `elements`
+1. Paleta de 48 colores vibrantes y profesionales (ampliada de 20 -> 40 -> 48)
+2. Asignación secuencial automática que evita duplicados inmediatos.
+3. Persistencia en base de datos SQLite.
+4. Campo `color` en tabla `elements`.
 
-### Colores Disponibles
+### Colores Disponibles (Muestra)
 ```javascript
 const ROUTE_COLORS = [
   "#e74c3c", "#3498db", "#2ecc71", "#f39c12", "#9b59b6",
-  "#1abc9c", "#e67e22", "#34495e", "#16a085", "#27ae60",
-  "#2980b9", "#8e44ad", "#c0392b", "#d35400", "#f1c40f",
-  "#e91e63", "#00bcd4", "#4caf50", "#ff9800", "#795548",
-  "#5d4037", "#455a64", "#c2185b", "#7b1fa2", "#512da8",
-  "#303f9f", "#1976d2", "#0288d1", "#0097a7", "#00796b",
-  "#388e3c", "#689f38", "#afb42b", "#fbc02d", "#ffa000",
-  "#f57c00", "#e64a19", "#5d4037", "#616161", "#455a64"
+  "#1abc9c", "#ff1493", "#34495e", "#16a085", "#f1c40f",
+  // ... hasta 48 colores totales para máxima diferenciación
 ];
 ```
 
 ## 🔧 Problemas Resueltos
 
 ### 1. Colores No Persistentes
-**Problema**: Los colores se perdían al recargar  
-**Solución**: Agregado campo `color` a la base de datos  
-**Archivos**: `ACTUALIZACION_COLORES_PERSISTENTES.md`
+**Problema**: Los colores se perdían al recargar el navegador.
+**Solución**: Agregado campo `color` a la tabla `elements` en SQLite.
 
 ### 2. Rutas OMEGA sin Colores Únicos
-**Problema**: Todas las rutas OMEGA tenían el mismo color  
-**Solución**: Asignación de colores únicos usando `getNextRouteColor()`  
-**Archivos**: `RUTAS_OMEGA_COLORES.txt`
+**Problema**: Todas las rutas OMEGA aparecían con el mismo color por defecto.
+**Solución**: Implementación de `getNextRouteColor()` para asignar colores únicos del dataset.
 
 ### 3. Versión PHP Incompleta
-**Problema**: Faltaban funciones críticas en PHP  
-**Solución**: Agregadas `setStatus()`, `saveAllChanges()`, `exportMapToPDF()`  
-**Archivos**: `RESUMEN_REPARACION.md`
+**Problema**: La versión PHP carecía de herramientas presentes en la versión JS.
+**Solución**: Sincronización total de `app.js` y funciones `setStatus()`, `saveAllChanges()`, `exportMapToPDF()`.
 
-### 4. Indicadores de Estado Faltantes
-**Problema**: No se mostraba el modo activo  
-**Solución**: Implementado sistema de estado en todas las herramientas  
-**Archivos**: `RESUMEN_REPARACION.md`
+### 4. Rutas Fantasmas (Visibilidad)
+**Problema**: Rutas Omega permanecían visibles tras ocultarlas en la versión PHP.
+**Solución**: Implementación de `checkIsOmega()` y separación estricta entre `omegaLayer` y `drawnItems`.
 
-### 5. Exportación PDF con Distorsión
-**Problema**: PDFs generados con imágenes distorsionadas  
-**Solución**: Cálculo correcto de proporciones y alta definición  
-**Archivos**: Código en `app.js`
+### 5. Obstrucción de Mapa por Leyenda
+**Problema**: La leyenda inferior tapaba herramientas del mapa y ocupaba mucho espacio.
+**Solución**: Rediseño a una Barra Lateral Derecha colapsable con tarjetas de información dinámica.
 
-### 6. Rutas Fantasmas (Visibilidad)
-**Problema**: Rutas Omega permanecían visibles tras ocultarlas en PHP  
-**Solución**: Implementación de `checkIsOmega()` y aislamiento de `omegaLayer`  
-**Archivos**: `RESUMEN_REPARACION.md`
-
-## 📊 Métricas del Proyecto
+## 📊 Métricas del Proyecto (Actualizadas)
 
 ### Líneas de Código
-- **JavaScript**: ~1,035 líneas
-- **PHP**: ~822 líneas
-- **Total**: ~1,857 líneas
+- **JavaScript (Frontend unificado)**: ~5,400 líneas
+- **PHP (Frontend unificado)**: ~5,500 líneas
+- **Backend (JS/PHP)**: ~300 líneas
+- **Total**: ~11,200+ líneas de código
 
 ### Archivos
-- **Código fuente**: 12 archivos
-- **Documentación**: 15+ archivos
-- **Configuración**: 8 archivos
+- **Código fuente**: 15 archivos organizados en `src/`
+- **Documentación**: 20+ archivos (incluyendo legacy)
+- **Configuración/Docker**: 10+ archivos
 
 ### Funcionalidades
-- **Herramientas**: 7 herramientas de dibujo/edición
-- **Rutas OMEGA**: 10 rutas predefinidas
-- **Colores**: 20 colores únicos
-- **Capas de mapa**: 3 tipos
-
-## 🎯 Rutas OMEGA Implementadas
-
-### Página 1
-1. OESTE (Admin) - 31 puntos
-2. SUR OESTE (Admin) - 5 puntos
-3. PAVIA (Admin) - 3 puntos
-4. SUR OESTE (Rot) - 4 puntos
-5. OESTE (Rot) - 4 puntos
-6. CABUDARE (Rot) - 5 puntos
-7. PAVIA (Rot) - 3 puntos
-8. CABUDARE A (Admin) - 38 puntos
-9. CABUDARE B (Admin) - 64 puntos
-10. RUEZGA / UNION (Rot) - 5 puntos
-
-### Página 2
-11. ESTE-CENTRO (Rot) - 5 puntos
-12. NORTE (Rot) - 5 puntos
-13. ESTE 1 (Admin) - 40 puntos
-14. ESTE 2 (Admin) - 4 puntos
-15. MANZANO CENTRO (Admin) - 26 puntos
-16. NORTE (Admin) - 9 puntos
-17. RUEZGA / UNION (Admin) - 43 puntos
-
-**Total**: 17 rutas con 287 puntos de control
-
-## 🔄 Cambios en Base de Datos
-
-### Versión 1.0
-```sql
-CREATE TABLE elements (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    type TEXT,
-    geometry TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-### Versión 2.0 (Actual)
-```sql
-CREATE TABLE elements (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    type TEXT,
-    geometry TEXT,
-    color TEXT,  -- ⭐ NUEVO
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-## 📈 Mejoras de Rendimiento
-
-1. **PRAGMA journal_mode = WAL**: Mejora velocidad de escritura SQLite
-2. **preferCanvas: true**: Optimiza renderizado de rutas en Leaflet
-3. **Delay entre peticiones OSRM**: Evita saturación del servicio
-4. **Caché de capas**: Reduce peticiones a servidores de mapas
+- **Herramientas de Dibujo**: 8 herramientas (Manual, Inteligente, TUBRICA, Marcador, Editar, Eliminar, Borrador, PDF).
+- **Rutas OMEGA**: 17 rutas predefinidas con coordenadas exactas.
+- **Seguimiento**: Conteo de pasajeros integrado por ruta.
 
 ## 🎓 Lecciones Aprendidas
 
-1. **Sincronización de Versiones**: Mantener paridad funcional entre JavaScript y PHP
-2. **Persistencia de Estado**: Guardar colores y configuraciones
-3. **UX Feedback**: Indicadores visuales de modo activo
-4. **Calidad de Exportación**: Cálculo correcto de proporciones en PDF
-5. **Documentación**: Documentar mientras se desarrolla, no después
+1. **Sincronización de Versiones**: Mantener un solo núcleo de lógica (`app.js`) minimiza errores entre plataformas.
+2. **UX Adaptativa**: Las barras laterales colapsables mejoran significativamente el área de trabajo en el mapa.
+3. **Persistencia Total**: No solo la geometría, sino el estilo (colores) y metadatos (pasajeros) deben persistir para ser útiles.
 
 ## 🔮 Futuras Mejoras
 

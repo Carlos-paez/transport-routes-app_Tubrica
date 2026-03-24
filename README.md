@@ -76,7 +76,6 @@ transport-routes-app/
 │   ├── API.md             # Documentación API
 │   ├── DOCKER.md          # Guía Docker
 │   ├── DIFERENCIAS_VERSIONES.md
-│   ├── RESUMEN_REPARACION.md
 │   ├── HISTORIAL_DESARROLLO.md
 │   └── legacy/            # Documentación histórica
 │
