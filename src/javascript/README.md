@@ -36,6 +36,7 @@ CREATE TABLE elements (
     type TEXT,
     geometry TEXT,
     color TEXT,
+    passengers INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 )
 ```
@@ -58,7 +59,7 @@ const PORT = 3000; // Cambiar aquí
 
 ## ✨ Funcionalidades
 
-- ✅ Rutas OMEGA predefinidas con colores únicos
+- ✅ Rutas OMEGA predefinidas con 48 colores únicos (v2026)
 - ✅ Trazado manual de rutas
 - ✅ Rutas inteligentes con OSRM
 - ✅ Marcadores personalizados

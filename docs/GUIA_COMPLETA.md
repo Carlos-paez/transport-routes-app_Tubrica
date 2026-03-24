@@ -43,25 +43,27 @@ El sistema utiliza un diseño de doble barra lateral para maximizar el área de 
 
 1. **Barra Lateral Izquierda (Herramientas)**: Contiene los controles de visibilidad de rutas OMEGA, herramientas de dibujo, borrador y botón de guardado.
 2. **Barra Lateral Derecha (Leyenda)**: Panel colapsable que muestra la información detallada de las rutas activas:
-   - **📏 Distancia**: Longitud total de la ruta en kilómetros.
-   - **⏱ Tiempo**: Tiempo estimado de recorrido (calculado a 40km/h promedio).
-   - **👥 Pasajeros**: Capacidad o conteo de pasajeros asignado a la ruta.
+1.  **Barra Lateral Izquierda (Herramientas)**: Contiene los controles de visibilidad de rutas OMEGA, herramientas de dibujo, borrador y botón de guardado.
+2.  **Barra Lateral Derecha (Leyenda)**: Panel colapsable que muestra la información detallada de las rutas activas:
+    -   **📏 Distancia**: Longitud total de la ruta en kilómetros.
+    -   **⏱ Tiempo**: Tiempo estimado de recorrido (calculado a 40km/h promedio).
+    -   **👥 Pasajeros**: Capacidad o conteo de pasajeros asignado a la ruta.
 
 ### 🚌 Rutas OMEGA
 Las rutas OMEGA son trayectorias fijas predefinidas por TUBRICA. Se cargan automáticamente y cuentan con colores únicos asignados secuencialmente.
-- ✅ 10+ rutas predefinidas con colores únicos
-- ✅ Mostrar/ocultar rutas individuales o todas
-- ✅ Zoom automático a ruta seleccionada
-- ✅ Visualización de límites municipales
+- ✅ 17 rutas predefinidas con colores únicos y coordenadas exactas.
+- ✅ Mostrar/ocultar rutas individuales o todas (con limpieza de capas fantasma).
+- ✅ Zoom automático a ruta seleccionada.
+- ✅ Visualización de límites municipales integrada.
 
 ### Herramientas de Dibujo
-- **Trazado Manual**: Dibuja rutas punto por punto
-- **Ruta Inteligente**: Genera rutas siguiendo calles reales (OSRM)
-- **Ir a TUBRICA**: Crea ruta directa desde cualquier punto a la sede
-- **Marcadores**: Añade puntos de interés personalizados
-- **Editar**: Modifica rutas arrastrando puntos
-- **Borrador**: Elimina segmentos con sensibilidad ajustable
-- **Eliminar**: Borra elementos completos
+- **Trazado Manual**: Dibuja rutas punto por punto.
+- **Ruta Inteligente**: Genera rutas siguiendo calles reales (OSRM).
+- **Ir a TUBRICA**: Crea ruta directa desde cualquier punto a la sede.
+- **Marcadores**: Añade puntos de interés personalizados en capa `markersLayer`.
+- **Editar**: Modifica rutas arrastrando puntos en tiempo real.
+- **Borrador**: Elimina segmentos con sensibilidad ajustable por radio.
+- **Eliminar**: Borra elementos completos con confirmación.
 
 ### Exportación y Reportes
 - Exportación a PDF de alta calidad (scale: 3)
