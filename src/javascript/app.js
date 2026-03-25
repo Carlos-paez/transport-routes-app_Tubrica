@@ -1084,7 +1084,8 @@ const OMEGA_WAYPOINTS = [
     desc: "Punto Fe y Alegría - Altos de Pavía - TUBRICA",
   },
   {
-    name: "SUR OESTE (Rot)", passengers: 20,
+    name: "SUR OESTE (Rot 1)",
+    passengers: 20,
     points: [
       [10.052, -69.358],
       [10.06, -69.365],
@@ -1092,6 +1093,18 @@ const OMEGA_WAYPOINTS = [
       [10.0967, -69.3584],
     ],
     desc: "Gimnasio Los Horcones - Carucieña - Ruiz Pineda - TUBRICA",
+  },
+  {
+    name: "ESTE-CENTRO (Rot 2)",
+    passengers: 18,
+    points: [
+      [10.078, -69.295],
+      [10.072, -69.305],
+      [10.065, -69.312],
+      [10.082, -69.338],
+      [10.0967, -69.3584],
+    ],
+    desc: "Rio Lamae - Vargasc - Libertador - Metropolis - Seguro - TUBRICA",
   },
   /*{
     name: "OESTE (Rot)", passengers: 10,
