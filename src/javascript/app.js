@@ -1083,7 +1083,7 @@ const OMEGA_WAYPOINTS = [
     ],
     desc: "Punto Fe y Alegría - Altos de Pavía - TUBRICA",
   },
-  /*{
+  {
     name: "SUR OESTE (Rot)", passengers: 20,
     points: [
       [10.052, -69.358],
@@ -1093,7 +1093,7 @@ const OMEGA_WAYPOINTS = [
     ],
     desc: "Gimnasio Los Horcones - Carucieña - Ruiz Pineda - TUBRICA",
   },
-  {
+  /*{
     name: "OESTE (Rot)", passengers: 10,
     points: [
       [10.063, -69.395],
