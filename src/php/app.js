@@ -1088,8 +1088,9 @@ const OMEGA_WAYPOINTS = [
     ],
     desc: "Gimnasio Los Horcones - Carucieña - Ruiz Pineda - TUBRICA",
   },
-  /*{
-    name: "OESTE (Rot)", passengers: 10,
+  {
+    name: "OESTE (Rot)",
+    passengers: 10,
     points: [
       [10.063, -69.395],
       [10.072, -69.388],
@@ -1097,7 +1098,7 @@ const OMEGA_WAYPOINTS = [
       [10.0967, -69.3584],
     ],
     desc: "Cerro Mara - La Y - Rio Linare - Nueva Paz - Valle Dorado - TUBRICA",
-  },*/
+  },
   {
     name: "CABUDARE (Rot)",
     passengers: 4,
